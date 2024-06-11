@@ -1,0 +1,96 @@
+1. Configura la Estructura del Proyecto: Primero, necesitas crear una estructura básica del proyecto que separe el frontend y el backend. Aquí hay un ejemplo de cómo puede lucir la estructura de tu proyecto:
+
+mi-proyecto/
+├── backend/
+│   ├── node_modules/
+│   ├── src/
+│   │   ├── index.js
+│   │   ├── ... (otros archivos del backend)
+│   ├── package.json
+├── frontend/
+│   ├── node_modules/
+│   ├── public/
+│   ├── src/
+│   │   ├── App.js
+│   │   ├── index.js
+│   │   ├── ... (otros archivos del frontend)
+│   ├── package.json
+├── package.json
+
+2. Configura el Backend (Node.js)
+
+1. Navega al directorio backend:
+
+cd mi-proyecto/backend
+
+2. Inicializa el proyecto de Node.js:
+
+npm init -y
+
+3. Instala las dependencias necesarias (por ejemplo, Express):
+
+ -- npm install express
+ -- Instalar nodemon: npm i -D nodemon
+ -- Instalar dotenv: npm i dotenv
+
+4. Crea el archivo principal (index.js):
+
+// backend/src/index.js
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+app.get('/api', (req, res) => {
+  res.send('Hello from the backend!');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+3. . Configura el Frontend (React)
+
+1. Navega al directorio frontend: cd ../frontend
+1.1 Elimnar la carpeta src
+2. Crea una nueva aplicación de React: npx create-react-app .
+3. Instala axios para hacer solicitudes HTTP al backend (opcional, pero común): npm install axios
+4. Instalar react-bootstrap: npm install react-bootstrap bootstrap
+5. Agregar Bootstrap en el proyecto: En el archivo src/index.js, importa el CSS de Bootstrap: 
+    import 'bootstrap/dist/css/bootstrap.min.css';
+6. Instalar react-router-dom para el manejo de rutas: npm install react-router-dom
+
+
+
+4. Configura los Scripts de NPM
+    1. Navega al directorio raíz del proyecto: cd ..
+    2. Inicializa un nuevo package.json en el directorio raíz si aún no existe: npm init -y
+    3. Instala concurrently: npm install concurrently --save-dev
+    4. Configura los scripts en package.json del directorio raíz:
+
+        {
+            "name": "mi-proyecto",
+            "version": "1.0.0",
+            "main": "index.js",
+            "license": "MIT",
+            "scripts": {
+                "start": "concurrently \"npm run server\" \"npm run client\"",
+                "server": "cd backend && npm start",
+                "client": "cd frontend && npm start"
+            }
+        }
+
+    5.  Proxy en React
+        Para evitar problemas de CORS, puedes configurar un proxy en el archivo package.json del frontend:
+        {
+        "name": "frontend",
+        "version": "0.1.0",
+        "private": true,
+        "dependencies": {
+            // tus dependencias
+        },
+        "scripts": {
+            "start": "react-scripts start",
+            // otros scripts
+        },
+        "proxy": "http://localhost:5000"
+        }
