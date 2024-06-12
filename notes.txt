@@ -58,6 +58,8 @@ app.listen(PORT, () => {
 5. Agregar Bootstrap en el proyecto: En el archivo src/index.js, importa el CSS de Bootstrap: 
     import 'bootstrap/dist/css/bootstrap.min.css';
 6. Instalar react-router-dom para el manejo de rutas: npm install react-router-dom
+7. Instalar Immer:  npm install immer use-immer
+8. Instalar react-router-dom: npm install react-router-dom
 
 
 
