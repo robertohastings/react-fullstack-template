@@ -11,8 +11,8 @@ function Header() {
 
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                        <Nav.Link href="#home">About Us</Nav.Link>
+                        <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link href="AboutUs">About Us</Nav.Link>
                         <Nav.Link href="#ContactUs">Contact Us</Nav.Link>
                         <Nav.Link href="#Products">Products</Nav.Link>
                         <Nav.Link href="#Services">Services</Nav.Link>
