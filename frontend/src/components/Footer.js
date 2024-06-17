@@ -1,4 +1,5 @@
 import React from "react"
+//import {Footer as BootstrapFooter} from 'react-bootstrap'
 
 const Footer = () => {
     return (

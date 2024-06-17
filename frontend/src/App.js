@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import axios from "axios"
 
+
 //My Components
 import Header from "./components/Header"
 import Footer from "./components/Footer"
-import Page from "./components/Page"
+import Home from "./components/Home"
 
 function App() {
     const [data, setData] = useState("")
@@ -29,11 +30,22 @@ function App() {
         //     </header>
         // </div>
 
-        <BrowserRouter>
-            <Header />
-            <Page title="Home Page" />
-            <Footer />
-        </BrowserRouter>
+        <>
+
+            <BrowserRouter>
+
+                <Header />
+                <main>
+                    <Routes>
+                        <Route path="/" element={<Home/>}/>
+                    </Routes>
+                </main>
+
+                <Footer />
+
+            </BrowserRouter>
+        
+        </>
     )
 }
 
