@@ -2,7 +2,7 @@ import React from "react"
 
 const AboutUs = () => {
     return (
-        <div className="container mt-4">
+        <div className="container">
             <h1>About Us</h1>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?</p>
 

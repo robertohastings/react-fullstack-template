@@ -24,3 +24,8 @@ main {
     flex: 1;
     /* background-color: yellow; */
 }
+.container {
+  display: flexbox;
+  align-items: center;
+  justify-content: center;
+}

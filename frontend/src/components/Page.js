@@ -1,5 +1,6 @@
 import React, { useEffect } from "react"
-import Container from "./Container"
+// import Container from "./Container"
+import Container from "react-bootstrap/Container"
 
 function Page(props) {
     useEffect(() => {
@@ -8,7 +9,7 @@ function Page(props) {
     }, [props.title])
     return (
         <>
-            <Container wide={props.wide}>{props.children}</Container>
+            <div className="container">{props.children}</div>
         </>
     )
 }
