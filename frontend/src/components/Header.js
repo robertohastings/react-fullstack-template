@@ -13,7 +13,7 @@ function Header() {
                     <Nav className="mr-auto">
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="AboutUs">About Us</Nav.Link>
-                        <Nav.Link href="#ContactUs">Contact Us</Nav.Link>
+                        <Nav.Link href="ContactUs">Contact Us</Nav.Link>
                         <Nav.Link href="#Products">Products</Nav.Link>
                         <Nav.Link href="#Services">Services</Nav.Link>
                     </Nav>

@@ -8,6 +8,7 @@ import Header from "./components/Header"
 import Footer from "./components/Footer"
 import Home from "./components/Home"
 import AboutUs from "./components/AboutUs"
+import ContactUs from "./components/ContactUs"
 
 function App() {
     const [data, setData] = useState("")
@@ -37,6 +38,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/AboutUs" element={<AboutUs />} />
+                        <Route path="/ContactUs" element={<ContactUs />} />
                     </Routes>
                 </main>
 
