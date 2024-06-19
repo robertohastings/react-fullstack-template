@@ -19,8 +19,8 @@ function App() {
         axios
             .get("/api/landingPage")
             .then(response => {
+                console.log('data:', response.data)
                 setData(response.data)
-                console.log(data)
             })
             .catch(error => {
                 console.error("There was an error fetching the data!", error)
@@ -40,9 +40,9 @@ function App() {
                 <main>
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/AboutUs" element={<AboutUs />} />
+                        <Route path="/AboutUs" element={<AboutUs landing={data.aboutUs} />} />
                         <Route path="/ContactUs" element={<ContactUs />} />
-                        <Route path="/Products" element={<Products />} />
+                        <Route path="/Products" element={<Products landing={data.products} />} />
                         <Route path="/Services" element={<Services />} />
                     </Routes>
                 </main>

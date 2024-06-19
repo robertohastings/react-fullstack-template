@@ -9,8 +9,13 @@ app.get("/api/landingPage", (req, res) => {
         aboutUs: {
             titulo: "About Us",
             activo: true,
-            contenido: "p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?</p><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.</p>"
-        }
+            contenido: "<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?</p><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.</p>"
+        },
+        products: {
+            titulo: "Nuestros productos",
+            activo: true,
+            contenido: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?"
+        }        
     }
     res.send(data)
 })
