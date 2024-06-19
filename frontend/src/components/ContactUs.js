@@ -34,7 +34,7 @@ function ContactUs() {
     return (
         <Page title="Contáctanos" >
 
-            <h1>Contactanos</h1>
+            <h1>Contáctanos</h1>
             <p className="mt-3">¡Queremos saber de ti!. Favor de llenar el siguiente formulario y en breve lo contactaremos</p>
 
             <div className="border rounded-3 mt-4">

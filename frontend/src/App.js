@@ -43,7 +43,7 @@ function App() {
                         <Route path="/AboutUs" element={<AboutUs landing={data.aboutUs} />} />
                         <Route path="/ContactUs" element={<ContactUs />} />
                         <Route path="/Products" element={<Products landing={data.products} />} />
-                        <Route path="/Services" element={<Services />} />
+                        <Route path="/Services" element={<Services landing={data.services} />} />
                     </Routes>
                 </main>
 
