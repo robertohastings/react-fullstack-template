@@ -17,9 +17,10 @@ function App() {
 
     useEffect(() => {
         axios
-            .get("/api")
+            .get("/api/landingPage")
             .then(response => {
                 setData(response.data)
+                console.log(data)
             })
             .catch(error => {
                 console.error("There was an error fetching the data!", error)
