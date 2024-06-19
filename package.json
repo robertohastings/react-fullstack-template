@@ -14,5 +14,9 @@
     "devDependencies": {
         "ajv": "^7.2.4",
         "concurrently": "^8.2.2"
+    },
+    "dependencies": {
+        "formik": "^2.4.6",
+        "yup": "^1.4.0"
     }
 }

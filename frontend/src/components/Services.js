@@ -1,10 +1,10 @@
 import React from "react"
 import Page from "./Page"
 
-const AboutUs = () => {
+function Services() {
     return (
-        <Page title="About us">
-            <h1>About Us</h1>
+        <Page title="Services">
+            <h1>Services</h1>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?</p>
 
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.</p>
@@ -16,4 +16,4 @@ const AboutUs = () => {
     )
 }
 
-export default AboutUs
+export default Services

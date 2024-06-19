@@ -14,8 +14,8 @@ function Header() {
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="AboutUs">About Us</Nav.Link>
                         <Nav.Link href="ContactUs">Contact Us</Nav.Link>
-                        <Nav.Link href="#Products">Products</Nav.Link>
-                        <Nav.Link href="#Services">Services</Nav.Link>
+                        <Nav.Link href="Products">Products</Nav.Link>
+                        <Nav.Link href="Services">Services</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

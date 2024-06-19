@@ -9,6 +9,8 @@ import Footer from "./components/Footer"
 import Home from "./components/Home"
 import AboutUs from "./components/AboutUs"
 import ContactUs from "./components/ContactUs"
+import Products from "./components/Products"
+import Services from "./components/Services"
 
 function App() {
     const [data, setData] = useState("")
@@ -39,6 +41,8 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/AboutUs" element={<AboutUs />} />
                         <Route path="/ContactUs" element={<ContactUs />} />
+                        <Route path="/Products" element={<Products />} />
+                        <Route path="/Services" element={<Services />} />
                     </Routes>
                 </main>
 
