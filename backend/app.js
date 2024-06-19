@@ -4,6 +4,8 @@ const PORT = process.env.PORT || 8080
 
 //const PORT = 5000
 
+app.use("/api", require("./router"))
+
 app.get("/api/landingPage", (req, res) => {
     const data = {
         aboutUs: {
@@ -15,7 +17,7 @@ app.get("/api/landingPage", (req, res) => {
             titulo: "Nuestros productos",
             activo: true,
             contenido: "<p><strong>Lorem</strong> ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?</p><p><strong>Lorem</strong> ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?</p>"
-        }        
+        }
     }
     res.send(data)
 })
