@@ -7,7 +7,8 @@ function Products(props) {
         <Page title={titulo}>
             <h1>{titulo}</h1>
             <div>
-                {contenido}
+            <div dangerouslySetInnerHTML={{__html: contenido}}></div>
+                {/* {contenido} */}
             </div>
         </Page>
     )
