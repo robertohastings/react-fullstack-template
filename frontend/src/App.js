@@ -11,29 +11,43 @@ import AboutUs from "./components/AboutUs"
 import ContactUs from "./components/ContactUs"
 import Products from "./components/Products"
 import Services from "./components/Services"
+import SpinnerDot from "./components/Spinner/SpinnerDot"
 
 function App() {
-    const [data, setData] = useState("")
+    const [data, setData] = useState({})
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        axios
-            .get("/api/landingPage")
-            .then(response => {
-                console.log('data:', response.data)
-                setData(response.data)
-            })
-            .catch(error => {
-                console.error("There was an error fetching the data!", error)
-            })
+        try {
+            axios
+                .get("/api/landingPage")
+                .then(response => {
+                    console.log("data:", response.data)
+                    setData(response.data)
+                    setIsLoading(false)
+                })
+                .catch(error => {
+                    console.error("There was an error fetching the data!", error)
+                    setIsLoading(true)
+                })
+        } catch (error) {
+            console.error("There was an error fetching the data!", error)
+            setIsLoading(false)
+        } finally {
+            setIsLoading(false)
+        }
     }, [])
 
-    return (
-        // <div className="App">
-        //     <header className="App-header">
-        //         <p>{data}</p>
-        //     </header>
-        // </div>
+    if (isLoading) {
+        console.log("Cargando info...")
+        return (
+            <div>
+                <SpinnerDot />
+            </div>
+        )
+    }
 
+    return (
         <>
             <BrowserRouter>
                 <Header />
