@@ -12,6 +12,8 @@ import ContactUs from "./components/ContactUs"
 import Products from "./components/Products"
 import Services from "./components/Services"
 import SpinnerDot from "./components/Spinner/SpinnerDot"
+import Admin from "./components/Admin"
+import Testing from "./components/Testing"
 
 function App() {
     const [data, setData] = useState({})
@@ -58,6 +60,8 @@ function App() {
                         <Route path="/ContactUs" element={<ContactUs />} />
                         <Route path="/Products" element={<Products landing={data.products} />} />
                         <Route path="/Services" element={<Services landing={data.services} />} />
+                        <Route path="/Admin" element={<Admin />} />
+                        <Route path="/Usuarios" element={<Testing title="Usuarios" />} />
                     </Routes>
                 </main>
 
