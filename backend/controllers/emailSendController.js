@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer")
 
 exports.apiSendEmailByGmal = async function (req, res) {
+    console.log('entre')
     const { nombre, email, telefono, comentarios } = req.body
 
     if (!nombre || !email || !telefono || !comentarios) {
@@ -8,15 +9,17 @@ exports.apiSendEmailByGmal = async function (req, res) {
     }
 
     const transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: "slmp-550-46.slc.westdc.net",
+        port: 465,
+        secure: true,
         auth: {
-            user: "rob.hst@gmail.com", // Reemplaza con tu dirección de correo de Gmail
-            pass: "IaN090918." // Reemplaza con tu contraseña de Gmail
+            user: "contacto@hostregio.com", // Reemplaza con tu dirección de correo de Gmail
+            pass: "6$(V@!Tel@$$" // Reemplaza con tu contraseña de Gmail
         }
     })
 
     const mailOptions = {
-        from: "rob.hst@gmail.com",
+        from: "contacto@hostregio.com",
         to: "rob.hst@gmail.com",
         subject: "Nuevo mensaje de contacto",
         text: `Nombre: ${nombre}\nEmail: ${email}\nTeléfono: ${telefono}\nComentarios: ${comentarios}`
