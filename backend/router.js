@@ -4,6 +4,7 @@ const apiRouter = express.Router()
 const holaMundoController = require("./controllers/holaMundaController")
 const landingController = require("./controllers/landingController")
 const emailSendController = require("./controllers/emailSendController")
+const catalogosController = require("./controllers/catalagosController")
 
 const cors = require("cors")
 
@@ -13,5 +14,7 @@ apiRouter.get("/router", (req, res) => res.json("Hello, if you see this message 
 apiRouter.get("/holamundo", holaMundoController.apiHolaMundo)
 apiRouter.get("/landingPage", landingController.apiLanding)
 apiRouter.post("/send-email-by-gmail", emailSendController.apiSendEmailByGmal)
+//catalagos
+apiRouter.get("/catalagos/obtener-categorias", catalogosController.apiObtenerCategorias)
 
 module.exports = apiRouter
