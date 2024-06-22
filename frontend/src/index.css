@@ -18,14 +18,15 @@ code {
 }
 
 main {
+    margin-top: 2rem;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
     flex: 1;
     /* background-color: yellow; */
 }
 .container {
-  display: flexbox;
-  align-items: center;
-  justify-content: center;
+    display: flexbox;
+    align-items: center;
+    justify-content: center;
 }

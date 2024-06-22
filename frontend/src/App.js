@@ -58,7 +58,7 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/AboutUs" element={<AboutUs landing={data.aboutUs} />} />
                         <Route path="/ContactUs" element={<ContactUs />} />
-                        <Route path="/Products" element={<Products landing={data.products} />} />
+                        <Route path="/Products" element={<Products landing={data.products} categories={data.categories} />} />
                         <Route path="/Services" element={<Services landing={data.services} />} />
                         <Route path="/Admin" element={<Admin />} />
                         <Route path="/Usuarios" element={<Testing title="Usuarios" />} />

@@ -16,5 +16,5 @@ apiRouter.get("/landingPage", landingController.apiLanding)
 apiRouter.post("/send-email-by-gmail", emailSendController.apiSendEmailByGmal)
 //catalagos
 apiRouter.get("/catalagos/obtener-categorias", catalogosController.apiObtenerCategorias)
-
+apiRouter.get("/inventario/obtener-productos", catalogosController.apiObtenerProductos)
 module.exports = apiRouter

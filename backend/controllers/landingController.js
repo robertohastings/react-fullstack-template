@@ -1,4 +1,4 @@
-exports.apiLanding = function (req, res) {
+exports.apiLanding = async function (req, res) {
     const data = {
         aboutUs: {
             titulo: "About Us",
@@ -14,7 +14,29 @@ exports.apiLanding = function (req, res) {
             titulo: "Nuestros servicios",
             activo: true,
             contenido: "<p><strong>Lorem</strong> ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?</p><p><strong>Lorem</strong> ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?</p>"
-        }        
+        },
+        categories: [
+            {
+                id: 1,
+                descripcion: "Cillum 1 ullamco dolore commodo velit ut"
+            },
+            {
+                id: 2,
+                descripcion: "Cillum 2 ullamco dolore commodo velit ut"
+            },
+            {
+                id: 3,
+                descripcion: "Cillum 3 ullamco dolore commodo velit ut"
+            },
+            {
+                id: 4,
+                descripcion: "Cillum 4 ullamco dolore commodo velit ut"
+            },
+            {
+                id: 5,
+                descripcion: "Cillum 5 ullamco dolore commodo velit ut"
+            }
+        ]
     }
-    res.send(data)
+    await res.send(data)
 }
