@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { Col, Form, Row, Card, ListGroup, ListGroupItem, Button } from "react-bootstrap"
+import { Col, Form, Row, Card, ListGroup, Button } from "react-bootstrap"
+
 
 import Page from "./Page"
 import Axios from "axios"
@@ -34,11 +35,12 @@ function Products(props) {
 
     return (
         <Page title={titulo}>
-            <h1>{titulo}</h1>
+            
+            <h1 className="mb-4">{titulo}</h1>
 
-            <div dangerouslySetInnerHTML={{ __html: contenido }}></div>
+            <div style={{backgroundColor: "lightgrey"}} className="mb-5 p-3" dangerouslySetInnerHTML={{ __html: contenido }}></div>
 
-            <div className="mt-4">
+            <div className="mt-5">
                 <Form>
                     <Form.Group as={Row} controlId="selectorCategoria">
                         <Form.Label column sm={3}>
@@ -56,11 +58,14 @@ function Products(props) {
                 </Form>
             </div>
 
+            {/* Cards de productos */}
             {productos.length > 0 && (
                 <div className="mt-4 mb-4">
                     <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                         {productos.map(producto => {
+                            
                             return (
+                                
                                 <Col key={producto.id}>
                                     <Card>
                                         <Card.Img variant="top" src={producto.pict1} />

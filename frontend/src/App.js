@@ -14,6 +14,7 @@ import Services from "./components/Services"
 import SpinnerDot from "./components/Spinner/SpinnerDot"
 import Admin from "./components/Admin"
 import Testing from "./components/Testing"
+import LandingPage from "./components/Admin/LandingPage"
 
 function App() {
     const [data, setData] = useState({})
@@ -62,6 +63,7 @@ function App() {
                         <Route path="/Services" element={<Services landing={data.services} />} />
                         <Route path="/Admin" element={<Admin />} />
                         <Route path="/Usuarios" element={<Testing title="Usuarios" />} />
+                        <Route path="/Admin/LandingPage" element={<LandingPage />} />
                     </Routes>
                 </main>
 

@@ -35,7 +35,8 @@ exports.apiObtenerProductos = async function (req, res) {
             precio: 10.0,
             descuento: 0.0,
             oferta: 0.0,
-            existencia: 5
+            existencia: 5,
+            categoria: 1
         },
         {
             id: 2,
@@ -46,7 +47,8 @@ exports.apiObtenerProductos = async function (req, res) {
             precio: 13.0,
             descuento: 0.0,
             oferta: 0.0,
-            existencia: 5
+            existencia: 5,
+            categoria: 1
         },
         {
             id: 3,
@@ -57,7 +59,8 @@ exports.apiObtenerProductos = async function (req, res) {
             precio: 20.0,
             descuento: 0.0,
             oferta: 0.0,
-            existencia: 5
+            existencia: 5,
+            categoria: 1
         },
         {
             id: 4,
@@ -68,7 +71,8 @@ exports.apiObtenerProductos = async function (req, res) {
             precio: 25.0,
             descuento: 0.0,
             oferta: 0.0,
-            existencia: 5
+            existencia: 5,
+            categoria: 2
         },
         {
             id: 5,
@@ -79,8 +83,33 @@ exports.apiObtenerProductos = async function (req, res) {
             precio: 30.0,
             descuento: 0.0,
             oferta: 0.0,
-            existencia: 5
-        }
+            existencia: 5,
+            categoria: 3
+        },
+        {
+            id: 6,
+            sku: "AB-6",
+            nombre: "Producto 6",
+            descripcion: "Cillum ullamco dolore commodo velit ut anim enim consectetur cillum ex.",
+            pict1: "https://fiestatijuana.mx/image-not-available.png",
+            precio: 30.0,
+            descuento: 0.0,
+            oferta: 0.0,
+            existencia: 5,
+            categoria: 4
+        }, 
+        {
+            id: 7,
+            sku: "AB-7",
+            nombre: "Producto 7",
+            descripcion: "Cillum ullamco dolore commodo velit ut anim enim consectetur cillum ex.",
+            pict1: "https://fiestatijuana.mx/image-not-available.png",
+            precio: 30.0,
+            descuento: 0.0,
+            oferta: 0.0,
+            existencia: 6,
+            categoria: 5
+        },                  
     ]
     await res.send(data)
 }
