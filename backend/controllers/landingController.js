@@ -3,7 +3,7 @@ exports.apiLanding = async function (req, res) {
         aboutUs: {
             titulo: "About Us",
             activo: true,
-            contenido: "<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas aliquam nemo laboriosam consectetur ut voluptatem ad, saepe tenetur porro repudiandae recusandae exercitationem eveniet quia mollitia dolorem. Quidem delectus voluptatibus fuga?</p><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem adipisci maiores ab sequi unde explicabo ratione excepturi harum obcaecati modi. Sint, minus quo? Ut quibusdam excepturi, officiis odio non libero.</p>"
+            contenido: "<p><strong>About Us</strong></p><p>Lorem itsu lorem itsu. lorem itus.</p><ol><li>One</li><li>Two</li><br></ol>"
         },
         products: {
             titulo: "Nuestros productos",

@@ -96,3 +96,6 @@ app.listen(PORT, () => {
         },
         "proxy": "http://localhost:5000"
         }
+
+
+npm install jodit-react html-react-parser --save
