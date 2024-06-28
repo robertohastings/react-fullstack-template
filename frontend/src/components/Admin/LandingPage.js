@@ -78,7 +78,7 @@ function LandingPage() {
                     <h4 className="pt-2 pb-3">About Us</h4>
 
                     <Form onSubmit={handledSubmit_AboutUs}>
-                        <JoditEditor ref={editorAboutUs} value={aboutUs} onChange={newContent => setAboutUs(newContent)} />
+                        <JoditEditor tabIndex={1} ref={editorAboutUs} value={aboutUs} onChange={newContent => setAboutUs(newContent)} />
 
                         <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
                             <IoSaveOutline />
@@ -91,7 +91,7 @@ function LandingPage() {
                     <h4 className="pt-2 pb-3">Products</h4>
 
                     <Form onSubmit={handledSubmitProducts}>
-                        <JoditEditor ref={editorProducts} value={products} onChange={newContent => setProducts(newContent)} />
+                        <JoditEditor tabIndex={2} ref={editorProducts} value={products} onChange={newContent => setProducts(newContent)} />
 
                         <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
                             <IoSaveOutline />
@@ -103,7 +103,7 @@ function LandingPage() {
                     <h4 className="pt-2 pb-3">Services</h4>
 
                     <Form onSubmit={handledSubmitProducts}>
-                        <JoditEditor ref={editorServices} value={services} onChange={newContent => setServices(newContent)} />
+                        <JoditEditor tabIndex={3} ref={editorServices} value={services} onChange={newContent => setServices(newContent)} />
 
                         <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
                             <IoSaveOutline />

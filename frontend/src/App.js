@@ -27,6 +27,10 @@ function App() {
     const initialState = {
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
         flashMessages: [],
+        alert: {
+            message: [],
+            typeAlert: ""
+        },
         user: {
             token: localStorage.getItem("complexappToken"),
             username: localStorage.getItem("complexappUsername"),
@@ -52,6 +56,10 @@ function App() {
                 break
             case "flashMessage":
                 draft.flashMessages.push(action.value)
+                break
+            case "alertMessage":
+                draft.alert.message.push(action.value)
+                draft.alert.typeAlert = action.typeAlert
                 break
             default:
             //do nothing
@@ -97,7 +105,8 @@ function App() {
             <StateContext.Provider value={state}>
                 <DispatchContext.Provider value={dispatch}>
                     <BrowserRouter>
-                        <FlashMessage messages={state.flashMessages} />
+                        {/* <FlashMessage messages={state.flashMessages} /> */}
+                        <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
                         <Header />
 
                         <main>

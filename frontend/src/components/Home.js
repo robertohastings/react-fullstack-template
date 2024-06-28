@@ -14,7 +14,9 @@ function Home() {
 
     const handledClick = () => {
         //alert("click")
-        appDispatch({ type: "flashMessage", value: "Prueba de flash message" })
+        //appDispatch({ type: "flashMessage", value: "Prueba de flash message" })
+        // appDispatch({ type: "alertMessage", data: { message: "Alert", typeAlert: "warning" } })
+        appDispatch({ type: "alertMessage", value: "alert", typeAlert: "danger" })
     }
 
     return (
@@ -22,11 +24,11 @@ function Home() {
             <Row className="m-4">
                 <Col md={6}>
                     <Card>
-                        <Card.Img variant="top" src="sorteo-tec.jpg" />
+                        <Card.Img variant="top" src="https://fiestatijuana.mx/image-not-available.png" />
                         <Card.Body>
                             <Card.Title>Sorteo Tec</Card.Title>
                             <Card.Text>Descripción del Sorteo Tec.</Card.Text>
-                            <Link to="/boletos">
+                            <Link to="/">
                                 <Button onClick={handledClick} variant="primary">
                                     Ver Boletos
                                 </Button>
@@ -36,11 +38,11 @@ function Home() {
                 </Col>
                 <Col md={6}>
                     <Card>
-                        <Card.Img variant="top" src="siembra-cultural.jpg" />
+                        <Card.Img variant="top" src="https://fiestatijuana.mx/image-not-available.png" />
                         <Card.Body>
                             <Card.Title>Siembra Cultural</Card.Title>
                             <Card.Text>Descripción de Siembra Cultural.</Card.Text>
-                            <Link to="/boletos">
+                            <Link to="/">
                                 <Button variant="primary">Ver Boletos</Button>
                             </Link>
                         </Card.Body>
