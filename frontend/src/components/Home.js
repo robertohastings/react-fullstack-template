@@ -1,17 +1,25 @@
-import React from 'react'
-import Page from './Page'
+import React, { useContext } from "react"
+import Page from "./Page"
 import Card from "react-bootstrap/Card"
 import Button from "react-bootstrap/Button"
 //import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import DispatchContext from "../DispatchContext"
 
 import { Link } from "react-router-dom"
 
 function Home() {
-  return (
-    <Page title="Home">
-        <Row className="m-4">
+    const appDispatch = useContext(DispatchContext)
+
+    const handledClick = () => {
+        //alert("click")
+        appDispatch({ type: "flashMessage", value: "Prueba de flash message" })
+    }
+
+    return (
+        <Page title="Home">
+            <Row className="m-4">
                 <Col md={6}>
                     <Card>
                         <Card.Img variant="top" src="sorteo-tec.jpg" />
@@ -19,7 +27,9 @@ function Home() {
                             <Card.Title>Sorteo Tec</Card.Title>
                             <Card.Text>Descripción del Sorteo Tec.</Card.Text>
                             <Link to="/boletos">
-                                <Button variant="primary">Ver Boletos</Button>
+                                <Button onClick={handledClick} variant="primary">
+                                    Ver Boletos
+                                </Button>
                             </Link>
                         </Card.Body>
                     </Card>
@@ -37,8 +47,8 @@ function Home() {
                     </Card>
                 </Col>
             </Row>
-    </Page>
-  )
+        </Page>
+    )
 }
 
 export default Home

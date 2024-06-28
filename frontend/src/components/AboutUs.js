@@ -1,14 +1,18 @@
-import React from "react"
+import React, { useContext } from "react"
 import HtmlReactParser from "html-react-parser"
+import StateContext from "../StateContext"
+
 import Page from "./Page"
 
-const AboutUs = props => {
-    const { titulo, contenido } = props.landing
-    console.log(contenido)
+const AboutUs = () => {
+    const appState = useContext(StateContext)
+    const { titulo, contenido } = appState.landinPage.aboutUs
+    console.log("appState:", appState.landinPage.aboutUs)
 
     return (
-        <Page title="About us">
-            {/* <h1>{titulo}</h1> */}
+        <Page title={titulo}>
+            <h1>{titulo}</h1>
+
             {/* <div>
                 <div dangerouslySetInnerHTML={{ __html: contenido }}></div>
             </div> */}

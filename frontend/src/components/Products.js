@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
+import HtmlReactParser from "html-react-parser"
+import StateContext from "../StateContext"
 import { Col, Form, Row, Card, ListGroup, Button } from "react-bootstrap"
-
 
 import Page from "./Page"
 import Axios from "axios"
 
-function Products(props) {
-    const { titulo, contenido } = props.landing
-    const dataCategories = props.categories
+function Products() {
+    const appState = useContext(StateContext)
+    console.log("appState:", appState)
+    const { titulo, contenido } = appState.landinPage.products
+    const dataCategories = appState.landinPage.categories
 
     const [categoria, setCategoria] = useState(null)
     const [productos, setProductos] = useState({})
@@ -35,10 +38,13 @@ function Products(props) {
 
     return (
         <Page title={titulo}>
-            
             <h1 className="mb-4">{titulo}</h1>
 
-            <div style={{backgroundColor: "lightgrey"}} className="mb-5 p-3" dangerouslySetInnerHTML={{ __html: contenido }}></div>
+            {/* <div style={{backgroundColor: "lightgrey"}} className="mb-5 p-3" dangerouslySetInnerHTML={{ __html: contenido }}></div> */}
+
+            <div style={{ backgroundColor: "lightgrey" }} className="mb-5 p-3">
+                {HtmlReactParser(contenido)}
+            </div>
 
             <div className="mt-5">
                 <Form>
@@ -63,9 +69,7 @@ function Products(props) {
                 <div className="mt-4 mb-4">
                     <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                         {productos.map(producto => {
-                            
                             return (
-                                
                                 <Col key={producto.id}>
                                     <Card>
                                         <Card.Img variant="top" src={producto.pict1} />

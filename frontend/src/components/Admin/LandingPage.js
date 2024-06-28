@@ -1,13 +1,31 @@
-import React, { useState, useMemo, useRef } from "react"
-import { Tab, Tabs, Form, InputGroup, Button } from "react-bootstrap"
+import React, { useState, useRef, useContext, useEffect } from "react"
+import { Tab, Tabs, Form, Button } from "react-bootstrap"
 import JoditEditor from "jodit-react"
+import { IoSaveOutline } from "react-icons/io5"
 import Page from "../Page"
+import StateContext from "../../StateContext"
 
 function LandingPage() {
-    const editor = useRef(null)
-    const [aboutUs, setAboutUs] = useState("")
+    const appState = useContext(StateContext)
 
-    const handledSubmit = e => {
+    const editorAboutUs = useRef(null)
+    const editorProducts = useRef(null)
+    const editorServices = useRef(null)
+
+    const [aboutUs, setAboutUs] = useState(appState.landinPage.aboutUs.contenido)
+    const [products, setProducts] = useState(appState.landinPage.products.contenido)
+    const [services, setServices] = useState(appState.landinPage.services.contenido)
+
+    // useEffect(() => {
+    //   setAboutUs(appState.landinPage.products.contenido)
+    // }, [])
+
+    const handledSubmit_AboutUs = e => {
+        e.preventDefault()
+        //TODO: MANDARLO AL SERVIDOR
+        console.log(aboutUs)
+    }
+    const handledSubmitProducts = e => {
         e.preventDefault()
         //TODO: MANDARLO AL SERVIDOR
         console.log(aboutUs)
@@ -49,28 +67,49 @@ function LandingPage() {
                                 id="services"
                                 className="pt-2 pb-3"
                             />
-                            <Button className="pt-2">Guardar</Button>
-                        </Form>
-                    </div>
-                </Tab>
-                <Tab eventKey="profile" title="About Us">
-                    <h4 className="pt-4 pb-3">About Us</h4>
-                    <hr />
-                    <div>
-                        <Form onSubmit={handledSubmit}>
-                            <JoditEditor ref={editor} value={aboutUs} onChange={newContent => setAboutUs(newContent)} />
-
-                            <Button type="submit" className="mt-3">
-                                Guardar
+                            <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
+                                <IoSaveOutline />
+                                <span>Guardar</span>
                             </Button>
                         </Form>
                     </div>
                 </Tab>
-                <Tab eventKey="longer-tab" title="Products">
-                    Tab content for Loooonger Tab
+                <Tab eventKey="profile" title="About Us">
+                    <h4 className="pt-2 pb-3">About Us</h4>
+
+                    <Form onSubmit={handledSubmit_AboutUs}>
+                        <JoditEditor ref={editorAboutUs} value={aboutUs} onChange={newContent => setAboutUs(newContent)} />
+
+                        <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
+                            <IoSaveOutline />
+                            <span>Guardar</span>
+                        </Button>
+                    </Form>
                 </Tab>
-                <Tab eventKey="contact" title="Services" disabled>
-                    Tab content for Contact
+
+                <Tab eventKey="products-tab" title="Products">
+                    <h4 className="pt-2 pb-3">Products</h4>
+
+                    <Form onSubmit={handledSubmitProducts}>
+                        <JoditEditor ref={editorProducts} value={products} onChange={newContent => setProducts(newContent)} />
+
+                        <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
+                            <IoSaveOutline />
+                            <span>Guardar</span>
+                        </Button>
+                    </Form>
+                </Tab>
+                <Tab eventKey="services-tab" title="Services">
+                    <h4 className="pt-2 pb-3">Services</h4>
+
+                    <Form onSubmit={handledSubmitProducts}>
+                        <JoditEditor ref={editorServices} value={services} onChange={newContent => setServices(newContent)} />
+
+                        <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
+                            <IoSaveOutline />
+                            <span>Guardar</span>
+                        </Button>
+                    </Form>
                 </Tab>
             </Tabs>
         </Page>
