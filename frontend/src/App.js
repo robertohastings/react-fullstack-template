@@ -1,5 +1,5 @@
 // frontend/src/App.js
-import React, { useEffect, useState, useContext } from "react"
+import React, { useEffect, useState, useContext, act } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import axios from "axios"
 import { useImmerReducer } from "use-immer"
@@ -19,6 +19,7 @@ import Admin from "./components/Admin"
 import Testing from "./components/Testing"
 import LandingPage from "./components/Admin/LandingPage"
 import FlashMessage from "./tools/FlashMessage"
+import Notifications from "./components/Notifications"
 
 function App() {
     const [data, setData] = useState({})
@@ -39,7 +40,8 @@ function App() {
         isSearchOpen: false,
         isChatOpen: false,
         unreadReadChatCount: 0,
-        landinPage: {}
+        landinPage: {},
+        notifications: false
     }
 
     function ourReducer(draft, action) {
@@ -56,6 +58,9 @@ function App() {
                 break
             case "flashMessage":
                 draft.flashMessages.push(action.value)
+                break
+            case "notifications":
+                draft.notifications = action.value
                 break
             case "alertMessage":
                 draft.alert.message.push(action.value)
@@ -107,6 +112,7 @@ function App() {
                     <BrowserRouter>
                         {/* <FlashMessage messages={state.flashMessages} /> */}
                         <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
+                        <Notifications show={state.notifications} />
                         <Header />
 
                         <main>

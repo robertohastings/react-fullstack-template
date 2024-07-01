@@ -1,17 +1,32 @@
-import React from "react"
+import React, { useContext } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Navbar, Nav, NavDropdown, Dropdown, Image } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import { RiUser3Line } from "react-icons/ri";
+import { RiUser3Line } from "react-icons/ri"
 import { CiLogout } from "react-icons/ci"
-import { PiGoogleLogo } from "react-icons/pi";
-import { PiPassword } from "react-icons/pi";
+import { PiGoogleLogo } from "react-icons/pi"
+import { PiPassword } from "react-icons/pi"
+import { IoMdNotifications } from "react-icons/io"
+import { IoIosNotificationsOutline } from "react-icons/io"
+import DispatchContext from "../DispatchContext"
 
 function Header() {
+    const appDispatch = useContext(DispatchContext)
+
     //TODO: cambiar sessionTitle por el nombre del usuario cuando se autentique
     //y cambiar el icono por la imagen del usurio redondeada como
-    const sessionTitle = 'Roberto'
-    const navDropdownTitle = (<><RiUser3Line />{' '}{sessionTitle}</> );
+    const sessionTitle = "Roberto"
+    const navDropdownTitle = (
+        <>
+            <RiUser3Line /> {sessionTitle}
+        </>
+    )
+
+    const handled_Notificactions = () => {
+        //alert("Notifications")
+        appDispatch({ type: "notifications", value: true })
+    }
+
     return (
         <div className="flex-row my-3 my-md-0">
             <Navbar bg="dark" variant="dark" expand="lg">
@@ -37,24 +52,33 @@ function Header() {
                         </Nav.Link>
                     </Nav>
                     <Nav>
+                        <Nav.Link onClick={handled_Notificactions}>
+                            <IoMdNotifications />
+                        </Nav.Link>
+                    </Nav>
+                    <Nav>
                         <NavDropdown title={navDropdownTitle} id="nav-dropdown" drop="start">
+                            <NavDropdown.Item eventKey="4.1" className="d-flex align-items-center gap-2"></NavDropdown.Item>
+
                             <NavDropdown.Item as={Link} eventKey="4.1" className="d-flex align-items-center gap-2">
-                                <PiPassword/> Usuario y Contraseña
+                                <PiPassword /> Usuario y Contraseña
                             </NavDropdown.Item>
                             <NavDropdown.Divider />
                             <NavDropdown.Item eventKey="4.2" className="d-flex align-items-center gap-2">
-                                
-                                    <PiGoogleLogo />
-                                
+                                <PiGoogleLogo />
                                 Google
                             </NavDropdown.Item>
                             <NavDropdown.Divider />
-                            <NavDropdown.Item eventKey="4.3" className="d-flex align-items-center gap-2"><CiLogout /> Salir</NavDropdown.Item>
+                            <NavDropdown.Item eventKey="4.3" className="d-flex align-items-center gap-2">
+                                <CiLogout /> Salir
+                            </NavDropdown.Item>
                             <NavDropdown.Divider />
-                            <NavDropdown.Item eventKey="4.4" className="d-flex align-items-center gap-2"><RiUser3Line />Peril</NavDropdown.Item>
- 
+                            <NavDropdown.Item eventKey="4.4" className="d-flex align-items-center gap-2">
+                                <RiUser3Line />
+                                Peril
+                            </NavDropdown.Item>
                         </NavDropdown>
-                    </Nav>                    
+                    </Nav>
                     <Nav>
                         <NavDropdown title="Admin" id="nav-dropdown" drop="start">
                             <NavDropdown.Item as={Link} eventKey="5.1">
@@ -63,7 +87,9 @@ function Header() {
                             <NavDropdown.Divider />
                             <NavDropdown.Item eventKey="5.2">Productos</NavDropdown.Item>
                             <NavDropdown.Divider />
-                            <NavDropdown.Item as={Link} to="Admin/LandingPage" eventKey="5.3">Landing Page</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="Admin/LandingPage" eventKey="5.3">
+                                Landing Page
+                            </NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
