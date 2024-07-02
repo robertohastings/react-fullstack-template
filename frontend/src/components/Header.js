@@ -27,6 +27,11 @@ function Header() {
         appDispatch({ type: "notifications", value: true })
     }
 
+    const handled_LoggedIn = () => {
+        //alert("Click")
+        appDispatch({ type: "showLoggedIn", value: true })
+    }
+
     return (
         <div className="flex-row my-3 my-md-0">
             <Navbar bg="dark" variant="dark" expand="lg">
@@ -60,7 +65,7 @@ function Header() {
                         <NavDropdown title={navDropdownTitle} id="nav-dropdown" drop="start">
                             <NavDropdown.Item eventKey="4.1" className="d-flex align-items-center gap-2"></NavDropdown.Item>
 
-                            <NavDropdown.Item as={Link} eventKey="4.1" className="d-flex align-items-center gap-2">
+                            <NavDropdown.Item eventKey="4.1" className="d-flex align-items-center gap-2" onClick={handled_LoggedIn}>
                                 <PiPassword /> Usuario y Contraseña
                             </NavDropdown.Item>
                             <NavDropdown.Divider />

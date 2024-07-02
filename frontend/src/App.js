@@ -20,6 +20,7 @@ import Testing from "./components/Testing"
 import LandingPage from "./components/Admin/LandingPage"
 import FlashMessage from "./tools/FlashMessage"
 import Notifications from "./components/Notifications"
+import LoggedIn from "./components/LoggedIn"
 
 function App() {
     const [data, setData] = useState({})
@@ -27,6 +28,7 @@ function App() {
 
     const initialState = {
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
+        showLoggedIn: false,
         flashMessages: [],
         alert: {
             message: [],
@@ -61,6 +63,9 @@ function App() {
                 break
             case "notifications":
                 draft.notifications = action.value
+                break
+            case "showLoggedIn":
+                draft.showLoggedIn = action.value
                 break
             case "alertMessage":
                 draft.alert.message.push(action.value)
@@ -113,6 +118,7 @@ function App() {
                         {/* <FlashMessage messages={state.flashMessages} /> */}
                         <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
                         <Notifications show={state.notifications} />
+                        <LoggedIn show={state.showLoggedIn} />
                         <Header />
 
                         <main>
