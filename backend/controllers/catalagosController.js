@@ -1,4 +1,4 @@
-exports.apiObtenerCategorias = async function (req, res) {
+export async function apiObtenerCategorias (req, res) {
     const data = [
         {
             id: 1,
@@ -24,7 +24,7 @@ exports.apiObtenerCategorias = async function (req, res) {
     await res.send(data)
 }
 
-exports.apiObtenerProductos = async function (req, res) {
+export async function apiObtenerProductos (req, res) {
     const data = [
         {
             id: 1,

@@ -99,3 +99,8 @@ app.listen(PORT, () => {
 
 
 npm install jodit-react html-react-parser --save
+
+en backend:
+    npm install mysql2
+    npm install bcrypt
+    npm install jsonwebtoken

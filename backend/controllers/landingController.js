@@ -1,4 +1,4 @@
-exports.apiLanding = async function (req, res) {
+export async function apiLanding (req, res) {
     const data = {
         aboutUs: {
             titulo: "About Us",

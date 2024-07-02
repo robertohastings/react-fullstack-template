@@ -1,20 +1,21 @@
-const express = require("express")
-const apiRouter = express.Router()
+import { Router } from "express"
+const apiRouter = Router()
 
-const holaMundoController = require("./controllers/holaMundaController")
-const landingController = require("./controllers/landingController")
-const emailSendController = require("./controllers/emailSendController")
-const catalogosController = require("./controllers/catalagosController")
+//import { apiHolaMundo } from "./controllers/holaMundaController.js"
+import { apiLanding } from "./controllers/landingController.js"
+//import { apiSendEmailByGmal } from "./controllers/emailSendController.js"
+import { apiObtenerCategorias, apiObtenerProductos } from "./controllers/catalagosController.js"
 
-const cors = require("cors")
+//import cors from "cors"
 
-apiRouter.use(cors())
+
 
 apiRouter.get("/router", (req, res) => res.json("Hello, if you see this message that means that backend routing is up and running successfully"))
-apiRouter.get("/holamundo", holaMundoController.apiHolaMundo)
-apiRouter.get("/landingPage", landingController.apiLanding)
-apiRouter.post("/send-email-by-gmail", emailSendController.apiSendEmailByGmal)
+//apiRouter.get("/holamundo", apiHolaMundo)
+apiRouter.get("/landingPage", apiLanding)
+//apiRouter.post("/send-email-by-gmail", apiSendEmailByGmal)
 //catalagos
-apiRouter.get("/catalagos/obtener-categorias", catalogosController.apiObtenerCategorias)
-apiRouter.get("/inventario/obtener-productos", catalogosController.apiObtenerProductos)
-module.exports = apiRouter
+apiRouter.get("/catalagos/obtener-categorias", apiObtenerCategorias)
+apiRouter.get("/inventario/obtener-productos", apiObtenerProductos)
+
+export default apiRouter
