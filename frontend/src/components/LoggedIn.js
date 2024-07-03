@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react"
 import { Link } from "react-router-dom"
-import { Modal, Form, Button, Row, Col, Container } from "react-bootstrap"
+import { Modal, Form, Button, Row, Col, Container, Spinner } from "react-bootstrap"
 import DispatchContext from "../DispatchContext"
 import { PiCopySimple, PiGoogleLogo } from "react-icons/pi"
 import { LuUserCircle2 } from "react-icons/lu"
@@ -13,6 +13,7 @@ function LoggedIn(props) {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [errorMessage, seterrorMessage] = useState("")
+    const [isFetching, setIsFetching] = useState(false)
 
     const appDispatch = useContext(DispatchContext)
 
@@ -40,7 +41,7 @@ function LoggedIn(props) {
             //     }
             // })
             // console.log(response.data)
-
+            setIsFetching(true)
             await axios
                 .get(`${api_url}/usersLogin`, {
                     params: {
@@ -51,10 +52,19 @@ function LoggedIn(props) {
                 })
                 .then(response => {
                     console.log(response.data)
-                    //console.log(response.success)
                     if (response.data.success === false) {
-                        seterrorMessage(response.data.data.message)
-                        appDispatch({ type: "alertMessage", value: response.data.data.message, typeAlert: "danger" })
+                        seterrorMessage(response.data.data.message)                                            
+                    } else {
+                        seterrorMessage('')
+                        appDispatch({
+                            type: 'login',
+                            data: {
+                                token: response.data.data.token,
+                                username: response.data.data.nombre,
+                                avatar: 'no-avatar',                                
+                            }
+                        })
+                        handledClose()
                     }
                 })
                 .catch(error => {
@@ -62,6 +72,8 @@ function LoggedIn(props) {
                 })
         } catch (error) {
             console.error("There was an error fetching data!", error)
+        } finally {
+            setIsFetching(false)
         }
     }
 
@@ -111,8 +123,14 @@ function LoggedIn(props) {
                     <Button variant="primary" onClick={handledClose} className="d-flex align-items-center gap-1 px-3">
                         Autenticarse con <PiGoogleLogo size={25} /> oogle
                     </Button>
-                    <Button className="px-3" variant="success" onClick={handled_In} disabled={email === "" || password === "" || password.length < 10 ? true : false}>
-                        Entrar
+                    <Button className="px-3" variant="success" onClick={handled_In} 
+                        disabled={email === "" || password === "" || password.length < 10 || isFetching ? true : false}>
+                        {isFetching &&
+                            <Spinner size="sm" animation="border"/>
+                        }
+                        {!isFetching &&                        
+                            <span>Entrar</span>
+                        }
                     </Button>
                 </Modal.Footer>
             </Modal>

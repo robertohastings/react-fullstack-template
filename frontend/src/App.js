@@ -25,6 +25,7 @@ import LoggedIn from "./components/LoggedIn"
 function App() {
     const [data, setData] = useState({})
     const [isLoading, setIsLoading] = useState(true)
+    
 
     const initialState = {
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
@@ -50,10 +51,16 @@ function App() {
         switch (action.type) {
             case "login":
                 draft.loggedIn = true
-                draft.user = action.data
+                //draft.user = action.data
+                localStorage.setItem("complexappToken", action.data.token)
+                localStorage.setItem("complexappUsername", action.data.username)
+                localStorage.setItem("complexappAvatar", action.data.avatar)
                 break
             case "logout":
                 draft.loggedIn = false
+                localStorage.removeItem("complexappToken")
+                localStorage.removeItem("complexappUsername")
+                localStorage.removeItem("complexappAvatar")
                 break
             case "landinPage":
                 draft.landinPage = action.data

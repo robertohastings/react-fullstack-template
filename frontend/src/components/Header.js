@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useState, useEffect } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Navbar, Nav, NavDropdown, Dropdown, Image } from "react-bootstrap"
 import { Link } from "react-router-dom"
@@ -15,10 +15,12 @@ function Header() {
     const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
 
+    
     //TODO: cambiar sessionTitle por el nombre del usuario cuando se autentique
     //y cambiar el icono por la imagen del usurio redondeada como
+    const [sessionTitle, setsessionTitle] = useState(appState.user.username)
     console.log(appState.loggedIn)
-    const sessionTitle = appState.user.username
+    //const sessionTitle = appState.user.username
     const navDropdownTitle = (
         <>
             <RiUser3Line /> {sessionTitle}
