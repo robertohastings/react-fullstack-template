@@ -53,15 +53,15 @@ function LoggedIn(props) {
                 .then(response => {
                     console.log(response.data)
                     if (response.data.success === false) {
-                        seterrorMessage(response.data.data.message)                                            
+                        seterrorMessage(response.data.data.message)
                     } else {
-                        seterrorMessage('')
+                        seterrorMessage("")
                         appDispatch({
-                            type: 'login',
+                            type: "login",
                             data: {
                                 token: response.data.data.token,
                                 username: response.data.data.nombre,
-                                avatar: 'no-avatar',                                
+                                avatar: "no-avatar"
                             }
                         })
                         handledClose()
@@ -96,12 +96,12 @@ function LoggedIn(props) {
                     <Form className="mt-2">
                         <Form.Group className="mb-3" controlId="email">
                             <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" placeholder="name@example.com" autoFocus onChange={handled_Email} defaultValue={email} />
+                            <Form.Control type="email" placeholder="name@example.com" autoFocus onChange={handled_Email} defaultValue={email} autoComplete="off" />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="password">
                             <Form.Label>Contraseña</Form.Label>
-                            <Form.Control type="password" placeholder="Contraseña" onChange={handled_Password} defaultValue={password} />
-                            <p className="fst-italic text-sm">Mínimo 10 caracteres</p>
+                            <Form.Control type="password" placeholder="Contraseña" onChange={handled_Password} defaultValue={password} autoComplete="off" />
+                            <p className="fst-italic text-sm fs-6">Mínimo 10 caracteres</p>
                         </Form.Group>
                     </Form>
                     <div>
@@ -123,14 +123,9 @@ function LoggedIn(props) {
                     <Button variant="primary" onClick={handledClose} className="d-flex align-items-center gap-1 px-3">
                         Autenticarse con <PiGoogleLogo size={25} /> oogle
                     </Button>
-                    <Button className="px-3" variant="success" onClick={handled_In} 
-                        disabled={email === "" || password === "" || password.length < 10 || isFetching ? true : false}>
-                        {isFetching &&
-                            <Spinner size="sm" animation="border"/>
-                        }
-                        {!isFetching &&                        
-                            <span>Entrar</span>
-                        }
+                    <Button className="px-3" variant="success" onClick={handled_In} disabled={email === "" || password === "" || password.length < 10 || isFetching ? true : false}>
+                        {isFetching && <Spinner size="sm" animation="border" />}
+                        {!isFetching && <span>Entrar</span>}
                     </Button>
                 </Modal.Footer>
             </Modal>

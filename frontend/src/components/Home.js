@@ -26,11 +26,11 @@ function Home() {
                     <Card>
                         <Card.Img variant="top" src="https://fiestatijuana.mx/image-not-available.png" />
                         <Card.Body>
-                            <Card.Title>Sorteo Tec</Card.Title>
-                            <Card.Text>Descripción del Sorteo Tec.</Card.Text>
+                            <Card.Title>Productos</Card.Title>
+                            <Card.Text>Descripción del Producto</Card.Text>
                             <Link to="/">
                                 <Button onClick={handledClick} variant="primary">
-                                    Ver Boletos
+                                    Ver
                                 </Button>
                             </Link>
                         </Card.Body>
@@ -40,10 +40,10 @@ function Home() {
                     <Card>
                         <Card.Img variant="top" src="https://fiestatijuana.mx/image-not-available.png" />
                         <Card.Body>
-                            <Card.Title>Siembra Cultural</Card.Title>
-                            <Card.Text>Descripción de Siembra Cultural.</Card.Text>
+                            <Card.Title>Servicios</Card.Title>
+                            <Card.Text>Descripción del Servicio</Card.Text>
                             <Link to="/">
-                                <Button variant="primary">Ver Boletos</Button>
+                                <Button variant="primary">Ver</Button>
                             </Link>
                         </Card.Body>
                     </Card>
