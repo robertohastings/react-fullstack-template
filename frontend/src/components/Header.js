@@ -7,15 +7,18 @@ import { CiLogout } from "react-icons/ci"
 import { PiGoogleLogo } from "react-icons/pi"
 import { PiPassword } from "react-icons/pi"
 import { IoMdNotifications } from "react-icons/io"
-import { IoIosNotificationsOutline } from "react-icons/io"
+
 import DispatchContext from "../DispatchContext"
+import StateContext from "../StateContext"
 
 function Header() {
     const appDispatch = useContext(DispatchContext)
+    const appState = useContext(StateContext)
 
     //TODO: cambiar sessionTitle por el nombre del usuario cuando se autentique
     //y cambiar el icono por la imagen del usurio redondeada como
-    const sessionTitle = "Roberto"
+    console.log(appState.loggedIn)
+    const sessionTitle = appState.user.username
     const navDropdownTitle = (
         <>
             <RiUser3Line /> {sessionTitle}
@@ -56,47 +59,52 @@ function Header() {
                             Services
                         </Nav.Link>
                     </Nav>
-                    <Nav>
-                        <Nav.Link onClick={handled_Notificactions}>
-                            <IoMdNotifications />
-                        </Nav.Link>
-                    </Nav>
+                    {appState.loggedIn && (
+                        <Nav>
+                            <Nav.Link onClick={handled_Notificactions}>
+                                <IoMdNotifications />
+                            </Nav.Link>
+                        </Nav>
+                    )}
                     <Nav>
                         <NavDropdown title={navDropdownTitle} id="nav-dropdown" drop="start">
                             <NavDropdown.Item eventKey="4.1" className="d-flex align-items-center gap-2"></NavDropdown.Item>
 
                             <NavDropdown.Item eventKey="4.1" className="d-flex align-items-center gap-2" onClick={handled_LoggedIn}>
-                                <PiPassword /> Usuario y Contraseña
+                                <PiPassword /> Log In
                             </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item eventKey="4.2" className="d-flex align-items-center gap-2">
-                                <PiGoogleLogo />
-                                Google
-                            </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item eventKey="4.3" className="d-flex align-items-center gap-2">
-                                <CiLogout /> Salir
-                            </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item eventKey="4.4" className="d-flex align-items-center gap-2">
-                                <RiUser3Line />
-                                Peril
-                            </NavDropdown.Item>
+
+                            {appState.loggedIn && (
+                                <>
+                                    <NavDropdown.Divider />
+                                    <NavDropdown.Item eventKey="4.3" className="d-flex align-items-center gap-2">
+                                        <CiLogout /> Salir
+                                    </NavDropdown.Item>
+
+                                    <NavDropdown.Divider />
+                                    <NavDropdown.Item eventKey="4.4" className="d-flex align-items-center gap-2">
+                                        <RiUser3Line />
+                                        Peril
+                                    </NavDropdown.Item>
+                                </>
+                            )}
                         </NavDropdown>
                     </Nav>
-                    <Nav>
-                        <NavDropdown title="Admin" id="nav-dropdown" drop="start">
-                            <NavDropdown.Item as={Link} eventKey="5.1">
-                                Usuarios
-                            </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item eventKey="5.2">Productos</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item as={Link} to="Admin/LandingPage" eventKey="5.3">
-                                Landing Page
-                            </NavDropdown.Item>
-                        </NavDropdown>
-                    </Nav>
+                    {appState.loggedIn && (
+                        <Nav>
+                            <NavDropdown title="Admin" id="nav-dropdown" drop="start">
+                                <NavDropdown.Item as={Link} eventKey="5.1">
+                                    Usuarios
+                                </NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item eventKey="5.2">Productos</NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item as={Link} to="Admin/LandingPage" eventKey="5.3">
+                                    Landing Page
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+                    )}
                 </Navbar.Collapse>
             </Navbar>
         </div>

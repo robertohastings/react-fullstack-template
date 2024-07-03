@@ -2,16 +2,17 @@ import React, { useContext, useState } from "react"
 import { Link } from "react-router-dom"
 import { Modal, Form, Button, Row, Col, Container } from "react-bootstrap"
 import DispatchContext from "../DispatchContext"
-import { PiGoogleLogo } from "react-icons/pi"
-import { Axios } from "axios"
+import { PiCopySimple, PiGoogleLogo } from "react-icons/pi"
+import { LuUserCircle2 } from "react-icons/lu"
+import axios from "axios"
 
 function LoggedIn(props) {
-    //console.log(props)
     const api_url = process.env.REACT_APP_API_URL
-    console.log('url', api_url)
+    const id_empresa = process.env.REACT_APP_APP_EMPRESA_ID
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [errorMessage, seterrorMessage] = useState("")
 
     const appDispatch = useContext(DispatchContext)
 
@@ -26,11 +27,41 @@ function LoggedIn(props) {
     const handled_Password = e => {
         setPassword(e.target.value)
     }
-    const handled_In = () => {
+    const handled_In = async () => {
+        // console.log("api_url:", api_url, "id_empresa:", id_empresa)
+        // console.log("email:", email, "password:", password)
+        // console.log(`${api_url}/usersLogin`)
         try {
-            Axios.get("api")
+            // const response = await axios.get(`${api_url}/usersLogin`, {
+            //     params: {
+            //         id_empresa: id_empresa,
+            //         email: email,
+            //         password: password
+            //     }
+            // })
+            // console.log(response.data)
+
+            await axios
+                .get(`${api_url}/usersLogin`, {
+                    params: {
+                        id_empresa: id_empresa,
+                        email: email,
+                        password: password
+                    }
+                })
+                .then(response => {
+                    console.log(response.data)
+                    //console.log(response.success)
+                    if (response.data.success === false) {
+                        seterrorMessage(response.data.data.message)
+                        appDispatch({ type: "alertMessage", value: response.data.data.message, typeAlert: "danger" })
+                    }
+                })
+                .catch(error => {
+                    console.error("There was an error fetching data!", error)
+                })
         } catch (error) {
-            
+            console.error("There was an error fetching data!", error)
         }
     }
 
@@ -38,10 +69,19 @@ function LoggedIn(props) {
         <>
             <Modal show={props.show} onHide={handledClose}>
                 <Modal.Header closeButton={true}>
-                    <Modal.Title>Log In</Modal.Title>
+                    <Modal.Title>
+                        <div>
+                            <LuUserCircle2 size={30} />
+                        </div>
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    {errorMessage && (
+                        <div className="d-flex justify-content-center">
+                            <p className="text-white bg-danger rounded-2 p-2">{errorMessage}</p>
+                        </div>
+                    )}
+                    <Form className="mt-2">
                         <Form.Group className="mb-3" controlId="email">
                             <Form.Label>Email</Form.Label>
                             <Form.Control type="email" placeholder="name@example.com" autoFocus onChange={handled_Email} defaultValue={email} />
@@ -52,10 +92,10 @@ function LoggedIn(props) {
                             <p className="fst-italic text-sm">Mínimo 10 caracteres</p>
                         </Form.Group>
                     </Form>
-                    <div >
-                        <Container >
-                            <Row >
-                                <Col className="d-flex justify-content-center">                            
+                    <div>
+                        <Container>
+                            <Row>
+                                <Col className="d-flex justify-content-center">
                                     <Link>Olvide mi contraseña</Link>
                                 </Col>
                             </Row>
@@ -64,14 +104,14 @@ function LoggedIn(props) {
                                     <Link>Aún no tengo cuenta</Link>
                                 </Col>
                             </Row>
-                        </Container>                                            
+                        </Container>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={handledClose} className="d-flex align-items-center gap-2">
-                        <PiGoogleLogo size={25}/> Autenticarse con Google 
+                    <Button variant="primary" onClick={handledClose} className="d-flex align-items-center gap-1 px-3">
+                        Autenticarse con <PiGoogleLogo size={25} /> oogle
                     </Button>
-                    <Button variant="success" onClick={handled_In} disabled={email === "" || password === "" || password.length < 10 ? true : false}>
+                    <Button className="px-3" variant="success" onClick={handled_In} disabled={email === "" || password === "" || password.length < 10 ? true : false}>
                         Entrar
                     </Button>
                 </Modal.Footer>
