@@ -41,28 +41,28 @@ function LandingPage() {
                         <Form>
                             <Form.Check // prettier-ignore
                                 type="switch"
-                                label="About Us"
+                                label="¿Quienes somos?"
                                 defaultChecked={true}
                                 id="aboutUs"
                                 className="pt-2"
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
-                                label="Contat Us"
+                                label="Contáctanos"
                                 defaultChecked={true}
                                 id="contactUs"
                                 className="pt-2"
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
-                                label="Products"
+                                label="Productoss"
                                 defaultChecked={true}
                                 id="products"
                                 className="pt-2"
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
-                                label="Services"
+                                label="Servicios"
                                 defaultChecked={true}
                                 id="services"
                                 className="pt-2 pb-3"
@@ -74,8 +74,8 @@ function LandingPage() {
                         </Form>
                     </div>
                 </Tab>
-                <Tab eventKey="profile" title="About Us">
-                    <h4 className="pt-2 pb-3">About Us</h4>
+                <Tab eventKey="profile" title="¿Quienes somos?">
+                    <h4 className="pt-2 pb-3">¿Quienes somos?</h4>
 
                     <Form onSubmit={handledSubmit_AboutUs}>
                         <JoditEditor tabIndex={1} ref={editorAboutUs} value={aboutUs} onChange={newContent => setAboutUs(newContent)} />
@@ -87,8 +87,8 @@ function LandingPage() {
                     </Form>
                 </Tab>
 
-                <Tab eventKey="products-tab" title="Products">
-                    <h4 className="pt-2 pb-3">Products</h4>
+                <Tab eventKey="products-tab" title="Productos">
+                    <h4 className="pt-2 pb-3">Productos</h4>
 
                     <Form onSubmit={handledSubmitProducts}>
                         <JoditEditor tabIndex={2} ref={editorProducts} value={products} onChange={newContent => setProducts(newContent)} />
@@ -99,8 +99,8 @@ function LandingPage() {
                         </Button>
                     </Form>
                 </Tab>
-                <Tab eventKey="services-tab" title="Services">
-                    <h4 className="pt-2 pb-3">Services</h4>
+                <Tab eventKey="services-tab" title="Servicios">
+                    <h4 className="pt-2 pb-3">Servicios</h4>
 
                     <Form onSubmit={handledSubmitProducts}>
                         <JoditEditor tabIndex={3} ref={editorServices} value={services} onChange={newContent => setServices(newContent)} />

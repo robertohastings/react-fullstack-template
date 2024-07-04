@@ -79,7 +79,7 @@ function LoggedIn(props) {
 
     return (
         <>
-            <Modal show={props.show} onHide={handledClose}>
+            <Modal show={props.show} onHide={handledClose} size="sm">
                 <Modal.Header closeButton={true}>
                     <Modal.Title>
                         <div>
@@ -119,9 +119,9 @@ function LoggedIn(props) {
                         </Container>
                     </div>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handledClose} className="d-flex align-items-center gap-1 px-3">
-                        Autenticarse con <PiGoogleLogo size={25} /> oogle
+                <Modal.Footer className="justify-content-center">
+                    <Button variant="primary" onClick={handledClose} className="d-flex align-items-center gap-0 px-3">
+                        <PiGoogleLogo size={25} /> oogle
                     </Button>
                     <Button className="px-3" variant="success" onClick={handled_In} disabled={email === "" || password === "" || password.length < 10 || isFetching ? true : false}>
                         {isFetching && <Spinner size="sm" animation="border" />}
