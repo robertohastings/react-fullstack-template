@@ -1,6 +1,6 @@
 import { pool } from "../db.js"
 
-export const getCategoriasByPage = async (req, res) => {
+export const getCategorias = async (req, res) => {
     console.log("here")
     try {
         const { limite, pagina } = req.query
@@ -22,7 +22,7 @@ export const getCategoriasByPage = async (req, res) => {
         //     res.json({ status: 200, data, totalRegistros })
         // })
 
-        const rows = await pool.query(`CALL getCategoriasByPage(?, ?);`, [limite, pagina])
+        const rows = await pool.query(`CALL getCategorias(?, ?);`, [limite, pagina])
 
         console.log("rows:", rows[0][0][0])
 
