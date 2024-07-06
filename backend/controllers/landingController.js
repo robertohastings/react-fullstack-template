@@ -24,9 +24,9 @@ export const getCategorias = async (req, res) => {
 
         const rows = await pool.query(`CALL getCategorias(?, ?);`, [limite, pagina])
 
-        console.log("rows:", rows[0][0][0])
+        //console.log("rows:", rows[0][0][0])
 
-        console.log("rows:", rows[0][1])
+        //console.log("rows:", rows[0][1])
         res.json({
             success: true,
             categorias: rows[0][1],

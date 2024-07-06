@@ -25,9 +25,20 @@ function Products() {
             console.log(categoria)
             async function fetchData() {
                 try {
-                    const response = await Axios.get("/api/inventario/obtener-productos")
-                    console.log("productos", response.data)
-                    setProductos(response.data)
+                    await Axios.get("/api/getCategorias", {
+                        params: {
+                            limite: 0,
+                            pagina: 0
+                        }
+                    })
+                        .then(response => {
+                            console.log(response)
+                        })
+                        .catch(error => {
+                            console.log("There was an error fetching data", error)
+                        })
+                    // console.log("productos", response.data)
+                    // setProductos(response.data)
                 } catch (error) {
                     console.log("error:", error)
                 }
