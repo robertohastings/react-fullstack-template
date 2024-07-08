@@ -5,14 +5,14 @@ import Page from "./Page"
 
 function Services() {
     const appState = useContext(StateContext)
-    const { titulo, contenido } = appState.landinPage.services
-    console.log("appstate", appState)
+    //const { titulo, contenido } = appState.landinPage.services
+    //console.log("appstate", appState.landingPage)
 
     return (
-        <Page title={titulo}>
-            <h1>{titulo}</h1>
+        <Page title='Servicios'>
+            <h1>Servicios</h1>
             {/* <div dangerouslySetInnerHTML={{__html: contenido}}></div> */}
-            <div>{HtmlReactParser(contenido)}</div>
+            <div>{HtmlReactParser(appState.landingPage.servicios)}</div>
         </Page>
     )
 }

@@ -43,7 +43,7 @@ function App() {
         isSearchOpen: false,
         isChatOpen: false,
         unreadReadChatCount: 0,
-        landinPage: {},
+        landingPage: {},
         notifications: false
     }
 
@@ -62,8 +62,9 @@ function App() {
                 localStorage.removeItem("complexappUsername")
                 localStorage.removeItem("complexappAvatar")
                 break
-            case "landinPage":
-                draft.landinPage = action.data
+            case "landingPage":
+                //console.log('action data landingPage:', action.data)
+                draft.landingPage = action.data                
                 break
             case "flashMessage":
                 draft.flashMessages.push(action.value)
@@ -88,18 +89,35 @@ function App() {
 
     useEffect(() => {
         try {
+            // await axios
+            //     .get("/api/landingPage")
+            //     .then(response => {
+            //         console.log("data:", response.data)
+            //         setData(response.data)
+            //         setIsLoading(false)
+            //         dispatch({ type: "landinPage", data: response.data })
+            //     })
+            //     .catch(error => {
+            //         console.error("There was an error fetching the data!", error)
+            //         setIsLoading(true)
+            //     })
             axios
-                .get("/api/landingPage")
+                .get("/api/getLandingPage", {
+                    params: {
+                        id_empresa: 1,
+                        id_landingPage: 1
+                    }
+                })
                 .then(response => {
-                    console.log("data:", response.data)
+                    console.log("dataLanding:", response.data)
                     setData(response.data)
                     setIsLoading(false)
-                    dispatch({ type: "landinPage", data: response.data })
+                    dispatch({ type: "landingPage", data: response.data.landingPage })                    
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)
                     setIsLoading(true)
-                })
+                })            
         } catch (error) {
             console.error("There was an error fetching the data!", error)
             setIsLoading(false)

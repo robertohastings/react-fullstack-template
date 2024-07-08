@@ -1,7 +1,45 @@
 import { pool } from "../db.js"
 
+export const getProductosByCategoria = async (req, res) => {
+    try {
+        const { id_empresa, id_categoria } = req.query
+        const rows = await pool.query(`CALL getProductosByCategoria(?, ?)`, [id_empresa, id_categoria])
+
+        const data = {
+            success: true,
+            productos: rows[0][0],
+            numeroRegistros: (rows[0][0]).length
+        }
+        res.json(data)
+
+    } catch (error) {
+        console.log('Error fectching the data ', error)
+    }
+}
+
+export const getLandingPage = async (req, res) => {
+    try {
+        //console.log('here')
+        const { id_empresa, id_landingPage } = req.query
+        const rows = await pool.query(`CALL getLandingPage( ?, ?);`, [id_empresa, id_landingPage])
+        //console.log(rows[0][0][0]);
+        const data = {
+            success: true,
+            landingPage: {
+                quienesSomos : rows[0][0][0].quienes_somos,
+                servicios : rows[0][0][0].servicios,
+                productos : rows[0][0][0].productos,
+                categorias: rows[0][1]               
+            }
+        }
+        res.json(data)
+    } catch (error) {
+        console.log('Error fectching the data ', error)
+    }
+}
+
 export const getCategorias = async (req, res) => {
-    console.log("here")
+    //console.log("here")
     try {
         const { limite, pagina } = req.query
         console.log(limite, pagina)
