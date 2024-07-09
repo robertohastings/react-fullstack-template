@@ -36,12 +36,12 @@ function Products() {
                         }
                     })
                         .then(response => {
-                            if (response.status = 200) {
+                            if ((response.status = 200)) {
                                 //console.log('productos encontrados:',response)
                                 setProductos(response.data.productos)
                             } else {
                                 console.log("There was an error fetching data", response.error.statusText)
-                            }                         
+                            }
                         })
                         .catch(error => {
                             console.log("There was an error fetching data", error)
@@ -59,7 +59,7 @@ function Products() {
     }, [categoria])
 
     return (
-        <Page title='Productos'>
+        <Page title="Productos">
             <h1 className="mb-4">Productos</h1>
 
             {/* <div style={{backgroundColor: "lightgrey"}} className="mb-5 p-3" dangerouslySetInnerHTML={{ __html: contenido }}></div> */}
@@ -70,10 +70,8 @@ function Products() {
 
             <div className="mt-5 d-flex justify-content-center">
                 <Form>
-                    <Form.Group as={Col} controlId="selectorCategoria" >
-                        <Form.Label column>
-                            Seleccione una Categoria
-                        </Form.Label>
+                    <Form.Group as={Col} controlId="selectorCategoria">
+                        <Form.Label column>Seleccione una Categoria</Form.Label>
                         <Col className="d-flex align-items-center">
                             <Form.Select onChange={e => setCategoria(e.target.value)}>
                                 <option value={0}>Seleccione</option>
@@ -86,11 +84,11 @@ function Products() {
                 </Form>
             </div>
 
-            {isLoading && <SpinnerDot/>}
+            {isLoading && <SpinnerDot />}
 
-            {!isLoading && <>                        
-                {/* Cards de productos */}
-
+            {!isLoading && (
+                <>
+                    {/* Cards de productos */}
 
                     {productos.length > 0 && (
                         <div className="mt-4 mb-4">
@@ -98,9 +96,9 @@ function Products() {
                                 {productos.map(producto => {
                                     return (
                                         <Col key={producto.id}>
-                                            <Card style={{ width: '18rem' }}>
+                                            <Card>
                                                 <div>
-                                                    <Card.Img variant="top" src={producto.image1 !== null || producto.image1 !== '' ? producto.image1 : "https://fiestatijuana.mx/image-not-available.png"} />
+                                                    <Card.Img variant="top" src={producto.image1 !== null || producto.image1 !== "" ? producto.image1 : "https://fiestatijuana.mx/image-not-available.png"} />
                                                 </div>
                                                 <Card.Body>
                                                     <Card.Title>{producto.nombre}</Card.Title>
@@ -141,7 +139,8 @@ function Products() {
                             </Row>
                         </div>
                     )}
-            </>}
+                </>
+            )}
         </Page>
     )
 }

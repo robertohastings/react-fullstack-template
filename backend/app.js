@@ -5,6 +5,7 @@ import cors from "cors"
 import route from "./router.js"
 import usersRoutes from "./routes/user.routes.js"
 import landingRoutes from "./routes/landing.routes.js"
+import adminRoutes from "./routes/admin.routes.js"
 
 const app = express()
 //const PORT = process.env.PORT || 8080
@@ -21,6 +22,7 @@ app.use(express.json()) //Para pueda interpretar la recepción de JSON
 app.use("/api", route)
 app.use("/api", usersRoutes)
 app.use("/api/", landingRoutes)
+app.use("/api/", adminRoutes)
 
 app.get("/api", (req, res) => {
     res.send("Hola mundo from backend! 5")
