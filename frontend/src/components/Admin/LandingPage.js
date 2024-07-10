@@ -4,10 +4,12 @@ import JoditEditor from "jodit-react"
 import { IoSaveOutline } from "react-icons/io5"
 import Page from "../Page"
 import StateContext from "../../StateContext"
+import DispatchContext from "../../DispatchContext"
 import Axios from "axios"
 
 function LandingPage() {
     const appState = useContext(StateContext)
+    const appDispatch = useContext(DispatchContext)
 
     const editorAboutUs = useRef(null)
     const editorProducts = useRef(null)
@@ -16,16 +18,21 @@ function LandingPage() {
     const [aboutUs, setAboutUs] = useState(appState.landingPage.quienesSomos)
     const [products, setProducts] = useState(appState.landingPage.productos)
     const [services, setServices] = useState(appState.landingPage.servicios)
-    const [settings, setSettings] = useState({
-        mostrar_quienes_somos: false,
-        mostrar_contactanos: false,
-        mostrar_productos: false,
-        mostrar_servicios: false
-    })
+    // const [settings, setSettings] = useState({
+    //     mostrar_quienes_somos: false,
+    //     mostrar_contactanos: false,
+    //     mostrar_productos: false,
+    //     mostrar_servicios: false
+    // })
+    const [quienesSomosChecked, setQuienesSomosChecked] = useState(appState.landingPage.settings.mostrar_quienes_somos === 1 ? true : false)
+    const [contactanosChecked, setContactanosChecked] = useState(appState.landingPage.settings.mostrar_contactanos === 1 ? true : false)
+    const [productosChecked, setproductosChecked] = useState(appState.landingPage.settings.mostrar_productos === 1 ? true : false)
+    const [serviciosChecked, setServiciosChecked] = useState(appState.landingPage.settings.mostrar_servicios === 1 ? true : false)
+    //const [ settingsChecked, setSettingsChecked ] = useState(false)
 
     const [isSaving, setIsSaving] = useState(false)
 
-    console.log("aboutus:", appState.landingPage.quienesSomos)
+    //console.log("aboutus:", appState.landingPage.quienesSomos)
 
     // useEffect(() => {
     //   setAboutUs(appState.landinPage.products.contenido)
@@ -109,17 +116,48 @@ function LandingPage() {
 
     const activa_desactiva_handled = async e => {
         e.preventDefault()
-        // setServices(true)
-        // const { name, value } = e.target
-        // setSettings({ ...settings, [name]: value })
-        // console.log("settings:", settings)
-        console.log(e.target.mostrar_quienes_somos)
+        setIsSaving(true)
+
+        const landingPage = {
+            id_empresa: 1,
+            id_landingPage: 1,
+            mostrar_quienes_somos: quienesSomosChecked === true ? 1 : 0,
+            mostrar_productos: productosChecked === true ? 1 : 0,
+            mostrar_servicios: serviciosChecked === true ? 1 : 0,
+            mostrar_contactanos: contactanosChecked === true ? 1 : 0
+        }
+
+        appDispatch({
+            type: "landingPageSettings",
+            data: {
+                mostrar_quienes_somos: quienesSomosChecked === true ? 1 : 0,
+                mostrar_productos: productosChecked === true ? 1 : 0,
+                mostrar_servicios: serviciosChecked === true ? 1 : 0,
+                mostrar_contactanos: contactanosChecked === true ? 1 : 0
+            }
+        })
+
+        try {
+            await Axios.put("/api/putLandingPage_Settings", landingPage)
+                .then(response => {
+                    console.log(response)
+                })
+                .catch(error => {
+                    console.log("There was an error updating about us: ", error)
+                })
+        } catch (error) {
+            console.log("error:", error)
+        } finally {
+            setIsSaving(false)
+        }
+
+        setIsSaving(false)
     }
 
     return (
         <Page title="Landig Page">
-            <Tabs defaultActiveKey="profile" id="justify-tab-example" className="mb-3" justify>
-                <Tab eventKey="landing-page" title="Landing Page">
+            <Tabs defaultActiveKey="settings" id="justify-tab-example" className="mb-3" justify>
+                <Tab eventKey="settings" title="Landing Page">
                     <h4 className="pt-4">Activar / Desactivar páginas</h4>
                     <hr />
                     <div>
@@ -127,38 +165,39 @@ function LandingPage() {
                             <Form.Check // prettier-ignore
                                 type="switch"
                                 label="¿Quienes somos?"
-                                defaultChecked={true}
+                                defaultChecked={quienesSomosChecked}
                                 id="aboutUs"
                                 className="pt-2"
-                                name="mostrar_quienes_somos"
+                                onChange={e => setQuienesSomosChecked(e.target.checked)}
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
                                 label="Contáctanos"
-                                defaultChecked={true}
+                                defaultChecked={contactanosChecked}
                                 id="contactUs"
                                 className="pt-2"
-                                name="mostrar_contactanos"
+                                onChange={e => setContactanosChecked(e.target.checked)}
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
-                                label="Productoss"
-                                defaultChecked={true}
+                                label="Productos"
+                                defaultChecked={productosChecked}
                                 id="products"
                                 className="pt-2"
-                                name="mostrar_productos"
+                                onChange={e => setproductosChecked(e.target.checked)}
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
                                 label="Servicios"
-                                defaultChecked={true}
+                                defaultChecked={serviciosChecked}
                                 id="services"
                                 className="pt-2 pb-3"
-                                name="mostrar_servicios"
+                                onChange={e => setServiciosChecked(e.target.checked)}
                             />
                             <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
                                 <IoSaveOutline />
-                                <span>Guardar</span>
+                                {isSaving && <Spinner size="sm" animation="border" />}
+                                {!isSaving && <span>Guardar</span>}
                             </Button>
                         </Form>
                     </div>
@@ -177,7 +216,7 @@ function LandingPage() {
                     </Form>
                 </Tab>
 
-                <Tab eventKey="products-tab" title="Productos">
+                <Tab eventKey="products" title="Productos">
                     <h4 className="pt-2 pb-3">Productos</h4>
 
                     <Form onSubmit={handledSubmitProducts}>
@@ -190,7 +229,7 @@ function LandingPage() {
                         </Button>
                     </Form>
                 </Tab>
-                <Tab eventKey="services-tab" title="Servicios">
+                <Tab eventKey="services" title="Servicios">
                     <h4 className="pt-2 pb-3">Servicios</h4>
 
                     <Form onSubmit={handledSubmitServicios}>

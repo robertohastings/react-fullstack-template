@@ -25,7 +25,6 @@ import LoggedIn from "./components/LoggedIn"
 function App() {
     const [data, setData] = useState({})
     const [isLoading, setIsLoading] = useState(true)
-    
 
     const initialState = {
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
@@ -43,7 +42,7 @@ function App() {
         isSearchOpen: false,
         isChatOpen: false,
         unreadReadChatCount: 0,
-        landingPage: {},
+        landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
         notifications: false
     }
 
@@ -64,7 +63,12 @@ function App() {
                 break
             case "landingPage":
                 //console.log('action data landingPage:', action.data)
-                draft.landingPage = action.data                
+                //draft.landingPage = action.data
+                localStorage.setItem("complexappLanding", JSON.stringify(action.data))
+                break
+            case "landingPageSettings":
+                //console.log('action data landingPage:', action.data)
+                draft.landingPage.settings = action.data
                 break
             case "flashMessage":
                 draft.flashMessages.push(action.value)
@@ -112,12 +116,12 @@ function App() {
                     console.log("dataLanding:", response.data)
                     setData(response.data)
                     setIsLoading(false)
-                    dispatch({ type: "landingPage", data: response.data.landingPage })                    
+                    dispatch({ type: "landingPage", data: response.data.landingPage })
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)
                     setIsLoading(true)
-                })            
+                })
         } catch (error) {
             console.error("There was an error fetching the data!", error)
             setIsLoading(false)

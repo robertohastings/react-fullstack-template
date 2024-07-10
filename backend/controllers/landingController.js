@@ -8,12 +8,11 @@ export const getProductosByCategoria = async (req, res) => {
         const data = {
             success: true,
             productos: rows[0][0],
-            numeroRegistros: (rows[0][0]).length
+            numeroRegistros: rows[0][0].length
         }
         res.json(data)
-
     } catch (error) {
-        console.log('Error fectching the data ', error)
+        console.log("Error fectching the data ", error)
     }
 }
 
@@ -26,15 +25,21 @@ export const getLandingPage = async (req, res) => {
         const data = {
             success: true,
             landingPage: {
-                quienesSomos : rows[0][0][0].quienes_somos,
-                servicios : rows[0][0][0].servicios,
-                productos : rows[0][0][0].productos,
-                categorias: rows[0][1]               
+                quienesSomos: rows[0][0][0].quienes_somos,
+                servicios: rows[0][0][0].servicios,
+                productos: rows[0][0][0].productos,
+                categorias: rows[0][1],
+                settings: {
+                    mostrar_quienes_somos: rows[0][0][0].mostrar_quienes_somos,
+                    mostrar_productos: rows[0][0][0].mostrar_productos,
+                    mostrar_servicios: rows[0][0][0].mostrar_servicios,
+                    mostrar_contactanos: rows[0][0][0].mostrar_contactanos
+                }
             }
         }
         res.json(data)
     } catch (error) {
-        console.log('Error fectching the data ', error)
+        console.log("Error fectching the data ", error)
     }
 }
 
