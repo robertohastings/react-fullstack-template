@@ -28,6 +28,7 @@ function LandingPage() {
     const [contactanosChecked, setContactanosChecked] = useState(appState.landingPage.settings.mostrar_contactanos === 1 ? true : false)
     const [productosChecked, setproductosChecked] = useState(appState.landingPage.settings.mostrar_productos === 1 ? true : false)
     const [serviciosChecked, setServiciosChecked] = useState(appState.landingPage.settings.mostrar_servicios === 1 ? true : false)
+    const [sitioEnMttoChecked, setSitioEnMttoChecked] = useState(appState.landingPage.settings.mostrar_sitioEnMantenimiento === 1 ? true : false)
     //const [ settingsChecked, setSettingsChecked ] = useState(false)
 
     const [isSaving, setIsSaving] = useState(false)
@@ -124,7 +125,8 @@ function LandingPage() {
             mostrar_quienes_somos: quienesSomosChecked === true ? 1 : 0,
             mostrar_productos: productosChecked === true ? 1 : 0,
             mostrar_servicios: serviciosChecked === true ? 1 : 0,
-            mostrar_contactanos: contactanosChecked === true ? 1 : 0
+            mostrar_contactanos: contactanosChecked === true ? 1 : 0,
+            mostrar_sitioEnMantenimiento: sitioEnMttoChecked === true ? 1 : 0
         }
 
         appDispatch({
@@ -133,7 +135,8 @@ function LandingPage() {
                 mostrar_quienes_somos: quienesSomosChecked === true ? 1 : 0,
                 mostrar_productos: productosChecked === true ? 1 : 0,
                 mostrar_servicios: serviciosChecked === true ? 1 : 0,
-                mostrar_contactanos: contactanosChecked === true ? 1 : 0
+                mostrar_contactanos: contactanosChecked === true ? 1 : 0,
+                mostrar_sitioEnMantenimiento: sitioEnMttoChecked === true ? 1 : 0
             }
         })
 
@@ -191,8 +194,16 @@ function LandingPage() {
                                 label="Servicios"
                                 defaultChecked={serviciosChecked}
                                 id="services"
-                                className="pt-2 pb-3"
+                                className="pt-2"
                                 onChange={e => setServiciosChecked(e.target.checked)}
+                            />
+                            <Form.Check // prettier-ignore
+                                type="switch"
+                                label="Mostrar Sitio en Mantenimiento"
+                                defaultChecked={sitioEnMttoChecked}
+                                id="mtto"
+                                className="pt-2 pb-3"
+                                onChange={e => setSitioEnMttoChecked(e.target.checked)}
                             />
                             <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
                                 <IoSaveOutline />

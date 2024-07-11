@@ -94,10 +94,10 @@ export const putLandingPage_Servicios = async (req, res) => {
 }
 
 export const putLandingPage_Settings = async (req, res) => {
-    const { id_empresa, id_landingPage, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos } = req.body
+    const { id_empresa, id_landingPage, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos, mostrar_sitioEnMantenimiento } = req.body
 
     try {
-        const [result] = await pool.query("CALL putLandingPage_Settings(?, ?, ?, ?, ?, ?)", [id_empresa, id_landingPage, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos])
+        const [result] = await pool.query("CALL putLandingPage_Settings(?, ?, ?, ?, ?, ?, ?)", [id_empresa, id_landingPage, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos, mostrar_sitioEnMantenimiento])
 
         if (result.affectedRows == 0) {
             res.status(404).json({

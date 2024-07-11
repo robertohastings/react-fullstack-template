@@ -1,7 +1,6 @@
 import { Router } from "express"
 import { getCategorias, getLandingPage, getProductosByCategoria } from "../controllers/landingController.js"
 
-
 const router = Router()
 
 router.get("/getCategorias", getCategorias)

@@ -21,6 +21,7 @@ import LandingPage from "./components/Admin/LandingPage"
 import FlashMessage from "./tools/FlashMessage"
 import Notifications from "./components/Notifications"
 import LoggedIn from "./components/LoggedIn"
+import ListCategorias from "./components/Inventario/Categorias/ListCategorias"
 
 function App() {
     const [data, setData] = useState({})
@@ -131,7 +132,7 @@ function App() {
     }, [])
 
     if (isLoading) {
-        console.log("Cargando info...")
+        //console.log("Cargando info...")
         return (
             <div>
                 <SpinnerDot />
@@ -160,6 +161,7 @@ function App() {
                                 <Route path="/Admin" element={<Admin />} />
                                 <Route path="/Usuarios" element={<Testing title="Usuarios" />} />
                                 <Route path="/Admin/LandingPage" element={<LandingPage />} />
+                                <Route path="/Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
                             </Routes>
                         </main>
 

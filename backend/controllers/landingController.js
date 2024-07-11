@@ -33,7 +33,8 @@ export const getLandingPage = async (req, res) => {
                     mostrar_quienes_somos: rows[0][0][0].mostrar_quienes_somos,
                     mostrar_productos: rows[0][0][0].mostrar_productos,
                     mostrar_servicios: rows[0][0][0].mostrar_servicios,
-                    mostrar_contactanos: rows[0][0][0].mostrar_contactanos
+                    mostrar_contactanos: rows[0][0][0].mostrar_contactanos,
+                    mostrar_sitioEnMantenimiento: rows[0][0][0].mostrar_sitioEnMantenimiento
                 }
             }
         }
