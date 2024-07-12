@@ -6,18 +6,15 @@ import Page from "./Page"
 
 const AboutUs = () => {
     const appState = useContext(StateContext)
-    const { titulo, contenido } = appState.landinPage.aboutUs
-    console.log("appState:", appState.landinPage.aboutUs)
+    //const { titulo, contenido } = appState.landinPage.quienesSomos
+    //console.log("appState:", appState.landinPage.aboutUs)
 
     return (
-        <Page title={titulo}>
-            <h1>{titulo}</h1>
+        <Page title="Quienes somos">
+            <h1>Quienes somos</h1>
 
-            {/* <div>
-                <div dangerouslySetInnerHTML={{ __html: contenido }}></div>
-            </div> */}
 
-            <div>{HtmlReactParser(contenido)}</div>
+            <div>{HtmlReactParser(appState.landingPage.quienesSomos)}</div>
         </Page>
     )
 }
