@@ -28,6 +28,7 @@ function ContactUs() {
         validationSchema: validationSchema,
         //Lo que pasa cuando se envia el formulario
         onSubmit: values => {
+            console.log('values')
             setSending(true)
             setTimeout(() => {
                 alert(JSON.stringify(values, null, 2))
