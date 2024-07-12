@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { getCategoriasListado, putCategoria } from "../controllers/inventario.controller.js"
+import { getCategoriasListado, postCategoria } from "../controllers/inventario.controller.js"
 
 const router = Router()
 
