@@ -21,10 +21,21 @@ export const getCategoriasListado = async (req, res) => {
 }
 
 export const postCategoria = async (req, res) => {
-    const { id_empresa, id_categoria, nombre, descripcion, activo } = req.body
+    console.log('Body:', req.body)
+    const { 
+        id_empresa, 
+        id_categoria, 
+        nombre, 
+        descripcion, 
+        imagen,
+        activo 
+    } = req.body
 
     try {
-        const [result] = await pool.query("CALL putCategoria(?, ?, ?, ?, ?)", [id_empresa, id_categoria, nombre, descripcion, activo])
+
+        const [result] = await pool.query("CALL postCategorias(?, ?, ?, ?, ?, ?)", 
+            [id_empresa, id_categoria, nombre, descripcion, imagen, activo]
+        )
 
         if (result.affectedRows == 0) {
             res.status(404).json({
@@ -35,6 +46,11 @@ export const postCategoria = async (req, res) => {
                 message: "Categoria actualizada"
             })
         }
+
+        // return res.status(200).json({
+        //     message: "Categoria actualizada"
+        // })
+
     } catch (error) {
         console.log("Ocurrió un error")
         res.status(500).json({

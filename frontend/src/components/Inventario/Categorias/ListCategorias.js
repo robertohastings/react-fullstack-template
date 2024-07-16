@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react"
 import Axios from "axios"
 import { Table, Button, Pagination, Spinner, Image, Modal, Form, FloatingLabel } from "react-bootstrap"
 import { CiEdit } from "react-icons/ci"
+import { IoIosAddCircle } from "react-icons/io";
+import { TbRefresh } from "react-icons/tb";
 import * as Yup from "yup"
 import { Formik, useFormik } from "formik"
 //import { Navigate } from "react-router-dom"
 import Page from "../../Page"
 import SpinnerButton from "../../Spinner/SpinnerButton"
+import ImageEditor from "../../../tools/ImageEditor"
 
 const validationSchema = Yup.object({
     nombre: Yup.string().required("El nombre debe ser capturado"),
@@ -14,12 +17,15 @@ const validationSchema = Yup.object({
 })
 
 function ListCategorias() {
+    const [imageNotFound, setImageNotFound] = useState('"https://fiestatijuana.mx/image-not-available.png"')
     const [data, setData] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     const [totalRecords, setTotalRecords] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const [isLoading, setIsLoaging] = useState(false)
     const [sending, setSending] = useState(false)
+    const [showPicture, setShowPicture] = useState(false)
+    const [imageSelected, setImageSelected] = useState({})
     //const history = useHistory()
 
     //Modal
@@ -31,6 +37,7 @@ function ListCategorias() {
     const [categoriaSelected, setCategoriaSelected] = useState({})
 
     const fetchProducts = async () => {
+        setIsLoaging(true)
         //console.log("rowsPerPage:", rowsPerPage, " currentPage:", currentPage)
         try {
             //console.log("rowsPerPage:", rowsPerPage, " currentPage:", currentPage)
@@ -40,7 +47,7 @@ function ListCategorias() {
                     pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5
                 }
             })
-            console.log("response:", response)
+            console.log("response:", response.data.categorias)
             setData(response.data.categorias)
             setTotalRecords(response.data.totalRegistros)
         } catch (error) {
@@ -51,7 +58,7 @@ function ListCategorias() {
     }
 
     useEffect(() => {
-        setIsLoaging(true)
+        //setIsLoaging(true)
         //setRowsPerPage(5)
 
         fetchProducts()
@@ -66,6 +73,7 @@ function ListCategorias() {
             id_categoria: 0,
             nombre: "",
             descripcion: "",
+            imagen: "",
             activo: 0
         },
         //La validación que hacemos con YUP
@@ -80,6 +88,7 @@ function ListCategorias() {
                 id_categoria: values.id_categoria,
                 nombre: values.nombre,
                 descripcion: values.descripcion,
+                imagen: '',
                 activo: values.activo
             }
             postCategoria(categoria)
@@ -88,9 +97,9 @@ function ListCategorias() {
 
     const postCategoria = async categoria => {
         try {
-            await Axios.put("/api/inventario/postCategoria", categoria)
+            await Axios.post("/api/inventario/postCategoria", categoria)
                 .then(response => {
-                    console.log(response)
+                    console.log(response)                    
                 })
                 .catch(error => {
                     console.log("There was an error updating about us: ", error)
@@ -99,34 +108,90 @@ function ListCategorias() {
             console.log("error:", error)
         } finally {
             setSending(false)
+            setShow(false)
+            fetchProducts()
         }
     }
 
-    const edit_handled = id_categoria => {
-        formik.values.id_categoria = data[id_categoria - 1].id_categoria
-        formik.values.nombre = data[id_categoria - 1].nombre
-        formik.values.descripcion = data[id_categoria - 1].descripcion
-        formik.values.activo = data[id_categoria - 1].activo === "Si" ? 1 : 0
+    const edit_handled = row => {
+        formik.values.id_categoria = row.id_categoria
+        formik.values.nombre = row.nombre
+        formik.values.descripcion = row.descripcion
+        formik.values.activo = row.activo === "Si" ? 1 : 0
+        formik.values.imagen = row.imagen
 
         setShow(true)
     }
 
     const Agregar_handled = () => {
+        formik.values.id_empresa = 1
         formik.values.id_categoria = 0
         formik.values.nombre = ""
         formik.values.descripcion = ""
+        formik.values.imagen = ""
         formik.values.activo = 1
         setShow(true)
     }
+    const Refrescar_handled = () => fetchProducts()
+
+    const imageHandled = (row) => {
+        console.log('row', row)
+        console.log('data', data)
+        // console.log('imagen:', data[id_categoria - 1].imagen)
+        setImageSelected({
+            nombre: row.nombre,
+            descripcion: row.descripcion,
+            imagen: row.imagen
+        })
+        setShowPicture(true)
+    }
+    const closeImageModal = () => setShowPicture(false)
+
+    const handleImageEdited = async (blob) => {
+        console.log('blob', blob)
+        setImageSelected(blob)
+        // const formData = new FormData();
+        // formData.append('image', blob);
+        // formData.append('nombreImagen', 'Nombre de la imagen');
+    
+        // try {
+        //   const response = await axios.post('http://localhost:3001/upload', formData, {
+        //     headers: {
+        //       'Content-Type': 'multipart/form-data'
+        //     }
+        //   });
+    
+        //   setMessage(response.data.message);
+        // } catch (error) {
+        //   console.error('Error uploading the file:', error);
+        //   setMessage('Error uploading the file.');
+        // }
+    };    
 
     return (
         <Page title="ABC Categorias">
             <h3>ABC Categorias</h3>
+            <div className="gap-2">
+                <div>
+                    <Button className="my-3" size="sm" variant="outline-primary" onClick={Agregar_handled}>
+                            <IoIosAddCircle/>{` Agregar`}
+                    </Button>
+                    <Button className="mx-2 my-3" size="sm" variant="outline-primary" onClick={Refrescar_handled}>
+                            <TbRefresh/>{` Refrescar`}
+                    </Button>
+                </div>
+                <div>
+                    <Pagination>
+                        {Array.from({ length: Math.ceil(totalRecords / rowsPerPage) }, (_, index) => (
+                            <Pagination.Item key={index + 1} active={index + 1 === currentPage} onClick={() => paginate(index + 1)}>
+                                {index + 1}
+                            </Pagination.Item>
+                        ))}
+                    </Pagination>                    
+                </div>
+            </div>
 
-            <Button className="my-3" size="sm" variant="outline-primary" onClick={Agregar_handled}>
-                Agregar
-            </Button>
-
+            {/* Lista */}
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -155,10 +220,10 @@ function ListCategorias() {
                                 <td className="align-content-center">{row.fecha_actualizacion}</td>
                                 <td className="align-content-center">{row.activo}</td>
                                 <td>
-                                    <Image style={{ height: "80px", width: "80px" }} src={row.imagen !== null ? row.imagen : "https://fiestatijuana.mx/image-not-available.png"} thumbnail />
+                                    <Image style={{ height: "80px", width: "80px", cursor: "pointer"}} src={row.imagen} thumbnail onClick={() => imageHandled(row)}/>
                                 </td>
                                 <td className="align-content-center justify-content-center">
-                                    <Button size="sm" variant="warning" onClick={() => edit_handled(row.id_categoria)}>
+                                    <Button size="sm" variant="warning" onClick={() => edit_handled(row)}>
                                         <CiEdit />
                                     </Button>
                                 </td>
@@ -175,10 +240,11 @@ function ListCategorias() {
                 ))}
             </Pagination>
 
+            {/* Modal edicion de categoria */}
             <>
-                <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
+                <Modal size="lg" show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
                     <Modal.Header closeButton>
-                        <Modal.Title>Categoria # {formik.values.id_categoria === 0 ? "nueva" : categoriaSelected.id_categoria}</Modal.Title>
+                        <Modal.Title>Categoria # {formik.values.id_categoria === 0 ? "nueva" : formik.values.id_categoria}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
@@ -190,7 +256,7 @@ function ListCategorias() {
 
                             {/* Descripcion */}
                             <FloatingLabel label="Descripción" className="mb-3">
-                                <Form.Control type="text" placeholder="Descripción" id="descripcion" name="descripcion" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.descripcion} />
+                                <Form.Control as="textarea" placeholder="Descripción" id="descripcion" name="descripcion" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.descripcion} style={{ height: '120px'}}/>
                                 {formik.touched.descripcion && formik.errors.descripcion ? <div className="text-danger">{formik.errors.descripcion}</div> : null}
                             </FloatingLabel>
 
@@ -198,9 +264,10 @@ function ListCategorias() {
                             <FloatingLabel label="Activo" className="mb-3">
                                 {/* <Form.Control type="text" placeholder="Activo" id="activo" name="activo" onChange={formik.handleChange} onBlur={formik.handleBlur} defaultValue={categoriaSelected.activo} /> */}
 
-                                <Form.Select aria-label="Floating label select example" id="activo" name="activo" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.activo}>
+                                <Form.Select aria-label="Floating label select example" id="activo" name="activo" onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                                    value={formik.values.activo}>
+                                    <option value="0">No</option>
                                     <option value="1">Si</option>
-                                    <option value="2">No</option>
                                 </Form.Select>
                                 {formik.touched.activo && formik.errors.activo ? <div className="text-danger">{formik.errors.activo}</div> : null}
                             </FloatingLabel>
@@ -214,6 +281,30 @@ function ListCategorias() {
                             {sending && <SpinnerButton mensaje="Guardando..." />}
                             {!sending && "Guardar"}
                         </Button>
+                    </Modal.Footer>
+                </Modal>
+            </>
+
+            {/* Modal imagen */}
+            <>
+                <Modal size="lg" show={showPicture} onHide={closeImageModal} centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            <h5>{imageSelected.nombre}</h5>
+                            <h4>{imageSelected.descripcion}</h4>
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div class="d-flex justify-content-center">
+                            <Image className="justify-content-center" style={{width:'700px', height: '500px'}} src={imageSelected !== null || imageSelected !== '' ? imageSelected.imagen : "https://fiestatijuana.mx/image-not-available.png"} thumbnail />
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer className="d-flex justify-content-center">
+                            <ImageEditor onImageEdited={handleImageEdited} />
+
+                            <Button variant="secondary" onClick={closeImageModal}>
+                                Cerrar
+                            </Button>
                     </Modal.Footer>
                 </Modal>
             </>

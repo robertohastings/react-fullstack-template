@@ -113,6 +113,9 @@ en frontend:
         REACT_APP_APP_EMPRESA_ID=1
 
 
+npm install cropperjs
+
+
 id_producto
 bigint UN AI PK
 id_empresa

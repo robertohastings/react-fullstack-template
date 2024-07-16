@@ -99,7 +99,7 @@ function Header() {
                                     <NavDropdown.Item as={Link} to={"Inventario/Categorias/ListCategorias"}>
                                         ABC Categorías
                                     </NavDropdown.Item>
-                                    <NavDropdown.Item>Kardex</NavDropdown.Item>
+                                    <NavDropdown.Item>Kárdex</NavDropdown.Item>
                                     <NavDropdown.Item>Recepción de mercancía</NavDropdown.Item>
                                     <NavDropdown.Item>Devoluciones</NavDropdown.Item>
                                     <NavDropdown.Item>Entrega de mercancía (Remisión)</NavDropdown.Item>

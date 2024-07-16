@@ -4,6 +4,6 @@ import { getCategoriasListado, postCategoria } from "../controllers/inventario.c
 const router = Router()
 
 router.get("/getCategoriasListado", getCategoriasListado)
-router.get("/inventario/postCategoria", postCategoria)
+router.post("/inventario/postCategoria", postCategoria)
 
 export default router
