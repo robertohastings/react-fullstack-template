@@ -25,6 +25,7 @@ function ListCategorias() {
     const [isLoading, setIsLoaging] = useState(false)
     const [sending, setSending] = useState(false)
     const [showPicture, setShowPicture] = useState(false)
+    const [showLoadPicture, setShowLoadPicture] = useState(false)
     const [imageSelected, setImageSelected] = useState({})
     //const history = useHistory()
 
@@ -146,6 +147,12 @@ function ListCategorias() {
         setShowPicture(true)
     }
     const closeImageModal = () => setShowPicture(false)
+    const closeImageLoadModal = () => setShowLoadPicture(false)
+
+    const cargarImagen_handled = () => {
+        setShowPicture(false)
+        setShowLoadPicture(true)
+    }
 
     const handleImageEdited = async (blob) => {
         console.log('blob', blob)
@@ -299,15 +306,34 @@ function ListCategorias() {
                             <Image className="justify-content-center" style={{width:'700px', height: '500px'}} src={imageSelected !== null || imageSelected !== '' ? imageSelected.imagen : "https://fiestatijuana.mx/image-not-available.png"} thumbnail />
                         </div>
                     </Modal.Body>
-                    <Modal.Footer className="d-flex justify-content-center">
-                            <ImageEditor onImageEdited={handleImageEdited} />
-
+                    <Modal.Footer className="d-flex justify-content-center">                            
+                            <Button variant="secondary" onClick={cargarImagen_handled}>
+                                Cargar imagen
+                            </Button>
                             <Button variant="secondary" onClick={closeImageModal}>
                                 Cerrar
                             </Button>
                     </Modal.Footer>
                 </Modal>
             </>
+            {/* Modal cargar imagen */}
+            <>
+                <Modal size="lg" show={showLoadPicture} onHide={closeImageLoadModal} centered fullscreen={true}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            Cargar imagen
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <ImageEditor onImageEdited={handleImageEdited} />
+                    </Modal.Body>
+                    <Modal.Footer className="d-flex justify-content-center">                        
+                            <Button variant="secondary" onClick={closeImageLoadModal}>
+                                Cerrar
+                            </Button>
+                    </Modal.Footer>
+                </Modal>
+            </>            
         </Page>
     )
 }

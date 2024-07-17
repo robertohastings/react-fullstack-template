@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Row, Col, Button } from 'react-bootstrap';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 
@@ -61,13 +62,23 @@ const ImageEditor = ({ onImageEdited }) => {
 
   return (
     <div>
-      <h2>Image Editor</h2>
+      {/* <h2>Image Editor</h2> */}
       <input type="file" accept="image/*" onChange={handleFileChange} />
       <div>
-        {file && <img ref={imageRef} src={file} alt="Selected" style={{ display: 'none' }} />}
-        <canvas ref={previewCanvasRef} style={{ maxWidth: '100%' }}></canvas>
+        <Row>
+            <Col>
+                {file && <img ref={imageRef} src={file} alt="Selected" style={{ width: '100%', height: '100%' }} />}            
+            </Col>
+            <Col>
+                <canvas ref={previewCanvasRef} style={{ width: '100%', height: '100%' }}></canvas>            
+            </Col>
+        </Row>
+        <Row>
+            <Col>
+                <button onClick={handleSave}>Seleccionar</button>            
+            </Col>
+        </Row>
       </div>
-      <button onClick={handleSave}>Save</button>
     </div>
   );
 };
