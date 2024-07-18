@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react"
 import Axios from "axios"
 import { Table, Button, Pagination, Spinner, Image, Modal, Form, FloatingLabel } from "react-bootstrap"
 import { CiEdit } from "react-icons/ci"
-import { IoIosAddCircle } from "react-icons/io";
-import { TbRefresh } from "react-icons/tb";
+import { IoIosAddCircle } from "react-icons/io"
+import { TbRefresh } from "react-icons/tb"
 import * as Yup from "yup"
 import { Formik, useFormik } from "formik"
 //import { Navigate } from "react-router-dom"
@@ -89,7 +89,7 @@ function ListCategorias() {
                 id_categoria: values.id_categoria,
                 nombre: values.nombre,
                 descripcion: values.descripcion,
-                imagen: '',
+                imagen: "",
                 activo: values.activo
             }
             postCategoria(categoria)
@@ -100,7 +100,7 @@ function ListCategorias() {
         try {
             await Axios.post("/api/inventario/postCategoria", categoria)
                 .then(response => {
-                    console.log(response)                    
+                    console.log(response)
                 })
                 .catch(error => {
                     console.log("There was an error updating about us: ", error)
@@ -135,9 +135,9 @@ function ListCategorias() {
     }
     const Refrescar_handled = () => fetchProducts()
 
-    const imageHandled = (row) => {
-        console.log('row', row)
-        console.log('data', data)
+    const imageHandled = row => {
+        console.log("row", row)
+        console.log("data", data)
         // console.log('imagen:', data[id_categoria - 1].imagen)
         setImageSelected({
             nombre: row.nombre,
@@ -154,26 +154,27 @@ function ListCategorias() {
         setShowLoadPicture(true)
     }
 
-    const handleImageEdited = async (blob) => {
-        console.log('blob', blob)
+    const handleImageEdited = async blob => {
+        console.log("blob", blob)
+        setShowLoadPicture(false)
         setImageSelected(blob)
         // const formData = new FormData();
         // formData.append('image', blob);
         // formData.append('nombreImagen', 'Nombre de la imagen');
-    
+
         // try {
         //   const response = await axios.post('http://localhost:3001/upload', formData, {
         //     headers: {
         //       'Content-Type': 'multipart/form-data'
         //     }
         //   });
-    
+
         //   setMessage(response.data.message);
         // } catch (error) {
         //   console.error('Error uploading the file:', error);
         //   setMessage('Error uploading the file.');
         // }
-    };    
+    }
 
     return (
         <Page title="ABC Categorias">
@@ -181,10 +182,12 @@ function ListCategorias() {
             <div className="gap-2">
                 <div>
                     <Button className="my-3" size="sm" variant="outline-primary" onClick={Agregar_handled}>
-                            <IoIosAddCircle/>{` Agregar`}
+                        <IoIosAddCircle />
+                        {` Agregar`}
                     </Button>
                     <Button className="mx-2 my-3" size="sm" variant="outline-primary" onClick={Refrescar_handled}>
-                            <TbRefresh/>{` Refrescar`}
+                        <TbRefresh />
+                        {` Refrescar`}
                     </Button>
                 </div>
                 <div>
@@ -194,7 +197,7 @@ function ListCategorias() {
                                 {index + 1}
                             </Pagination.Item>
                         ))}
-                    </Pagination>                    
+                    </Pagination>
                 </div>
             </div>
 
@@ -227,7 +230,7 @@ function ListCategorias() {
                                 <td className="align-content-center">{row.fecha_actualizacion}</td>
                                 <td className="align-content-center">{row.activo}</td>
                                 <td>
-                                    <Image style={{ height: "80px", width: "80px", cursor: "pointer"}} src={row.imagen} thumbnail onClick={() => imageHandled(row)}/>
+                                    <Image style={{ height: "80px", width: "80px", cursor: "pointer" }} src={row.imagen} thumbnail onClick={() => imageHandled(row)} />
                                 </td>
                                 <td className="align-content-center justify-content-center">
                                     <Button size="sm" variant="warning" onClick={() => edit_handled(row)}>
@@ -263,7 +266,7 @@ function ListCategorias() {
 
                             {/* Descripcion */}
                             <FloatingLabel label="Descripción" className="mb-3">
-                                <Form.Control as="textarea" placeholder="Descripción" id="descripcion" name="descripcion" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.descripcion} style={{ height: '120px'}}/>
+                                <Form.Control as="textarea" placeholder="Descripción" id="descripcion" name="descripcion" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.descripcion} style={{ height: "120px" }} />
                                 {formik.touched.descripcion && formik.errors.descripcion ? <div className="text-danger">{formik.errors.descripcion}</div> : null}
                             </FloatingLabel>
 
@@ -271,8 +274,7 @@ function ListCategorias() {
                             <FloatingLabel label="Activo" className="mb-3">
                                 {/* <Form.Control type="text" placeholder="Activo" id="activo" name="activo" onChange={formik.handleChange} onBlur={formik.handleBlur} defaultValue={categoriaSelected.activo} /> */}
 
-                                <Form.Select aria-label="Floating label select example" id="activo" name="activo" onChange={formik.handleChange} onBlur={formik.handleBlur} 
-                                    value={formik.values.activo}>
+                                <Form.Select aria-label="Floating label select example" id="activo" name="activo" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.activo}>
                                     <option value="0">No</option>
                                     <option value="1">Si</option>
                                 </Form.Select>
@@ -303,16 +305,16 @@ function ListCategorias() {
                     </Modal.Header>
                     <Modal.Body>
                         <div class="d-flex justify-content-center">
-                            <Image className="justify-content-center" style={{width:'700px', height: '500px'}} src={imageSelected !== null || imageSelected !== '' ? imageSelected.imagen : "https://fiestatijuana.mx/image-not-available.png"} thumbnail />
+                            <Image className="justify-content-center" style={{ width: "700px", height: "500px" }} src={imageSelected !== null || imageSelected !== "" ? imageSelected.imagen : "https://fiestatijuana.mx/image-not-available.png"} thumbnail />
                         </div>
                     </Modal.Body>
-                    <Modal.Footer className="d-flex justify-content-center">                            
-                            <Button variant="secondary" onClick={cargarImagen_handled}>
-                                Cargar imagen
-                            </Button>
-                            <Button variant="secondary" onClick={closeImageModal}>
-                                Cerrar
-                            </Button>
+                    <Modal.Footer className="d-flex justify-content-center">
+                        <Button variant="secondary" onClick={cargarImagen_handled}>
+                            Cargar imagen
+                        </Button>
+                        <Button variant="secondary" onClick={closeImageModal}>
+                            Cerrar
+                        </Button>
                     </Modal.Footer>
                 </Modal>
             </>
@@ -320,20 +322,18 @@ function ListCategorias() {
             <>
                 <Modal size="lg" show={showLoadPicture} onHide={closeImageLoadModal} centered fullscreen={true}>
                     <Modal.Header closeButton>
-                        <Modal.Title>
-                            Cargar imagen
-                        </Modal.Title>
+                        <Modal.Title>Cargar imagen</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <ImageEditor onImageEdited={handleImageEdited} />
                     </Modal.Body>
-                    <Modal.Footer className="d-flex justify-content-center">                        
-                            <Button variant="secondary" onClick={closeImageLoadModal}>
-                                Cerrar
-                            </Button>
+                    <Modal.Footer className="d-flex justify-content-center">
+                        <Button variant="secondary" onClick={closeImageLoadModal}>
+                            Cerrar
+                        </Button>
                     </Modal.Footer>
                 </Modal>
-            </>            
+            </>
         </Page>
     )
 }
