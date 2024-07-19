@@ -114,6 +114,7 @@ en frontend:
 
 
 npm install cropperjs
+npm install cloudinary
 
 
 id_producto

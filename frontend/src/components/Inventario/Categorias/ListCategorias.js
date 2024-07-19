@@ -158,22 +158,24 @@ function ListCategorias() {
         console.log("blob", blob)
         setShowLoadPicture(false)
         setImageSelected(blob)
-        // const formData = new FormData();
-        // formData.append('image', blob);
-        // formData.append('nombreImagen', 'Nombre de la imagen');
 
-        // try {
-        //   const response = await axios.post('http://localhost:3001/upload', formData, {
-        //     headers: {
-        //       'Content-Type': 'multipart/form-data'
-        //     }
-        //   });
+        const formData = new FormData()
+        formData.append("image", blob)
+        //formData.append('nombreImagen', 'Nombre de la imagen');
 
-        //   setMessage(response.data.message);
-        // } catch (error) {
-        //   console.error('Error uploading the file:', error);
-        //   setMessage('Error uploading the file.');
-        // }
+        try {
+            const response = await Axios.post("/api/upload/postCloudinary", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+            console.log("postImage response:", response.data.message)
+
+            //setMessage(response.data.message);
+        } catch (error) {
+            console.error("Error uploading the file:", error)
+            //setMessage('Error uploading the file.');
+        }
     }
 
     return (
