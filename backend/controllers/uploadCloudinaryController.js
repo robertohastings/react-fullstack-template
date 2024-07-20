@@ -16,7 +16,9 @@ export const uploadImageToCloudinary = async (req, res) => {
         const response = await cloudinary.uploader
             .upload(image, {
                 timeout: 150000,
-                folder: "nir"
+                folder: "nir",
+                public_id: `${Date.now()}`,
+                resource_type: "auto"
             })
             .then(result => {
                 console.log(result)

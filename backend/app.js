@@ -23,6 +23,7 @@ import { PORT } from "./config.js"
 app.use(cors())
 app.use(express.json()) //Para pueda interpretar la recepción de JSON
 
+
 app.use("/api", route)
 app.use("/api", usersRoutes)
 app.use("/api/", landingRoutes)
