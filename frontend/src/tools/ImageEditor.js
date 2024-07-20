@@ -67,7 +67,7 @@ const ImageEditor = ({ onImageEdited }) => {
     return (
         <div>
             {/* <h2>Image Editor</h2> */}
-            <input type="file" accept="image/*" onChange={handleFileChange} />
+            <input type="file" accept="image/*" name="image" onChange={handleFileChange} />
             <div>
                 <Row>
                     <Col>{file && <img ref={imageRef} src={file} alt="Selected" style={{ width: "100%", height: "100%" }} />}</Col>

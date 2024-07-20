@@ -140,6 +140,7 @@ function ListCategorias() {
         console.log("data", data)
         // console.log('imagen:', data[id_categoria - 1].imagen)
         setImageSelected({
+            id_categoria: row.id_categoria,
             nombre: row.nombre,
             descripcion: row.descripcion,
             imagen: row.imagen
@@ -156,12 +157,14 @@ function ListCategorias() {
 
     const handleImageEdited = async blob => {
         console.log("blob", blob)
+        console.log("categora a subr:", imageSelected.id_categoria)
         setShowLoadPicture(false)
-        setImageSelected(blob)
+        //setImageSelected(blob)
 
         const formData = new FormData()
         formData.append("image", blob)
-        //formData.append('nombreImagen', 'Nombre de la imagen');
+        formData.append("id_categoria", imageSelected.id_categoria)
+        formData.append("id_empresa", "1")
 
         try {
             const response = await Axios.post("/api/upload/postCloudinary", formData, {

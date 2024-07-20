@@ -115,43 +115,13 @@ en frontend:
 
 npm install cropperjs
 npm install cloudinary
+npm i express-fileupload (no instaar)
+npm i multer
+npm i sharp (no es necesario instalarlo)
 https://www.npmjs.com/package/express-fileupload
 
 
-id_producto
-bigint UN AI PK
-id_empresa
-bigint PK
-nombre
-varchar(200)
-descripcion
-varchar(200)
-id_proveedor
-bigint
-id_categoria
-bigint
-precio
-double
-precio_promocion
-double
-costo
-double
-image1
-varchar(255)
-image2
-varchar(255)
-image3
-varchar(255)
-existencia
-int
-fecha_creacion
-datetime
-fecha_actualizacion
-datetime
-activo
-bit(1)
-sku
-varchar(20)
+
 
 --- npm config
 Al reiniciar el equipo tengo que actualizar los sets de npm 

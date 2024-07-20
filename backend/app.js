@@ -1,5 +1,6 @@
 import express from "express"
 import cors from "cors"
+//import fileUpload from "express-fileupload"
 
 //routes
 import route from "./router.js"
@@ -22,7 +23,7 @@ import { PORT } from "./config.js"
 
 app.use(cors())
 app.use(express.json()) //Para pueda interpretar la recepción de JSON
-
+//app.use(fileUpload())
 
 app.use("/api", route)
 app.use("/api", usersRoutes)
