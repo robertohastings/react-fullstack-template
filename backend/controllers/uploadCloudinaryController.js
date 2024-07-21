@@ -3,6 +3,9 @@
 import multer from "multer"
 import path from "path"
 
+// Middleware para asegurar que los campos del formulario estén disponibles
+const uploadMiddleware = multer().none();
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "images/categorias") // Carpeta de destino para las imágenes
@@ -28,20 +31,26 @@ export const uploadImageToCloudinary = (req, res) => {
     console.log("entre uploadImageToCloudinary")
 
     //Subo el archivo localmente al servidor
-
-    upload(req, res, err => {
+    uploadMiddleware(req, res, (err) => {
         if (err) {
-            console.log("error", err)
+            //console.log("error", err)
             return res.status(500).json({ message: "Error uploading image", error: err.message })
         }
 
-        if (!req.file) {
-            return res.status(400).json({ message: "No image file uploaded" })
-        }
+        upload(req, res, (err) => {
 
-        console.log("imágen de categoria:", req.body.id_categoria, " empresa:", req.body.id_empresa)
-        res.status(200).json({ message: "Image uploaded successfully", file: req.file })
-    })
+            if (err) {
+                return res.status(500).json({ message: 'Error uploading image', error: err.message });
+            }    
+
+            if (!req.file) {
+                return res.status(400).json({ message: "No image file uploaded" })
+            }
+    
+            console.log("imágen de categoria:", req.body.id_categoria, " empresa:", req.body.id_empresa)
+            res.status(200).json({ message: "Image uploaded successfully", file: req.file })
+        })
+    }
 
     //
 
@@ -71,4 +80,4 @@ export const uploadImageToCloudinary = (req, res) => {
     //         message: `Ocurrió un eror en el servidor: ${error}`
     //     })
     // }
-}
+)}
