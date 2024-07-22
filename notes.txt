@@ -119,6 +119,8 @@ npm i express-fileupload (no instaar)
 npm i multer
 npm i sharp (no es necesario instalarlo)
 https://www.npmjs.com/package/express-fileupload
+ejmplo de express-fileupload: hacer una prueba.
+https://github.com/richardgirges/express-fileupload/tree/master/example#basic-file-upload
 
 
 

@@ -3,22 +3,22 @@
 import multer from "multer"
 import path from "path"
 
-// Middleware para asegurar que los campos del formulario estén disponibles
-const uploadMiddleware = multer().none();
 
+// Middleware para asegurar que los campos del formulario estén disponibles
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "images/categorias") // Carpeta de destino para las imágenes
+      cb(null, 'imagenes/categorias'); // Carpeta de destino para las imágenes
     },
     filename: (req, file, cb) => {
-        const id_categoria = req.body.id_categoria
-        const id_empresa = req.body.id_empresa
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
-        cb(null, `${id_empresa}_${id_categoria}_${uniqueSuffix}-${file.originalname}.jpg`)
+      const idCategoria = req.body.id_categoria || 'undefined';
+      const idEmpresa = req.body.id_empresa || 'undefined';
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, `${idCategoria}-${idEmpresa}-${uniqueSuffix}.jpg`);
     }
-})
+  });
+  
+  const upload = multer({ storage: storage });
 
-const upload = multer({ storage: storage }).single("image")
 
 // dotenv.config()
 // cloudinary.config({
@@ -27,30 +27,47 @@ const upload = multer({ storage: storage }).single("image")
 //     api_secret: process.env.CLOUDINARY_API_SECRET
 // })
 
-export const uploadImageToCloudinary = (req, res) => {
-    console.log("entre uploadImageToCloudinary")
-
-    //Subo el archivo localmente al servidor
-    uploadMiddleware(req, res, (err) => {
-        if (err) {
-            //console.log("error", err)
-            return res.status(500).json({ message: "Error uploading image", error: err.message })
-        }
-
-        upload(req, res, (err) => {
-
-            if (err) {
-                return res.status(500).json({ message: 'Error uploading image', error: err.message });
-            }    
-
-            if (!req.file) {
-                return res.status(400).json({ message: "No image file uploaded" })
-            }
+export const uploadImage = (req, res) => {
     
-            console.log("imágen de categoria:", req.body.id_categoria, " empresa:", req.body.id_empresa)
-            res.status(200).json({ message: "Image uploaded successfully", file: req.file })
-        })
-    }
+    upload.single('image')(req, res, (err) => {
+        console.log(req.body)
+      if (err) {
+        console.log(err.message)
+        return res.status(500).json({ message: 'Error uploading image', error: err.message });
+      }
+  
+      if (!req.file) {
+        return res.status(400).json({ message: 'No image file uploaded' });
+      }
+  
+      res.status(200).json({ message: 'Image uploaded successfully', file: req.file.filename });
+    });
+  };
+
+// export const uploadImageToCloudinary = (req, res) => {
+//     console.log("entre uploadImageToCloudinary")
+
+//     //Subo el archivo localmente al servidor
+//     uploadMiddleware(req, res, (err) => {
+//         if (err) {
+//             console.log("error", err)
+//             return res.status(500).json({ message: "Error uploading image", error: err.message })
+//         }
+
+//         upload(req, res, (err) => {
+
+//             if (err) {
+//                 return res.status(500).json({ message: 'Error uploading image', error: err.message });
+//             }    
+
+//             if (!req.file) {
+//                 return res.status(400).json({ message: "No image file uploaded" })
+//             }
+    
+//             console.log("imágen de categoria:", req.body.id_categoria, " empresa:", req.body.id_empresa)
+//             res.status(200).json({ message: "Image uploaded successfully", file: req.file })
+//         })
+//     }
 
     //
 
@@ -80,4 +97,4 @@ export const uploadImageToCloudinary = (req, res) => {
     //         message: `Ocurrió un eror en el servidor: ${error}`
     //     })
     // }
-)}
+//)}

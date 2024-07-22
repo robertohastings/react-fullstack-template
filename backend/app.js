@@ -8,7 +8,7 @@ import usersRoutes from "./routes/user.routes.js"
 import landingRoutes from "./routes/landing.routes.js"
 import adminRoutes from "./routes/admin.routes.js"
 import inventarioRoutes from "./routes/inventario.routes.js"
-import uploadRoutes from "./routes/upload.route.js"
+import uploadRoutes from "./routes/upload.routes.js"
 
 const app = express()
 //const PORT = process.env.PORT || 8080
