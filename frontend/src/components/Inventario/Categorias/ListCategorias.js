@@ -17,7 +17,7 @@ const validationSchema = Yup.object({
 })
 
 function ListCategorias() {
-    const [imageNotFound, setImageNotFound] = useState('"https://fiestatijuana.mx/image-not-available.png"')
+    //const [imageNotFound, setImageNotFound] = useState('"https://fiestatijuana.mx/image-not-available.png"')
     const [data, setData] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     const [totalRecords, setTotalRecords] = useState(0)
@@ -32,10 +32,10 @@ function ListCategorias() {
     //Modal
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
-    const handleShow = () => setShow(true)
+    //const handleShow = () => setShow(true)
 
     //Categoria seleccionada
-    const [categoriaSelected, setCategoriaSelected] = useState({})
+    //const [categoriaSelected, setCategoriaSelected] = useState({})
 
     const fetchProducts = async () => {
         setIsLoaging(true)
@@ -173,6 +173,7 @@ function ListCategorias() {
                 }
             })
             console.log("postImage response:", response.data.message)
+            console.log("image uploaded:", response.data.file)
 
             //setMessage(response.data.message);
         } catch (error) {
