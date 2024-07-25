@@ -79,7 +79,7 @@ function ListCategorias() {
                 id_categoria: values.id_categoria,
                 nombre: values.nombre,
                 descripcion: values.descripcion,
-                imagen: "",
+                imagen: values.imagen,
                 activo: values.activo
             }
             postCategoria(categoria)
@@ -261,6 +261,12 @@ function ListCategorias() {
                             <FloatingLabel label="Descripción" className="mb-3">
                                 <Form.Control as="textarea" placeholder="Descripción" id="descripcion" name="descripcion" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.descripcion} style={{ height: "120px" }} />
                                 {formik.touched.descripcion && formik.errors.descripcion ? <div className="text-danger">{formik.errors.descripcion}</div> : null}
+                            </FloatingLabel>
+
+                            {/* Imagen */}
+                            <FloatingLabel label="Url Imagen" className="mb-3">
+                                <Form.Control type="text" placeholder="Url Imagen" id="imagen" name="imagen" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.imagen} />
+                                {formik.touched.imagen && formik.errors.imagen ? <div className="text-danger">{formik.errors.imagen}</div> : null}
                             </FloatingLabel>
 
                             {/* Activo */}
