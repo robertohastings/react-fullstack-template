@@ -17,7 +17,6 @@ const validationSchema = Yup.object({
 })
 
 function ListCategorias() {
-    //const [imageNotFound, setImageNotFound] = useState('"https://fiestatijuana.mx/image-not-available.png"')
     const [data, setData] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     const [totalRecords, setTotalRecords] = useState(0)
@@ -27,21 +26,15 @@ function ListCategorias() {
     const [showPicture, setShowPicture] = useState(false)
     const [showLoadPicture, setShowLoadPicture] = useState(false)
     const [imageSelected, setImageSelected] = useState({})
-    //const history = useHistory()
 
     //Modal
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
-    //const handleShow = () => setShow(true)
-
-    //Categoria seleccionada
-    //const [categoriaSelected, setCategoriaSelected] = useState({})
 
     const fetchProducts = async () => {
         setIsLoaging(true)
-        //console.log("rowsPerPage:", rowsPerPage, " currentPage:", currentPage)
+
         try {
-            //console.log("rowsPerPage:", rowsPerPage, " currentPage:", currentPage)
             const response = await Axios.get("/api/getCategoriasListado", {
                 params: {
                     limite: rowsPerPage,
@@ -59,9 +52,6 @@ function ListCategorias() {
     }
 
     useEffect(() => {
-        //setIsLoaging(true)
-        //setRowsPerPage(5)
-
         fetchProducts()
     }, [currentPage])
 
@@ -136,8 +126,8 @@ function ListCategorias() {
     const Refrescar_handled = () => fetchProducts()
 
     const imageHandled = row => {
-        console.log("row", row)
-        console.log("data", data)
+        //console.log("row", row)
+        //console.log("data", data)
         // console.log('imagen:', data[id_categoria - 1].imagen)
         setImageSelected({
             id_categoria: row.id_categoria,
@@ -156,10 +146,9 @@ function ListCategorias() {
     }
 
     const handleImageEdited = async blob => {
-        console.log("blob", blob)
-        console.log("categora a subr:", imageSelected.id_categoria)
+        //console.log("blob", blob)
+        //console.log("categora a subr:", imageSelected.id_categoria)
         setShowLoadPicture(false)
-        //setImageSelected(blob)
 
         const formData = new FormData()
         formData.append("image", blob)
@@ -173,12 +162,9 @@ function ListCategorias() {
                 }
             })
             console.log("postImage response:", response.data.message)
-            console.log("image uploaded:", response.data.file)
-
-            //setMessage(response.data.message);
+            //console.log("image uploaded:", response.data.file)
         } catch (error) {
             console.error("Error uploading the file:", error)
-            //setMessage('Error uploading the file.');
         }
     }
 

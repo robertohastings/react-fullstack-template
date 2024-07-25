@@ -22,6 +22,7 @@ import FlashMessage from "./tools/FlashMessage"
 import Notifications from "./components/Notifications"
 import LoggedIn from "./components/LoggedIn"
 import ListCategorias from "./components/Inventario/Categorias/ListCategorias"
+import ListProveedores from "./components/Compras/Proveedores/ListProveedores"
 
 function App() {
     const [data, setData] = useState({})
@@ -162,6 +163,7 @@ function App() {
                                 <Route path="/Usuarios" element={<Testing title="Usuarios" />} />
                                 <Route path="/Admin/LandingPage" element={<LandingPage />} />
                                 <Route path="/Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
+                                <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
                             </Routes>
                         </main>
 

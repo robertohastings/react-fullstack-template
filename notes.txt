@@ -135,3 +135,30 @@ npm config set https-proxy http://10.100.0.100:8080
 -- para eliminar el proxy actual:
 npm config rm proxy
 npm config rm https-proxy
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getProveedores`(
+	IN limite INT,
+    IN pagina INT 
+)
+BEGIN
+    SELECT COUNT(*) AS totalRegistros
+    FROM proveedores;
+    
+    IF (limite > 0) THEN
+		SELECT 	id_proveedor, nombre, contacto1, contacto2,
+				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion,
+				CASE WHEN activo = 1 THEN 'Si' ELSE 'NO' END AS activo, 
+				telefono1, telefono2, email1, email2, horario, whatsapp
+		FROM proveedores
+        ORDER BY id_empresa, id_proveedor
+		LIMIT limite OFFSET pagina;
+	ELSE 
+		SELECT 	id_proveedor, nombre, contacto1, contacto2,
+				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion,
+				CASE WHEN activo = 1 THEN 'Si' ELSE 'NO' END AS activo, 
+				telefono1, telefono2, email1, email2, horario, whatsapp
+		FROM proveedores
+        ORDER BY id_empresa, id_proveedor;
+	END IF;        
+END
