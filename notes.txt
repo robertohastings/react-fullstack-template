@@ -136,6 +136,22 @@ npm config set https-proxy http://10.100.0.100:8080
 npm config rm proxy
 npm config rm https-proxy
 
+id_empresa bigint(20) PK 
+id_proveedor bigint(20) AI PK 
+nombre varchar(500) 
+contacto1 varchar(200) 
+contacto2 varchar(200) 
+telefono1 varchar(20) 
+telefono2 varchar(20) 
+email1 varchar(180) 
+email2 varchar(180) 
+horario varchar(180) 
+fecha_creacion datetime 
+fecha_actualizacion datetime 
+activo tinyint(4) 
+whatsapp varchar(20)
+
+
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getProveedores`(
 	IN limite INT,
