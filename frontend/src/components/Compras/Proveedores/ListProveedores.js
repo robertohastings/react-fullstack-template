@@ -117,11 +117,11 @@ function ListProveedores() {
 
     const edit_handled = row => {
         formik.values.id_proveedor = row.id_proveedor
-        formik.values.nombre = row.nombre
-        formik.values.contacto1 = row.contacto1
-        formik.values.contacto2 = row.contacto2
-        formik.values.telefono1 = row.telefono1
-        formik.values.telefono2 = row.telefono2
+        formik.values.nombre = row.nombre 
+        formik.values.contacto1 = row.contacto1 
+        formik.values.contacto2 = row.contacto2 
+        formik.values.telefono1 = row.telefono1 
+        formik.values.telefono2 = row.telefono2 
         formik.values.whatsapp = row.whatsapp
         formik.values.email1 = row.email1
         formik.values.email2 = row.email2
@@ -255,7 +255,7 @@ function ListProveedores() {
                                 <Col>
                                     {/* contacto2 */}
                                     <FloatingLabel label="Contacto 2" className="mb-3">
-                                        <Form.Control as="text" placeholder="Contacto 2" id="contacto2" name="contacto2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.contacto2} />
+                                        <Form.Control type="text" placeholder="Contacto 2" id="contacto2" name="contacto2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.contacto2} />
                                         {formik.touched.contacto2 && formik.errors.contacto2 ? <div className="text-danger">{formik.errors.contacto2}</div> : null}
                                     </FloatingLabel>
                                 </Col>
@@ -264,21 +264,21 @@ function ListProveedores() {
                                 <Col>
                                     {/* telefono1 */}
                                     <FloatingLabel label="Teléfono 1" className="mb-3">
-                                        <Form.Control as="text" placeholder="Teléfono 1" id="telefono1" name="telefono1" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.telefono1} />
+                                        <Form.Control type="text" placeholder="Teléfono 1" id="telefono1" name="telefono1" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.telefono1} />
                                         {formik.touched.telefono1 && formik.errors.telefono1 ? <div className="text-danger">{formik.errors.telefono1}</div> : null}
                                     </FloatingLabel>
                                 </Col>
                                 <Col>
                                     {/* telefono2 */}
                                     <FloatingLabel label="Teléfono 2" className="mb-3">
-                                        <Form.Control as="text" placeholder="Teléfono 2" id="telefono2" name="telefono2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.telefono2} />
+                                        <Form.Control type="text" placeholder="Teléfono 2" id="telefono2" name="telefono2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.telefono2} />
                                         {formik.touched.telefono2 && formik.errors.telefono2 ? <div className="text-danger">{formik.errors.telefono2}</div> : null}
                                     </FloatingLabel>
                                 </Col>
                                 <Col>
                                     {/* whatsapp */}
                                     <FloatingLabel label="Whatsapp" className="mb-3">
-                                        <Form.Control as="text" placeholder="Whatsapp" id="whatsapp" name="whatsapp" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.whatsapp} />
+                                        <Form.Control type="text" placeholder="Whatsapp" id="whatsapp" name="whatsapp" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.whatsapp} />
                                         {formik.touched.whatsapp && formik.errors.whatsapp ? <div className="text-danger">{formik.errors.whatsapp}</div> : null}
                                     </FloatingLabel>
                                 </Col>
@@ -287,21 +287,21 @@ function ListProveedores() {
                                 <Col>
                                     {/* email1 */}
                                     <FloatingLabel label="Email 1" className="mb-3">
-                                        <Form.Control as="text" placeholder="Email 1" id="whatsapp" name="email1" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.email1} />
+                                        <Form.Control type="text" placeholder="Email 1" id="email1" name="email1" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.email1} />
                                         {formik.touched.email1 && formik.errors.email1 ? <div className="text-danger">{formik.errors.email1}</div> : null}
                                     </FloatingLabel>
                                 </Col>
                                 <Col>
                                     {/* email2 */}
                                     <FloatingLabel label="Email 2" className="mb-3">
-                                        <Form.Control as="text" placeholder="Email 2" id="whatsapp" name="email2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.email2} />
+                                        <Form.Control type="text" placeholder="Email 2" id="email2" name="email2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.email2} />
                                         {formik.touched.email2 && formik.errors.email2 ? <div className="text-danger">{formik.errors.email2}</div> : null}
                                     </FloatingLabel>
                                 </Col>
                                 <Col>
                                     {/* email2 */}
                                     <FloatingLabel label="Horario" className="mb-3">
-                                        <Form.Control as="text" placeholder="Horario" id="horario" name="horario" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.horario} />
+                                        <Form.Control type="text" placeholder="Horario" id="horario" name="horario" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.horario} />
                                         {formik.touched.horario && formik.errors.horario ? <div className="text-danger">{formik.errors.horario}</div> : null}
                                     </FloatingLabel>
                                 </Col>

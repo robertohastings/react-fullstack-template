@@ -1,5 +1,6 @@
 // import dotenv from "dotenv"
 import { v2 as cloudinary } from "cloudinary"
+import { pool } from "../db.js"
 
 //import multer from "multer"
 import path from "path"
@@ -63,15 +64,27 @@ export const uploadImage = (req, res) => {
                 .upload(image, {
                     timeout: 150000,
                     folder: "nir",
-                    public_id: `${Date.now()}`,
-                    resource_type: "auto"
+                    public_id: `${req.body.id_empresa}_cat_${req.body.id_categoria}`,
+                    resource_type: "image",
+                    format: "jpg"
                 })
-                .then(result => {
+                .then(async result => {
                     console.log(result)
+
+                    //Actualizo la imagen en la db
+                    try {
+                        const rows = await pool.query(`CALL putCategoriaImage(?, ?, ?);`, 
+                            [req.body.id_categoria, req.body.id_empresa, result.secure_url])                        
+                    } catch (error) {
+                        console.log('error al actualizar la imagen en la db', error)
+                    }
+
                     res.status(200).json({
                         message: "Imagen cargada en cloudinary",
                         url: result.secure_url
                     })
+
+
                 })
                 .catch(error => {
                     console.log("Ocurrió el error al subir la imágen a cloudinary", error)

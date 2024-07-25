@@ -161,7 +161,8 @@ function ListCategorias() {
                     "Content-Type": "multipart/form-data"
                 }
             })
-            console.log("postImage response:", response.data.message)
+            console.log("postImage response:", response.data)
+            fetchProducts()
             //console.log("image uploaded:", response.data.file)
         } catch (error) {
             console.error("Error uploading the file:", error)

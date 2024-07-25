@@ -162,19 +162,66 @@ BEGIN
     FROM proveedores;
     
     IF (limite > 0) THEN
-		SELECT 	id_proveedor, nombre, contacto1, contacto2,
-				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion,
+        SELECT 	id_proveedor, nombre, IFNULL(contacto1, '') AS contacto1, IFNULL(contacto2, '') AS contacto2,
+				DATE_FORMAT(IFNULL(fecha_actualizacion, now()), '%m/%d/%Y %H:%i') AS fecha_actualizacion,
 				CASE WHEN activo = 1 THEN 'Si' ELSE 'NO' END AS activo, 
-				telefono1, telefono2, email1, email2, horario, whatsapp
+				IFNULL(telefono1, '') AS telefono1, IFNULL(telefono2, '') AS telefono2, 
+                IFNULL(email1, '') AS email1, IFNULL(email2, '') AS email2, 
+                IFNULL(horario, '') AS horario, IFNULL(whatsapp, '') AS whatsapp
 		FROM proveedores
         ORDER BY id_empresa, id_proveedor
 		LIMIT limite OFFSET pagina;
 	ELSE 
-		SELECT 	id_proveedor, nombre, contacto1, contacto2,
-				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion,
+		SELECT 	id_proveedor, nombre, IFNULL(contacto1, '') AS contacto1, IFNULL(contacto2, '') AS contacto2,
+				DATE_FORMAT(IFNULL(fecha_actualizacion, now()), '%m/%d/%Y %H:%i') AS fecha_actualizacion,
 				CASE WHEN activo = 1 THEN 'Si' ELSE 'NO' END AS activo, 
-				telefono1, telefono2, email1, email2, horario, whatsapp
+				IFNULL(telefono1, '') AS telefono1, IFNULL(telefono2, '') AS telefono2, 
+                IFNULL(email1, '') AS email1, IFNULL(email2, '') AS email2, 
+                IFNULL(horario, '') AS horario, IFNULL(whatsapp, '') AS whatsapp
 		FROM proveedores
         ORDER BY id_empresa, id_proveedor;
 	END IF;        
+END
+
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `postProveedor`(
+	IN prm_id_empresa INT,
+    IN prm_id_proveedor INT,
+    IN prm_nombre varchar(500),
+	IN prm_contacto1 varchar(200),
+	IN prm_contacto2 varchar(200),
+    IN prm_telefono1 varchar(20),
+    IN prm_telefono2 varchar(20),
+    IN prm_whatsapp varchar(20),
+	IN prm_email1 varchar(180),
+    IN prm_email2 varchar(180),
+    IN prm_horario varchar(180),
+    IN prm_activo tinyint
+)
+BEGIN
+	
+    IF prm_id_proveedor = 0 THEN
+		INSERT INTO proveedores (id_empresa, id_proveedor, nombre, contacto1, contacto2, telefono1, telefono2, whatsapp,
+								 email1, email2, horario, activo)
+		VALUES (prm_id_empresa, prm_id_proveedor, prm_nombre, prm_contacto1, prm_contacto2, prm_telefono1, prm_telefono2, prm_whatsapp,
+				prm_email1, prm_email2, prm_horario, prm_activo);
+    ELSE
+		UPDATE proveedores 
+			SET nombre = prm_nombre, contacto1 = prm_contacto1, contacto2 = prm_contacto2, telefono1 = prm_telefono1,
+				telefono2 = prm_telefono2, whatsapp = prm_whatsapp, email1 = prm_email1, email2 = prm_email2,
+                horario = prm_horario, activo = prm_activo
+        WHERE id_empresa = prm_id_empresa AND id_proveedor = prm_id_proveedor;
+    END IF;
+
+END
+
+CREATE PROCEDURE `putCategoriaImage` (
+	IN prm_id_categoria INT,
+    IN prm_id_empresa INT,
+    in prm_imagen VARCHAR(255)
+)
+BEGIN
+	UPDATE categorias 
+		SET imagen = prm_imagen,
+			fecha_actualizacion = now()
+        WHERE id_empresa = prm_id_empresa AND  id_categoria = prm_id_categoria;
 END
