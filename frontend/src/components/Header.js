@@ -97,7 +97,9 @@ function Header() {
                             </Nav>
                             <Nav>
                                 <NavDropdown title="Inventario" id="nav-inventario" drop="start">
-                                    <NavDropdown.Item>ABC Productos</NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to={"Inventario/Productos/ListProductos"}>
+                                        ABC Productos
+                                    </NavDropdown.Item>
                                     <NavDropdown.Item as={Link} to={"Inventario/Categorias/ListCategorias"}>
                                         ABC Categorías
                                     </NavDropdown.Item>

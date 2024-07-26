@@ -23,6 +23,7 @@ import Notifications from "./components/Notifications"
 import LoggedIn from "./components/LoggedIn"
 import ListCategorias from "./components/Inventario/Categorias/ListCategorias"
 import ListProveedores from "./components/Compras/Proveedores/ListProveedores"
+import ListProductos from "./components/Inventario/Productos/ListProductos"
 
 function App() {
     const [data, setData] = useState({})
@@ -163,6 +164,7 @@ function App() {
                                 <Route path="/Usuarios" element={<Testing title="Usuarios" />} />
                                 <Route path="/Admin/LandingPage" element={<LandingPage />} />
                                 <Route path="/Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
+                                <Route path="/Inventario/Productos/ListProductos" element={<ListProductos />} />
                                 <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
                             </Routes>
                         </main>
