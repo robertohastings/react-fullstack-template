@@ -7,6 +7,6 @@ router.get("/getCategoriasListado", getCategoriasListado)
 router.post("/inventario/postCategoria", postCategoria)
 //Productos
 router.get("/inventario/getProductosListado", getProductosListado)
-router.post("/inventario/postCategoria", postCategoria)
+router.post("/inventario/postProducto", postProducto)
 
 export default router

@@ -22,7 +22,7 @@ export const getCategoriasListado = async (req, res) => {
 }
 
 export const postCategoria = async (req, res) => {
-    console.log("Body:", req.body)
+    //console.log("Body:", req.body)
     const { id_empresa, id_categoria, nombre, descripcion, imagen, activo } = req.body
 
     try {
@@ -68,7 +68,7 @@ export const getProductosListado = async (req, res) => {
     }
 }
 export const postProducto = async (req, res) => {
-    //console.log("Body:", req.body)
+    console.log("Body:", req.body)
     const { id_empresa, id_producto, nombre, descripcion, id_proveedor, id_categoria, precio, precio_promocion, costo, image1, image2, image3, existencia, activo, sku } = req.body
 
     try {
@@ -84,7 +84,7 @@ export const postProducto = async (req, res) => {
             })
         }
     } catch (error) {
-        console.log("Ocurrió un error")
+        console.log(`Ocurrió un error ${error.message}`)
         res.status(500).json({
             message: `Error: ${error}`
         })

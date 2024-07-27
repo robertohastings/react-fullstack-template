@@ -13,8 +13,7 @@ import ImageEditor from "../../../tools/ImageEditor"
 
 const validationSchema = Yup.object({
     nombre: Yup.string().required("El nombre debe ser capturado"),
-    contacto1: Yup.string().required("Contacto 1 debe ser capturado")
-    // descripcion: Yup.string().required("La descripción tiene que ser capturada")
+    descripcion: Yup.string().required("La descripción debe ser capturada")
 })
 
 function ListProductos() {
@@ -27,6 +26,8 @@ function ListProductos() {
     const [showPicture, setShowPicture] = useState(false)
     const [showLoadPicture, setShowLoadPicture] = useState(false)
     const [imageSelected, setImageSelected] = useState({})
+    const [categoriasData, setCategoriasData] = useState([])
+    const [proveedoresData, setProveedoresData] = useState([])
 
     //Modal
     const [show, setShow] = useState(false)
@@ -45,6 +46,24 @@ function ListProductos() {
             console.log("response:", response.data.productos)
             setData(response.data.productos)
             setTotalRecords(response.data.totalRegistros)
+
+            const responseCategorias = await Axios.get("/api/getCategoriasListado", {
+                params: {
+                    limite: 0,
+                    pagina: 0
+                }
+            })
+            //console.log("categorias:", responseCategorias.data.categorias)
+            setCategoriasData(responseCategorias.data.categorias)
+
+            const responseProveedores = await Axios.get("/api/compras/getProveedoresListado", {
+                params: {
+                    limite: 0,
+                    pagina: 0
+                }
+            })
+            console.log("Proveedores:", responseProveedores.data.proveedores)
+            setProveedoresData(responseProveedores.data.proveedores)
         } catch (error) {
             console.error("There was an error fetching the products!", error)
         } finally {
@@ -99,15 +118,16 @@ function ListProductos() {
                 image3: values.image3,
                 existencia: values.existencia,
                 sku: values.sku,
-                activo: values.activo
+                activo: parseInt(values.activo)
             }
             postProducto(producto)
         }
     })
 
     const postProducto = async producto => {
+        console.log("Producto:", producto)
         try {
-            await Axios.post("/api/inventario/postCategoria", producto)
+            await Axios.post("/api/inventario/postProducto", producto)
                 .then(response => {
                     console.log(response)
                 })
@@ -146,7 +166,7 @@ function ListProductos() {
         formik.values.id_empresa = 1
         formik.values.id_producto = 0
         formik.values.nombre = ""
-        formik.values.descripcion = 0
+        formik.values.descripcion = ""
         formik.values.id_proveedor = ""
         formik.values.id_categoria = 0
         formik.values.precio = 0
@@ -216,6 +236,13 @@ function ListProductos() {
                         <TbRefresh />
                         {` Refrescar`}
                     </Button>
+
+                    <Form.Select aria-label="Floating label select example" id="selectId_categoria" name="selectId_categoria" onChange={() => {}} style={{ width: "200px" }}>
+                        <option value={0}>Todas Categorias</option>
+                        {categoriasData.map(categoria => {
+                            return <option value={categoria.id_categoria}>{categoria.nombre}</option>
+                        })}
+                    </Form.Select>
                 </div>
                 <div>
                     <Pagination>
@@ -235,6 +262,7 @@ function ListProductos() {
                         <th>#Id</th>
                         <th>Nombre</th>
                         <th>Descripcion</th>
+                        <th>Exist.</th>
                         <th>Categoria</th>
                         <th>Proveedor</th>
                         <th>Precio</th>
@@ -259,6 +287,7 @@ function ListProductos() {
                                 <td className="align-content-center">{row.id_producto}</td>
                                 <td className="align-content-center">{row.nombre}</td>
                                 <td className="align-content-center">{row.descripcion}</td>
+                                <td className="align-content-center">{row.existencia}</td>
                                 <td className="align-content-center">{row.Categoria}</td>
                                 <td className="align-content-center">{row.Proveedor}</td>
                                 <td className="align-content-center">{row.precio}</td>
@@ -291,7 +320,7 @@ function ListProductos() {
             <>
                 <Modal size="lg" show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
                     <Modal.Header closeButton>
-                        <Modal.Title>Producto # {formik.values.id_producto === 0 ? "nuevo" : formik.values.id_producto}</Modal.Title>
+                        <Modal.Title>Producto # {formik.values.id_producto === 0 ? "nuevo" : `${formik.values.id_producto} - ${formik.values.nombre}`}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
@@ -308,7 +337,7 @@ function ListProductos() {
                                 <Col>
                                     {/* Descripción */}
                                     <FloatingLabel label="Descripción" className="mb-3">
-                                        <Form.Control type="text" placeholder="Descripción" id="descripcion" name="decripcion" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.descripcion} />
+                                        <Form.Control type="text" placeholder="Descripción" id="descripcion" name="descripcion" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.descripcion} />
                                         {formik.touched.descripcion && formik.errors.descripcion ? <div className="text-danger">{formik.errors.descripcion}</div> : null}
                                     </FloatingLabel>
                                 </Col>
@@ -316,15 +345,33 @@ function ListProductos() {
                             <Row>
                                 <Col>
                                     {/* Categoria */}
-                                    <FloatingLabel label="Categoria" className="mb-3">
+                                    {/* <FloatingLabel label="Categoria" className="mb-3">
                                         <Form.Control type="text" placeholder="Categoria" id="id_categoria" name="id_categoria" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.id_categoria} />
+                                        {formik.touched.id_categoria && formik.errors.id_categoria ? <div className="text-danger">{formik.errors.id_categoria}</div> : null}
+                                    </FloatingLabel> */}
+
+                                    <FloatingLabel label="Categoria" className="mb-3">
+                                        <Form.Select aria-label="Floating label select example" id="id_categoria" name="id_categoria" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.id_categoria}>
+                                            {categoriasData.map(categoria => {
+                                                return <option value={categoria.id_categoria}>{categoria.nombre}</option>
+                                            })}
+                                        </Form.Select>
                                         {formik.touched.id_categoria && formik.errors.id_categoria ? <div className="text-danger">{formik.errors.id_categoria}</div> : null}
                                     </FloatingLabel>
                                 </Col>
                                 <Col>
                                     {/* Proveedor */}
-                                    <FloatingLabel label="Proveedor" className="mb-3">
+                                    {/* <FloatingLabel label="Proveedor" className="mb-3">
                                         <Form.Control type="text" placeholder="Proveedor" id="id_proveedor" name="id_proveedor" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.id_proveedor} />
+                                        {formik.touched.id_proveedor && formik.errors.id_proveedor ? <div className="text-danger">{formik.errors.id_proveedor}</div> : null}
+                                    </FloatingLabel> */}
+
+                                    <FloatingLabel label="Proveedor" className="mb-3">
+                                        <Form.Select aria-label="Floating label select example" id="id_proveedor" name="id_proveedor" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.id_proveedor}>
+                                            {proveedoresData.map(proveedor => {
+                                                return <option value={proveedor.id_proveedor}>{proveedor.nombre}</option>
+                                            })}
+                                        </Form.Select>
                                         {formik.touched.id_proveedor && formik.errors.id_proveedor ? <div className="text-danger">{formik.errors.id_proveedor}</div> : null}
                                     </FloatingLabel>
                                 </Col>
@@ -359,24 +406,24 @@ function ListProductos() {
                                         <Form.Control type="number" placeholder="Existencia" id="existencia" name="existencia" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.existencia} />
                                         {formik.touched.existencia && formik.errors.existencia ? <div className="text-danger">{formik.errors.existencia}</div> : null}
                                     </FloatingLabel>
-                                </Col>                                
+                                </Col>
                                 <Col>
                                     {/* SKU */}
                                     <FloatingLabel label="Sku" className="mb-3">
-                                        <Form.Control type="number" placeholder="Sku" id="sku" name="sku" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.sku} />
+                                        <Form.Control type="text" placeholder="Sku" id="sku" name="sku" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.sku} />
                                         {formik.touched.sku && formik.errors.sku ? <div className="text-danger">{formik.errors.sku}</div> : null}
                                     </FloatingLabel>
                                 </Col>
                                 <Col>
                                     {/* Activo */}
-                                    <FloatingLabel label="Activo" className="mb-3">                                        
+                                    <FloatingLabel label="Activo" className="mb-3">
                                         <Form.Select aria-label="Floating label select example" id="activo" name="activo" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.activo}>
                                             <option value="0">No</option>
                                             <option value="1">Si</option>
                                         </Form.Select>
                                         {formik.touched.activo && formik.errors.activo ? <div className="text-danger">{formik.errors.activo}</div> : null}
-                                    </FloatingLabel>                                
-                                </Col>                                
+                                    </FloatingLabel>
+                                </Col>
                             </Row>
                             <Row>
                                 <Col>
@@ -384,7 +431,7 @@ function ListProductos() {
                                     <FloatingLabel label="Imagen 1" className="mb-3">
                                         <Form.Control type="text" placeholder="Imagen 1" id="image1" name="image1" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.image1} />
                                         {formik.touched.image1 && formik.errors.image1 ? <div className="text-danger">{formik.errors.image1}</div> : null}
-                                    </FloatingLabel>                                
+                                    </FloatingLabel>
                                 </Col>
                             </Row>
                         </Form>

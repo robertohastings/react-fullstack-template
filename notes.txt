@@ -231,4 +231,6 @@ BEGIN
 
 END
 
-
+agregar en getProductosListing el campo: P.existencia
+cambiar el tipo de dato de activo del catalago de productos a TINYINT(4)
+en el procedimiento postProducto cambiar el tipo de dato del parámetro activo a TINYINT
