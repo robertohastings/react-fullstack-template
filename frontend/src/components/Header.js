@@ -7,6 +7,8 @@ import { CiLogout } from "react-icons/ci"
 import { PiGoogleLogo } from "react-icons/pi"
 import { PiPassword } from "react-icons/pi"
 import { IoMdNotifications } from "react-icons/io"
+import { MdOutlineLocalGroceryStore } from "react-icons/md"
+import { MdLocalGroceryStore } from "react-icons/md"
 
 import DispatchContext from "../DispatchContext"
 import StateContext from "../StateContext"
@@ -146,6 +148,15 @@ function Header() {
                             </Nav.Link>
                         </Nav>
                     )}
+
+                    {/* Carrito de compras */}
+                    <Nav>
+                        <Nav.Link onClick={() => {}}>
+                            <MdOutlineLocalGroceryStore size={30}/>
+                        </Nav.Link>
+                    </Nav>
+
+                    
                     {/* Menú Usuario */}
                     <Nav>
                         <NavDropdown

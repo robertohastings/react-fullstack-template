@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import Axios from "axios"
-import { Table, Button, Pagination, Spinner, Image, Modal, Form, FloatingLabel, Row, Col } from "react-bootstrap"
+import { Table, Button, Pagination, Spinner, Image, Modal, Form, FloatingLabel, Row, Col, InputGroup } from "react-bootstrap"
 import { CiEdit } from "react-icons/ci"
 import { IoIosAddCircle } from "react-icons/io"
 import { TbRefresh } from "react-icons/tb"
@@ -28,25 +28,32 @@ function ListProductos() {
     const [imageSelected, setImageSelected] = useState({})
     const [categoriasData, setCategoriasData] = useState([])
     const [proveedoresData, setProveedoresData] = useState([])
+    const [existenciaData, setExistenciaData] = useState([
+        {
+            "name" : "Todos",
+            "value": 0
+        },
+        {
+            "name" : "Con existencia",
+            "value": 1
+        },
+        {
+            "name" : "Sin existencia",
+            "value": 2
+        },
+    ])
+    const [filtroCategoria, setFiltroCategoria] = useState(0)
+    const [filtroProveedor, setFiltroProveedor] = useState(0)
+    const [filtroExistencia, setFiltroExistencia] = useState(0)
 
     //Modal
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
 
-    const fetchProducts = async () => {
+    const fetchFiltroCategorias = async () => {
         setIsLoaging(true)
 
         try {
-            const response = await Axios.get("/api/inventario/getProductosListado", {
-                params: {
-                    limite: rowsPerPage,
-                    pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5
-                }
-            })
-            console.log("response:", response.data.productos)
-            setData(response.data.productos)
-            setTotalRecords(response.data.totalRegistros)
-
             const responseCategorias = await Axios.get("/api/getCategoriasListado", {
                 params: {
                     limite: 0,
@@ -55,7 +62,14 @@ function ListProductos() {
             })
             //console.log("categorias:", responseCategorias.data.categorias)
             setCategoriasData(responseCategorias.data.categorias)
+        } catch (error) {
+            console.log('ocurrió un error al cargar las categorias', error.message)
+        }
+    }
+    const fetchFiltroProveedores = async () => {
+        setIsLoaging(true)
 
+        try {
             const responseProveedores = await Axios.get("/api/compras/getProveedoresListado", {
                 params: {
                     limite: 0,
@@ -65,6 +79,30 @@ function ListProductos() {
             console.log("Proveedores:", responseProveedores.data.proveedores)
             setProveedoresData(responseProveedores.data.proveedores)
         } catch (error) {
+            console.log('ocurrió un error al cargar los proveedores', error.message)
+        }       
+    }
+
+    const fetchProducts = async () => {
+        setIsLoaging(true)
+        console.log('Categoria seleccionada', filtroCategoria)
+        console.log('Proveedor seleccionado', filtroProveedor)
+
+        try {
+            const response = await Axios.get("/api/inventario/getProductosListado", {
+                params: {
+                    limite: rowsPerPage,
+                    pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5,
+                    id_categoria: filtroCategoria,
+                    id_proveedor: filtroProveedor,
+                    existencia: filtroExistencia
+                }
+            })
+            console.log("response:", response.data.productos)
+            setData(response.data.productos)
+            setTotalRecords(response.data.totalRegistros)
+
+        } catch (error) {
             console.error("There was an error fetching the products!", error)
         } finally {
             setIsLoaging(false)
@@ -72,8 +110,24 @@ function ListProductos() {
     }
 
     useEffect(() => {
-        fetchProducts()
+        fetchFiltroCategorias()
+        fetchFiltroProveedores()
+    }, [])
+
+    useEffect(() => {
+        fetchProducts()        
     }, [currentPage])
+
+    useEffect(() => {
+        fetchProducts() 
+    }, [filtroCategoria])
+
+    useEffect(() => {
+        fetchProducts() 
+    }, [filtroProveedor])
+    useEffect(() => {
+        fetchProducts() 
+    }, [filtroExistencia])
 
     // Change page
     const paginate = pageNumber => setCurrentPage(pageNumber)
@@ -227,7 +281,7 @@ function ListProductos() {
         <Page title="ABC Categorias">
             <h3>ABC Productos</h3>
             <div className="gap-2">
-                <div>
+                <div className="d-flex">
                     <Button className="my-3" size="sm" variant="outline-primary" onClick={Agregar_handled}>
                         <IoIosAddCircle />
                         {` Agregar`}
@@ -237,12 +291,38 @@ function ListProductos() {
                         {` Refrescar`}
                     </Button>
 
-                    <Form.Select aria-label="Floating label select example" id="selectId_categoria" name="selectId_categoria" onChange={() => {}} style={{ width: "200px" }}>
-                        <option value={0}>Todas Categorias</option>
-                        {categoriasData.map(categoria => {
-                            return <option value={categoria.id_categoria}>{categoria.nombre}</option>
-                        })}
-                    </Form.Select>
+                    {/* Filtro categorias */}
+                    <InputGroup className="mx-2 my-3" style={{width: "200px"}}>
+                        <InputGroup.Text id="f-1">Categorias:</InputGroup.Text>
+                        <Form.Select aria-label="Floating label select example" id="selectId_categoria" name="selectId_categoria" onChange={(e) => {setFiltroCategoria(e.target.value)}}>
+                            <option value={0}>Todas</option>
+                            {categoriasData.map(categoria => {
+                                return <option value={categoria.id_categoria}>{categoria.nombre}</option>
+                            })}
+                        </Form.Select>
+                    </InputGroup>
+
+                    {/* Filtro proveedores */}
+                    <InputGroup className="mx-2 my-3" style={{width: "220px"}}>
+                        <InputGroup.Text id="f-1">Proveedores:</InputGroup.Text>
+                        <Form.Select aria-label="Floating label select example" id="selectId_proveedor" name="selectId_proveedor" onChange={(e) => {setFiltroProveedor(e.target.value)}}>
+                            <option value={0}>Todos</option>
+                            {proveedoresData.map(proveedor => {
+                                return <option value={proveedor.id_proveedor}>{proveedor.nombre}</option>
+                            })}
+                        </Form.Select>
+                    </InputGroup>
+
+                    {/* Filtro Existencia */}
+                    <InputGroup className="mx-2 my-3" style={{width: "260px"}}>
+                        <InputGroup.Text id="f-1">Existencia:</InputGroup.Text>
+                        <Form.Select aria-label="Floating label select example" id="selectExistencia" name="selectExistencia" onChange={(e) => {setFiltroExistencia(e.target.value)}}>
+                            {existenciaData.map(existencia => {
+                                return <option value={existencia.value}>{existencia.name}</option>
+                            })}
+                        </Form.Select>
+                    </InputGroup>
+
                 </div>
                 <div>
                     <Pagination>
