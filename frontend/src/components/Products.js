@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react"
 import HtmlReactParser from "html-react-parser"
 import StateContext from "../StateContext"
 import { Col, Form, Row, Card, ListGroup, Button, Container } from "react-bootstrap"
+import DispatchContext from "../DispatchContext"
 
 import Page from "./Page"
 import Axios from "axios"
@@ -9,6 +10,7 @@ import Axios from "axios"
 import SpinnerDot from "./Spinner/SpinnerDot"
 
 function Products() {
+    const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
     console.log("appState:", appState.landingPage.productos)
     //const { productos } = appState.landinPage.productos
@@ -37,7 +39,7 @@ function Products() {
                     })
                         .then(response => {
                             if ((response.status = 200)) {
-                                //console.log('productos encontrados:',response)
+                                console.log("productos encontrados:", response.data.productos)
                                 setProductos(response.data.productos)
                             } else {
                                 console.log("There was an error fetching data", response.error.statusText)
@@ -57,6 +59,21 @@ function Products() {
             fetchData()
         }
     }, [categoria])
+
+    const agregarCarrito_handled = producto => {
+        const data = {
+            id_producto: producto.id_producto,
+            nombre: producto.nombre,
+            cantidad: 1,
+            precio: producto.precio_promocion > 0 ? producto.precio_promocion : producto.precio,
+            imagen: producto.image1
+        }
+        console.log("producto", data)
+        appDispatch({
+            type: "agregarCarrito",
+            data: data
+        })
+    }
 
     return (
         <Page title="Productos">
@@ -123,7 +140,7 @@ function Products() {
                                                                 </Button>
                                                             </Col>
                                                             <Col>
-                                                                <Button variant="outline-warning" size="sm">
+                                                                <Button variant="outline-warning" size="sm" onClick={() => agregarCarrito_handled(producto)}>
                                                                     Agregar al Carrito
                                                                 </Button>
                                                             </Col>

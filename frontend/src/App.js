@@ -46,7 +46,8 @@ function App() {
         isChatOpen: false,
         unreadReadChatCount: 0,
         landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
-        notifications: false
+        notifications: false,
+        carrito: JSON.parse(localStorage.getItem("complexappCarrito"))
     }
 
     function ourReducer(draft, action) {
@@ -65,9 +66,34 @@ function App() {
                 localStorage.removeItem("complexappAvatar")
                 break
             case "landingPage":
-                //console.log('action data landingPage:', action.data)
+                console.log("action data landingPage:", action.data)
                 //draft.landingPage = action.data
                 localStorage.setItem("complexappLanding", JSON.stringify(action.data))
+                break
+            case "agregarCarrito":
+                console.log("action data", action.data)
+                const carrito = [JSON.parse(localStorage.getItem("complexappCarrito"))]
+                console.log("carrito", carrito)
+                if (carrito === null) {
+                    //registro nuevo
+                    localStorage.setItem("complexappCarrito", JSON.stringify(action.data))
+                } else {
+                    if (carrito.some(productoState => productoState.id_producto === action.data.id_producto)) {
+                        // iterar sobre el arreglo e indentificar el
+                        // elemento duplicado
+                        const carritoActualizado = carrito.map(productoState => {
+                            if (productoState.id_producto === action.data.id_producto) {
+                                //rescribir la cantidad
+                                productoState.cantidad = productoState.cantidad + action.data.cantidad
+                            }
+                            return productoState
+                        })
+                        localStorage.setItem("complexappCarrito", JSON.stringify(carritoActualizado))
+                    } else {
+                        //registro nuevo
+                        localStorage.setItem("complexappCarrito", JSON.stringify([...carrito, action.data]))
+                    }
+                }
                 break
             case "landingPageSettings":
                 //console.log('action data landingPage:', action.data)
