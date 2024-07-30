@@ -136,12 +136,14 @@ npm config set https-proxy http://10.100.0.100:8080
 npm config rm proxy
 npm config rm https-proxy
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getProductosListing`(
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getProductosListing`(
 	IN limite INT,
-    IN pagina INT    
+    IN pagina INT,
+    IN prm_id_categoria INT,
+    IN prm_id_proveedor INT,
+    IN prm_existencia INT
 )
 BEGIN
-
     SELECT COUNT(*) AS totalRegistros
     FROM productos;
     
@@ -157,10 +159,18 @@ BEGIN
                 IFNULL(P.image3, 'https://fiestatijuana.mx/image-not-available.png') AS image3,
                 DATE_FORMAT(IFNULL(P.fecha_actualizacion, now()), '%m/%d/%Y %H:%i') AS fecha_actualizacion,
                 CASE WHEN P.activo = 1 THEN 'Si' ELSE 'NO' END AS activo,
-                IFNULL(P.sku, '') AS sku
+                IFNULL(P.sku, '') AS sku, P.existencia
 		FROM productos P
         INNER JOIN proveedores PR ON PR.id_empresa = P.id_empresa AND PR.id_proveedor = P.id_proveedor
         INNER JOIN categorias C ON C.id_empresa = P.id_empresa AND C.id_categoria = P.id_categoria
+        WHERE P.id_categoria = CASE WHEN prm_id_categoria = 0 THEN P.id_categoria ELSE prm_id_categoria END AND
+			  P.id_proveedor = CASE WHEN prm_id_proveedor = 0 THEN P.id_proveedor ELSE prm_id_proveedor END AND
+              1 = CASE 
+					WHEN prm_existencia = 0 THEN 1
+                    WHEN prm_existencia = 1 AND P.existencia > 0 THEN 1
+                    WHEN prm_existencia = 2 AND P.existencia = 0 THEN 1
+                    ELSE 0
+				 END			
         ORDER BY P.id_empresa, P.id_proveedor
 		LIMIT limite OFFSET pagina;    
     
@@ -176,17 +186,18 @@ BEGIN
                 IFNULL(P.image3, 'https://fiestatijuana.mx/image-not-available.png') AS image3,
                 DATE_FORMAT(IFNULL(P.fecha_actualizacion, now()), '%m/%d/%Y %H:%i') AS fecha_actualizacion,
                 CASE WHEN P.activo = 1 THEN 'Si' ELSE 'NO' END AS activo,
-                IFNULL(P.sku, '') AS sku
+                IFNULL(P.sku, '') AS sku, P.existencia
 		FROM productos P
         INNER JOIN proveedores PR ON PR.id_empresa = P.id_empresa AND PR.id_proveedor = P.id_proveedor
         INNER JOIN categorias C ON C.id_empresa = P.id_empresa AND C.id_categoria = P.id_categoria
+        WHERE P.id_categoria = CASE WHEN prm_id_categoria = 0 THEN P.id_categoria ELSE prm_id_categoria END AND
+			  P.id_proveedor = CASE WHEN prm_id_proveedor = 0 THEN P.id_proveedor ELSE prm_id_proveedor END        
         ORDER BY P.id_empresa, P.id_proveedor;
     
     END IF;
-
 END
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `postProducto`(
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `postProducto`(
 	IN prm_id_empresa INT,
     IN prm_id_producto INT,
 	IN prm_nombre varchar(200) ,
@@ -199,12 +210,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `postProducto`(
 	IN prm_image1 varchar(255),
 	IN prm_image2 varchar(255),
 	IN prm_image3 varchar(255),
-	IN prm_existencia int(11),
-	IN prm_activo bit(1),
-	IN prm_sku varchar(20)    
+	IN prm_existencia INT,
+	IN prm_activo TINYINT(4),
+	IN prm_sku varchar(20) 
 )
 BEGIN
-
 	IF @prm_id_producto = 0 THEN
 		
         INSERT INTO 
@@ -223,12 +233,11 @@ BEGIN
                 costo = prm_costo, 
                 image1 = prm_image1, image2 = prm_image2, image3 = prm_image3,
                 existencia = prm_existencia, 
-                fecha_creacion = now(), feha_actualizacion = now(),
+                fecha_creacion = now(), fecha_actualizacion = now(),
                 activo = prm_activo, sku = prm_sku            
 		WHERE id_empresa = prm_id_empresa AND id_producto = prm_id_producto;    
     
     END IF;
-
 END
 
 agregar en getProductosListing el campo: P.existencia
