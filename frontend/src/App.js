@@ -47,7 +47,7 @@ function App() {
         unreadReadChatCount: 0,
         landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
         notifications: false,
-        carrito: JSON.parse(localStorage.getItem("complexappCarrito"))
+        carrito: localStorage.getItem("complexappCarrito") !== null ? [JSON.parse(localStorage.getItem("complexappCarrito"))] : []
     }
 
     function ourReducer(draft, action) {
@@ -91,6 +91,7 @@ function App() {
                         localStorage.setItem("complexappCarrito", JSON.stringify(carritoActualizado))
                     } else {
                         //registro nuevo
+                        console.log('carrito:', carrito)
                         localStorage.setItem("complexappCarrito", JSON.stringify([...carrito, action.data]))
                     }
                 }
@@ -121,6 +122,8 @@ function App() {
     const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
     useEffect(() => {
+        localStorage.setItem('complexappCarrito', [])
+        
         try {
             // await axios
             //     .get("/api/landingPage")
