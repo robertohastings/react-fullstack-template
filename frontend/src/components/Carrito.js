@@ -16,7 +16,7 @@ function Carrito() {
 
     return (
         <Page title="Carrito">
-            <div>
+            <div className="carrito">
                 <h4 className="pb-4">Carrito de Compras</h4>
                 {/* {carrito.map(producto => {
                     return <p>{producto.id_producto}</p>
@@ -84,14 +84,7 @@ function Carrito() {
                               </div>
                           ))}
                 </div>
-                <aside
-                    style={{
-                        padding: "3rem",
-                        position: "sticky",
-                        borderRadius: "1rem",
-                        top: "3rem"
-                    }}
-                >
+                <aside className="resumen">
                     <h3>Resumen del Pedido</h3>
                 </aside>
             </div>

@@ -100,3 +100,17 @@ main {
         transform: translateX(-50%) scale(1.2);
     }
 }
+
+.resumen {
+    background-color: #f9fafb;
+    padding: 3rem;
+    border-radius: 1rem;
+    position: sticky;
+    top: 3rem;
+}
+.carrito {
+    display: grid;
+    /* flex-start toma solo lo que se requiere */
+    align-items: flex-start;
+    gap: 5rem;
+}
