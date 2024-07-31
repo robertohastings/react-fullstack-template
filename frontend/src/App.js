@@ -24,10 +24,12 @@ import LoggedIn from "./components/LoggedIn"
 import ListCategorias from "./components/Inventario/Categorias/ListCategorias"
 import ListProveedores from "./components/Compras/Proveedores/ListProveedores"
 import ListProductos from "./components/Inventario/Productos/ListProductos"
+import Carrito from "./components/Carrito"
 
 function App() {
     const [data, setData] = useState({})
     const [isLoading, setIsLoading] = useState(true)
+    const [carrito, setCarrito] = useState([])
 
     const initialState = {
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
@@ -47,7 +49,7 @@ function App() {
         unreadReadChatCount: 0,
         landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
         notifications: false,
-        carrito: localStorage.getItem("complexappCarrito") !== null ? [JSON.parse(localStorage.getItem("complexappCarrito"))] : []
+        carrito: JSON.parse(localStorage.getItem("carrito"))
     }
 
     function ourReducer(draft, action) {
@@ -71,30 +73,49 @@ function App() {
                 localStorage.setItem("complexappLanding", JSON.stringify(action.data))
                 break
             case "agregarCarrito":
-                console.log("action data", action.data)
-                const carrito = [JSON.parse(localStorage.getItem("complexappCarrito"))]
-                console.log("carrito", carrito)
-                if (carrito === null) {
-                    //registro nuevo
-                    localStorage.setItem("complexappCarrito", JSON.stringify(action.data))
+                //console.log("action data", action.data)
+                //console.log('agregando....', guitarra)
+                //se va a interar sobre carrito mediante some
+
+                //Se activa la animación del flying
+                //setIsFlying(true);
+                //setTimeout(() => setIsFlying(false), 1000);
+
+                if (carrito.some(productoState => productoState.id_producto === action.data.id_producto)) {
+                    // iterar sobre el arreglo e indentificar el
+                    // elemento duplicado
+                    const carritoActualizado = carrito.map(productoState => {
+                        if (productoState.id_producto === action.data.id_producto) {
+                            //rescribir la cantidad
+                            console.log("cantidad actual:", productoState.cantidad, " cantidad a agregar:", action.data.cantidad)
+                            productoState.cantidad = action.data.cantidad
+                        }
+                        return productoState
+                    })
+                    setCarrito(carritoActualizado)
                 } else {
-                    if (carrito.some(productoState => productoState.id_producto === action.data.id_producto)) {
-                        // iterar sobre el arreglo e indentificar el
-                        // elemento duplicado
-                        const carritoActualizado = carrito.map(productoState => {
-                            if (productoState.id_producto === action.data.id_producto) {
-                                //rescribir la cantidad
-                                productoState.cantidad = productoState.cantidad + action.data.cantidad
-                            }
-                            return productoState
-                        })
-                        localStorage.setItem("complexappCarrito", JSON.stringify(carritoActualizado))
-                    } else {
-                        //registro nuevo
-                        console.log('carrito:', carrito)
-                        localStorage.setItem("complexappCarrito", JSON.stringify([...carrito, action.data]))
-                    }
+                    //registro nuevo
+                    setCarrito([...carrito, action.data])
                 }
+                break
+            case "actualizarCantidad":
+                const carritoActualizado = carrito.map(productoState => {
+                    if (productoState.id_producto === action.data.id_producto) {
+                        productoState.cantidad = action.data.cantidad
+                    }
+                    return productoState
+                })
+                setCarrito(carritoActualizado)
+                break
+            case "eliminarProducto":
+                //setIsFlying(true);
+                //setTimeout(() => setIsFlying(false), 1500);
+                const carritoEliminar = carrito.filter(productoState => productoState.id_producto !== action.data.id_producto)
+                setCarrito(carritoEliminar)
+                break
+            case "vaciarCarrito":
+                setCarrito([])
+                localStorage.removeItem("carrito")
                 break
             case "landingPageSettings":
                 //console.log('action data landingPage:', action.data)
@@ -122,8 +143,11 @@ function App() {
     const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
     useEffect(() => {
-        localStorage.setItem('complexappCarrito', [])
-        
+        //localStorage.setItem("complexappCarrito", JSON.stringify([]))
+        localStorage.setItem("complexappLanding", JSON.stringify([]))
+        const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
+        setCarrito(carritoLS)
+
         try {
             // await axios
             //     .get("/api/landingPage")
@@ -148,7 +172,8 @@ function App() {
                     console.log("dataLanding:", response.data)
                     setData(response.data)
                     setIsLoading(false)
-                    dispatch({ type: "landingPage", data: response.data.landingPage })
+                    //dispatch({ type: "landingPage", data: response.data.landingPage })
+                    localStorage.setItem("complexappLanding", JSON.stringify(response.data.landingPage))
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)
@@ -161,6 +186,12 @@ function App() {
             setIsLoading(false)
         }
     }, [])
+
+    // UseEffect para grabar en el LS
+    useEffect(() => {
+        if (carrito?.length === 0) return
+        localStorage.setItem("carrito", JSON.stringify(carrito))
+    }, [carrito])
 
     if (isLoading) {
         //console.log("Cargando info...")
@@ -195,6 +226,7 @@ function App() {
                                 <Route path="/Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
                                 <Route path="/Inventario/Productos/ListProductos" element={<ListProductos />} />
                                 <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
+                                <Route path="/Carrito" element={<Carrito />} />
                             </Routes>
                         </main>
 

@@ -12,6 +12,7 @@ import { MdLocalGroceryStore } from "react-icons/md"
 
 import DispatchContext from "../DispatchContext"
 import StateContext from "../StateContext"
+import Carrito from "./Carrito"
 
 function Header() {
     const appDispatch = useContext(DispatchContext)
@@ -74,12 +75,14 @@ function Header() {
                     {/* Menú Ventas */}
                     {appState.loggedIn && (
                         <>
+                            {/* Ventas */}
                             <Nav>
                                 <NavDropdown title="Ventas" id="nav-ventas" drop="start">
                                     <NavDropdown.Item>Cotizar</NavDropdown.Item>
                                     <NavDropdown.Item>Colocar Remisión</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
+                            {/* Compras */}
                             <Nav>
                                 <NavDropdown title="Compras" id="nav-compras" drop="start">
                                     <NavDropdown.Item as={Link} to={"Compras/Proveedores/ListProveedores"}>
@@ -89,6 +92,7 @@ function Header() {
                                     <NavDropdown.Item>Punto de Reorden</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
+                            {/* Cartera */}
                             <Nav>
                                 <NavDropdown title="Cartera" id="nav-cartera" drop="start">
                                     <NavDropdown.Item>ABC Clientes</NavDropdown.Item>
@@ -97,6 +101,7 @@ function Header() {
                                     <NavDropdown.Item>Notas de Crédito</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
+                            {/* Inventario */}
                             <Nav>
                                 <NavDropdown title="Inventario" id="nav-inventario" drop="start">
                                     <NavDropdown.Item as={Link} to={"Inventario/Productos/ListProductos"}>
@@ -111,6 +116,7 @@ function Header() {
                                     <NavDropdown.Item>Entrega de mercancía (Remisión)</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
+                            {/* Caja */}
                             <Nav>
                                 <NavDropdown title="Caja" id="nav-caja" drop="start">
                                     <NavDropdown.Item>Recepción de Pago</NavDropdown.Item>
@@ -118,12 +124,14 @@ function Header() {
                                     <NavDropdown.Item>Generación de Factura</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
+                            {/* Facturación */}
                             <Nav>
                                 <NavDropdown title="Facturación" id="nav-facturacion" drop="start">
                                     <NavDropdown.Item>Consulta de Factura</NavDropdown.Item>
                                     <NavDropdown.Item>Consulta de Comprobantes</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
+                            {/* Catálogos */}
                             <Nav>
                                 <NavDropdown title="Catálogos" id="nav-catalogos" drop="start">
                                     <NavDropdown.Item>Usuarios</NavDropdown.Item>
@@ -131,6 +139,7 @@ function Header() {
                                     <NavDropdown.Item>Permisos</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
+                            {/* Mesa de Ayuda */}
                             <Nav>
                                 <NavDropdown title="Mesa de Ayuda" id="nav-mesa-de-ayuda" drop="start">
                                     <NavDropdown.Item>ABC de áreas</NavDropdown.Item>
@@ -151,12 +160,11 @@ function Header() {
 
                     {/* Carrito de compras */}
                     <Nav>
-                        <Nav.Link onClick={() => {}}>
-                            <MdOutlineLocalGroceryStore size={30}/>
+                        <Nav.Link as={Link} to="Carrito">
+                            <MdOutlineLocalGroceryStore size={30} />
                         </Nav.Link>
                     </Nav>
 
-                    
                     {/* Menú Usuario */}
                     <Nav>
                         <NavDropdown

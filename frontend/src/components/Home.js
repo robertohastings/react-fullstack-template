@@ -14,6 +14,7 @@ import { Link } from "react-router-dom"
 function Home() {
     const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
+    console.log("appstate:", appState)
 
     const handledClick = () => {
         //alert("click")
