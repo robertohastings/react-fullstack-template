@@ -6,28 +6,29 @@ import { Card, ListGroup, Row, Col } from "react-bootstrap"
 
 function Carrito() {
     const appState = useContext(StateContext)
-    const [carrito, setCarrito] = useState({})
+    const [carrito, setCarrito] = useState(JSON.parse(localStorage.getItem("carrito")) ?? {})
 
-    useEffect(() => {
-        setCarrito(appState.carrito)
-    }, [appState.carrito])
+    // useEffect(() => {
+    //     console.log("carrito appstate", appState.carrito)
 
-    console.log("Carrito", appState)
+    //     setCarrito(appState.carrito)
+    // }, [])
 
     return (
         <Page title="Carrito">
-            <div className="carrito">
-                <h4 className="pb-4">Carrito de Compras</h4>
+            <h4 className="pb-4">Carrito de Compras</h4>
+            <div className="d-flex">
                 {/* {carrito.map(producto => {
                     return <p>{producto.id_producto}</p>
                 })} */}
-                <div className="d-flex ali">
+
+                <div className="w-75">
                     {carrito?.length === 0
                         ? "No hay productos en el carrito"
                         : carrito?.map(producto => (
-                              <div className="row" key={producto.id_producto}>
+                              <div className="row pb-3" key={producto.id_producto}>
                                   <div className="col">
-                                      <Card>
+                                      <Card style={{ width: "50%" }}>
                                           <div className="d-flex justify-content-center">
                                               <Card.Img variant="top" src={producto.imagen} style={{ width: "100%", height: "150px" }} />
                                           </div>
@@ -84,9 +85,10 @@ function Carrito() {
                               </div>
                           ))}
                 </div>
-                <aside className="resumen">
+
+                <div className="ticky-top">
                     <h3>Resumen del Pedido</h3>
-                </aside>
+                </div>
             </div>
         </Page>
     )
