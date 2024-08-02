@@ -49,7 +49,7 @@ function App() {
         unreadReadChatCount: 0,
         landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
         notifications: false,
-        carrito: carrito
+        carrito: JSON.parse(localStorage.getItem("carrito")) ?? []
     }
 
     function ourReducer(draft, action) {
@@ -84,6 +84,8 @@ function App() {
                 //setIsFlying(true);
                 //setTimeout(() => setIsFlying(false), 1000);
 
+                setCarrito(JSON.parse(localStorage.getItem("carrito")) ?? [])
+
                 if (carrito.some(productoState => productoState.id_producto === action.data.id_producto)) {
                     // iterar sobre el arreglo e indentificar el
                     // elemento duplicado
@@ -100,6 +102,7 @@ function App() {
                     //registro nuevo
                     setCarrito([...carrito, action.data])
                 }
+                localStorage.setItem("carrito", JSON.stringify(carrito))
                 draft.carrito = carrito
                 break
             case "actualizarCantidad":
@@ -114,8 +117,11 @@ function App() {
             case "eliminarProducto":
                 //setIsFlying(true);
                 //setTimeout(() => setIsFlying(false), 1500);
+                console.log("Action value:", action.value)
+                setCarrito(JSON.parse(localStorage.getItem("carrito")) ?? [])
                 const carritoEliminar = carrito.filter(productoState => productoState.id_producto !== action.value)
                 setCarrito(carritoEliminar)
+                localStorage.setItem("carrito", JSON.stringify(carrito))
                 draft.carrito = carrito
                 break
             case "vaciarCarrito":
@@ -194,10 +200,10 @@ function App() {
     }, [])
 
     // UseEffect para grabar en el LS
-    useEffect(() => {
-        if (carrito?.length === 0) return
-        localStorage.setItem("carrito", JSON.stringify(carrito))
-    }, [carrito])
+    // useEffect(() => {
+    //     if (carrito?.length === 0) return
+    //     localStorage.setItem("carrito", JSON.stringify(carrito))
+    // }, [carrito])
 
     if (isLoading) {
         //console.log("Cargando info...")

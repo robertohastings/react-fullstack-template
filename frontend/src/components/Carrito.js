@@ -12,13 +12,13 @@ function Carrito() {
 
     useEffect(() => {
         function checkCarrito() {
-            setCarrito(appState.carrito)
+            setCarrito(JSON.parse(localStorage.getItem("carrito")))
         }
         checkCarrito()
     }, [appState.carrito])
 
     const eliminarProducto_handled = id_producto => {
-        //console.log("id_producto", id_producto)
+        console.log("Producto a eliminar:", id_producto)
         appDispatch({ type: "alertMessage", value: "Producto ha sido eliminado", typeAlert: "success" })
         appDispatch({ type: "eliminarProducto", value: id_producto })
         //setCarrito(JSON.parse(localStorage.getItem("carrito")) ?? {})

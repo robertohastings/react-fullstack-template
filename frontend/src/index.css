@@ -44,6 +44,34 @@ main {
     -webkit-animation-fill-mode: forwards;
     animation-fill-mode: forwards;
 }
+.floating-alert-bottom {
+    display: none;
+    position: absolute;
+    /* z-index: 999; */
+    bottom: 5px;
+    left: 50%;
+    /* transform: translateX(-50%); */
+    -moz-animation: floatingAlert ease-in 5s forwards;
+    -webkit-animation: floatingAlert ease-in 5s forwards;
+    -o-animation: floatingAlert ease-in 5s forwards;
+    animation: floatingAlert ease-in 5s forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+.myAlert-bottom {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    -moz-animation: floatingAlert ease-in 5s forwards;
+    -webkit-animation: floatingAlert ease-in 5s forwards;
+    -o-animation: floatingAlert ease-in 5s forwards;
+    animation: floatingAlert ease-in 5s forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
 
 .floating-alerts .floating-alert:last-of-type {
     display: block;
@@ -100,5 +128,3 @@ main {
         transform: translateX(-50%) scale(1.2);
     }
 }
-
-

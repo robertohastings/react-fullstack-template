@@ -17,14 +17,15 @@ import Carrito from "./Carrito"
 function Header(props) {
     const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
-    const [carrito, setCarrito] = useState(appState.carrito ?? {})
+    const [carrito, setCarrito] = useState([])
+    //const [carrito, setCarrito] = useState(appState.carrito ?? [])
 
     //console.log("carrito items:", JSON.parse(localStorage.getItem("carrito")).length)
 
-    // useEffect(() => {
-    //     console.log("shoppingCart", props.shoppingCart)
-    //     setCarrito(props.shoppingCart)
-    // }, [props.shoppingCart])
+    useEffect(() => {
+        console.log("shoppingCart", props.shoppingCart)
+        setCarrito(JSON.parse(localStorage.getItem("carrito")))
+    }, [props.shoppingCart])
 
     // useEffect(() => {
     //     setCarrito(appState.carrito)
