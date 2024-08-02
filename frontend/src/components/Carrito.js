@@ -1,18 +1,28 @@
 import React, { useContext, useEffect, useState } from "react"
 import Page from "./Page"
 import StateContext from "../StateContext"
+import DispatchContext from "../DispatchContext"
 import { TiDeleteOutline } from "react-icons/ti"
 import { Card, ListGroup, Row, Col } from "react-bootstrap"
 
 function Carrito() {
     const appState = useContext(StateContext)
+    const appDispatch = useContext(DispatchContext)
     const [carrito, setCarrito] = useState(JSON.parse(localStorage.getItem("carrito")) ?? {})
 
-    // useEffect(() => {
-    //     console.log("carrito appstate", appState.carrito)
+    useEffect(() => {
+        function checkCarrito() {
+            setCarrito(appState.carrito)
+        }
+        checkCarrito()
+    }, [appState.carrito])
 
-    //     setCarrito(appState.carrito)
-    // }, [])
+    const eliminarProducto_handled = id_producto => {
+        //console.log("id_producto", id_producto)
+        appDispatch({ type: "alertMessage", value: "Producto ha sido eliminado", typeAlert: "success" })
+        appDispatch({ type: "eliminarProducto", value: id_producto })
+        //setCarrito(JSON.parse(localStorage.getItem("carrito")) ?? {})
+    }
 
     return (
         <Page title="Carrito">
@@ -76,7 +86,7 @@ function Carrito() {
                                               </Row>
                                               <Row>
                                                   <Col className="d-flex justify-content-center">
-                                                      <TiDeleteOutline size={25} onClick={() => {}} title="Eliminar este producto del carrito" />
+                                                      <TiDeleteOutline size={25} onClick={() => eliminarProducto_handled(producto.id_producto)} title="Eliminar este producto del carrito" style={{ cursor: "pointer" }} />
                                                   </Col>
                                               </Row>
                                           </Card.Footer>

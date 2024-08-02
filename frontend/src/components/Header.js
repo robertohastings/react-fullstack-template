@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
-import { Navbar, Nav, NavDropdown, Dropdown, Image } from "react-bootstrap"
+import { Navbar, Nav, NavDropdown, Dropdown, Image, Badge } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { RiUser3Line } from "react-icons/ri"
 import { CiLogout } from "react-icons/ci"
@@ -14,14 +14,27 @@ import DispatchContext from "../DispatchContext"
 import StateContext from "../StateContext"
 import Carrito from "./Carrito"
 
-function Header() {
+function Header(props) {
     const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
+    const [carrito, setCarrito] = useState(appState.carrito ?? {})
+
+    //console.log("carrito items:", JSON.parse(localStorage.getItem("carrito")).length)
+
+    // useEffect(() => {
+    //     console.log("shoppingCart", props.shoppingCart)
+    //     setCarrito(props.shoppingCart)
+    // }, [props.shoppingCart])
+
+    // useEffect(() => {
+    //     setCarrito(appState.carrito)
+    // }, [appState.carrito])
 
     //TODO: cambiar sessionTitle por el nombre del usuario cuando se autentique
     //y cambiar el icono por la imagen del usurio redondeada como
     //const [sessionTitle, setsessionTitle] = useState(appState.user.username)
-    console.log(appState.loggedIn)
+    //console.log(appState.loggedIn)
+    //console.log("carrito items:", appState.carrito)
     //const sessionTitle = appState.user.username
     // const navDropdownTitle = (
     //     <>
@@ -161,7 +174,13 @@ function Header() {
                     {/* Carrito de compras */}
                     <Nav>
                         <Nav.Link as={Link} to="Carrito">
-                            <MdOutlineLocalGroceryStore size={30} />
+                            {carrito.length === 0 && <MdOutlineLocalGroceryStore size={30} />}
+                            {carrito.length > 0 && (
+                                <>
+                                    <MdLocalGroceryStore size={30} />
+                                    <span>{carrito.length}</span>
+                                </>
+                            )}
                         </Nav.Link>
                     </Nav>
 

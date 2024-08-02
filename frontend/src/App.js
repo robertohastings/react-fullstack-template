@@ -49,7 +49,7 @@ function App() {
         unreadReadChatCount: 0,
         landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
         notifications: false,
-        carrito: JSON.parse(localStorage.getItem("carrito"))
+        carrito: carrito
     }
 
     function ourReducer(draft, action) {
@@ -71,6 +71,9 @@ function App() {
                 console.log("action data landingPage:", action.data)
                 //draft.landingPage = action.data
                 localStorage.setItem("complexappLanding", JSON.stringify(action.data))
+                break
+            case "setCarrito":
+                draft.carrito = JSON.parse(localStorage.getItem("carrito")) ?? []
                 break
             case "agregarCarrito":
                 //console.log("action data", action.data)
@@ -97,6 +100,7 @@ function App() {
                     //registro nuevo
                     setCarrito([...carrito, action.data])
                 }
+                draft.carrito = carrito
                 break
             case "actualizarCantidad":
                 const carritoActualizado = carrito.map(productoState => {
@@ -110,8 +114,9 @@ function App() {
             case "eliminarProducto":
                 //setIsFlying(true);
                 //setTimeout(() => setIsFlying(false), 1500);
-                const carritoEliminar = carrito.filter(productoState => productoState.id_producto !== action.data.id_producto)
+                const carritoEliminar = carrito.filter(productoState => productoState.id_producto !== action.value)
                 setCarrito(carritoEliminar)
+                draft.carrito = carrito
                 break
             case "vaciarCarrito":
                 setCarrito([])
@@ -145,8 +150,9 @@ function App() {
     useEffect(() => {
         //localStorage.setItem("complexappCarrito", JSON.stringify([]))
         localStorage.setItem("complexappLanding", JSON.stringify([]))
-        const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
-        setCarrito(carritoLS)
+        //const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
+        //setCarrito(carritoLS)
+        dispatch({ type: "setCarrito" })
 
         try {
             // await axios
@@ -211,7 +217,7 @@ function App() {
                         <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
                         <Notifications show={state.notifications} />
                         <LoggedIn show={state.showLoggedIn} />
-                        <Header />
+                        <Header shoppingCart={state.carrito} />
 
                         <main>
                             <Routes>
