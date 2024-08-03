@@ -4,8 +4,11 @@ import StateContext from "../StateContext"
 import DispatchContext from "../DispatchContext"
 import { TiDeleteOutline } from "react-icons/ti"
 import { Card, ListGroup, Row, Col } from "react-bootstrap"
+import { CartContext } from "../context/ShoppingCartContext"
 
 function Carrito() {
+    const [cart, setCart] = useContext(CartContext)
+
     const appState = useContext(StateContext)
     const appDispatch = useContext(DispatchContext)
     const [carrito, setCarrito] = useState(JSON.parse(localStorage.getItem("carrito")) ?? {})
@@ -18,10 +21,24 @@ function Carrito() {
     }, [appState.carrito])
 
     const eliminarProducto_handled = id_producto => {
-        console.log("Producto a eliminar:", id_producto)
-        appDispatch({ type: "alertMessage", value: "Producto ha sido eliminado", typeAlert: "success" })
-        appDispatch({ type: "eliminarProducto", value: id_producto })
+        // console.log("Producto a eliminar:", id_producto)
+        // appDispatch({ type: "alertMessage", value: "Producto ha sido eliminado", typeAlert: "success" })
+        // appDispatch({ type: "eliminarProducto", value: id_producto })
         //setCarrito(JSON.parse(localStorage.getItem("carrito")) ?? {})
+
+        setCart(currItems => {
+            if (currItems.find(item => item.id_producto === id_producto)?.cantidad === 1) {
+                return currItems.filter(item => item.id_producto !== id_producto)
+            } else {
+                return currItems.map(item => {
+                    if (item.id_producto === id_producto) {
+                        return { ...item, cantidad: item.cantidad - 1 }
+                    } else {
+                        return item
+                    }
+                })
+            }
+        })
     }
 
     return (
@@ -33,9 +50,9 @@ function Carrito() {
                 })} */}
 
                 <div className="w-75">
-                    {carrito?.length === 0
+                    {cart?.length === 0
                         ? "No hay productos en el carrito"
-                        : carrito?.map(producto => (
+                        : cart?.map(producto => (
                               <div className="row pb-3" key={producto.id_producto}>
                                   <div className="col">
                                       <Card style={{ width: "50%" }}>

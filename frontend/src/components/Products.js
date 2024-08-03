@@ -8,8 +8,11 @@ import Page from "./Page"
 import Axios from "axios"
 
 import SpinnerDot from "./Spinner/SpinnerDot"
+import { CartContext } from "../context/ShoppingCartContext"
 
 function Products() {
+    const [cart, setCart] = useContext(CartContext)
+
     const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
     console.log("appState:", appState.landingPage.productos)
@@ -68,12 +71,28 @@ function Products() {
             precio: producto.precio_promocion > 0 ? producto.precio_promocion : producto.precio,
             imagen: producto.image1
         }
-        console.log("producto", data)
-        appDispatch({
-            type: "agregarCarrito",
-            data: data
+        // console.log("producto", data)
+        // appDispatch({
+        //     type: "agregarCarrito",
+        //     data: data
+        // })
+        // appDispatch({ type: "alertMessage", value: "Producto agregado al carrito", typeAlert: "success" })
+
+        setCart(currItems => {
+            const isItemFound = currItems.find(item => item.id_producto === producto.id_producto)
+
+            if (isItemFound) {
+                return currItems.map(item => {
+                    if (item.id_producto === producto.id_producto) {
+                        return { ...item, cantidad: item.cantidad + 1 }
+                    } else {
+                        return item
+                    }
+                })
+            } else {
+                return [...currItems, data]
+            }
         })
-        appDispatch({ type: "alertMessage", value: "Producto agregado al carrito", typeAlert: "success" })
     }
 
     return (

@@ -25,6 +25,7 @@ import ListCategorias from "./components/Inventario/Categorias/ListCategorias"
 import ListProveedores from "./components/Compras/Proveedores/ListProveedores"
 import ListProductos from "./components/Inventario/Productos/ListProductos"
 import Carrito from "./components/Carrito"
+import ShoppingCartProvider from "./context/ShoppingCartContext"
 
 function App() {
     const [data, setData] = useState({})
@@ -219,30 +220,32 @@ function App() {
             <StateContext.Provider value={state}>
                 <DispatchContext.Provider value={dispatch}>
                     <BrowserRouter>
-                        {/* <FlashMessage messages={state.flashMessages} /> */}
-                        <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
-                        <Notifications show={state.notifications} />
-                        <LoggedIn show={state.showLoggedIn} />
-                        <Header shoppingCart={state.carrito} />
+                        <ShoppingCartProvider>
+                            {/* <FlashMessage messages={state.flashMessages} /> */}
+                            <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
+                            <Notifications show={state.notifications} />
+                            <LoggedIn show={state.showLoggedIn} />
+                            <Header shoppingCart={state.carrito} />
 
-                        <main>
-                            <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/AboutUs" element={<AboutUs />} />
-                                <Route path="/ContactUs" element={<ContactUs />} />
-                                <Route path="/Products" element={<Products />} />
-                                <Route path="/Services" element={<Services />} />
-                                <Route path="/Admin" element={<Admin />} />
-                                <Route path="/Usuarios" element={<Testing title="Usuarios" />} />
-                                <Route path="/Admin/LandingPage" element={<LandingPage />} />
-                                <Route path="/Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
-                                <Route path="/Inventario/Productos/ListProductos" element={<ListProductos />} />
-                                <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
-                                <Route path="/Carrito" element={<Carrito />} />
-                            </Routes>
-                        </main>
+                            <main>
+                                <Routes>
+                                    <Route path="/" element={<Home />} />
+                                    <Route path="/AboutUs" element={<AboutUs />} />
+                                    <Route path="/ContactUs" element={<ContactUs />} />
+                                    <Route path="/Products" element={<Products />} />
+                                    <Route path="/Services" element={<Services />} />
+                                    <Route path="/Admin" element={<Admin />} />
+                                    <Route path="/Usuarios" element={<Testing title="Usuarios" />} />
+                                    <Route path="/Admin/LandingPage" element={<LandingPage />} />
+                                    <Route path="/Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
+                                    <Route path="/Inventario/Productos/ListProductos" element={<ListProductos />} />
+                                    <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
+                                    <Route path="/Carrito" element={<Carrito />} />
+                                </Routes>
+                            </main>
 
-                        <Footer />
+                            <Footer />
+                        </ShoppingCartProvider>
                     </BrowserRouter>
                 </DispatchContext.Provider>
             </StateContext.Provider>

@@ -13,8 +13,15 @@ import { MdLocalGroceryStore } from "react-icons/md"
 import DispatchContext from "../DispatchContext"
 import StateContext from "../StateContext"
 import Carrito from "./Carrito"
+import { CartContext } from "../context/ShoppingCartContext"
 
 function Header(props) {
+    const [cart, setCart] = useContext(CartContext)
+
+    const quantity = cart.reduce((acc, curr) => {
+        return acc + curr.cantidad
+    }, 0)
+
     const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
     const [carrito, setCarrito] = useState([])
@@ -175,11 +182,11 @@ function Header(props) {
                     {/* Carrito de compras */}
                     <Nav>
                         <Nav.Link as={Link} to="Carrito">
-                            {carrito.length === 0 && <MdOutlineLocalGroceryStore size={30} />}
-                            {carrito.length > 0 && (
+                            {quantity === 0 && <MdOutlineLocalGroceryStore size={30} />}
+                            {quantity > 0 && (
                                 <>
                                     <MdLocalGroceryStore size={30} />
-                                    <span>{carrito.length}</span>
+                                    <span>{quantity}</span>
                                 </>
                             )}
                         </Nav.Link>
