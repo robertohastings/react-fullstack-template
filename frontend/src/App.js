@@ -1,10 +1,11 @@
 // frontend/src/App.js
-import React, { useEffect, useState, useContext, act } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import axios from "axios"
 import { useImmerReducer } from "use-immer"
 import StateContext from "./StateContext"
 import DispatchContext from "./DispatchContext"
+import ShoppingCartProvider, { CartContext } from "./context/ShoppingCartContext"
 
 //My Components
 import Header from "./components/Header"
@@ -25,12 +26,11 @@ import ListCategorias from "./components/Inventario/Categorias/ListCategorias"
 import ListProveedores from "./components/Compras/Proveedores/ListProveedores"
 import ListProductos from "./components/Inventario/Productos/ListProductos"
 import Carrito from "./components/Carrito"
-import ShoppingCartProvider from "./context/ShoppingCartContext"
 
 function App() {
+    //const [cart, setCart] = useContext(CartContext)
     const [data, setData] = useState({})
     const [isLoading, setIsLoading] = useState(true)
-    const [carrito, setCarrito] = useState([])
 
     const initialState = {
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
@@ -49,8 +49,8 @@ function App() {
         isChatOpen: false,
         unreadReadChatCount: 0,
         landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
-        notifications: false,
-        carrito: JSON.parse(localStorage.getItem("carrito")) ?? []
+        notifications: false
+        //carrito: JSON.parse(localStorage.getItem("carrito")) ?? []
     }
 
     function ourReducer(draft, action) {
@@ -72,62 +72,6 @@ function App() {
                 console.log("action data landingPage:", action.data)
                 //draft.landingPage = action.data
                 localStorage.setItem("complexappLanding", JSON.stringify(action.data))
-                break
-            case "setCarrito":
-                draft.carrito = JSON.parse(localStorage.getItem("carrito")) ?? []
-                break
-            case "agregarCarrito":
-                //console.log("action data", action.data)
-                //console.log('agregando....', guitarra)
-                //se va a interar sobre carrito mediante some
-
-                //Se activa la animación del flying
-                //setIsFlying(true);
-                //setTimeout(() => setIsFlying(false), 1000);
-
-                setCarrito(JSON.parse(localStorage.getItem("carrito")) ?? [])
-
-                if (carrito.some(productoState => productoState.id_producto === action.data.id_producto)) {
-                    // iterar sobre el arreglo e indentificar el
-                    // elemento duplicado
-                    const carritoActualizado = carrito.map(productoState => {
-                        if (productoState.id_producto === action.data.id_producto) {
-                            //rescribir la cantidad
-                            console.log("cantidad actual:", productoState.cantidad, " cantidad a agregar:", action.data.cantidad)
-                            productoState.cantidad = action.data.cantidad
-                        }
-                        return productoState
-                    })
-                    setCarrito(carritoActualizado)
-                } else {
-                    //registro nuevo
-                    setCarrito([...carrito, action.data])
-                }
-                localStorage.setItem("carrito", JSON.stringify(carrito))
-                draft.carrito = carrito
-                break
-            case "actualizarCantidad":
-                const carritoActualizado = carrito.map(productoState => {
-                    if (productoState.id_producto === action.data.id_producto) {
-                        productoState.cantidad = action.data.cantidad
-                    }
-                    return productoState
-                })
-                setCarrito(carritoActualizado)
-                break
-            case "eliminarProducto":
-                //setIsFlying(true);
-                //setTimeout(() => setIsFlying(false), 1500);
-                console.log("Action value:", action.value)
-                setCarrito(JSON.parse(localStorage.getItem("carrito")) ?? [])
-                const carritoEliminar = carrito.filter(productoState => productoState.id_producto !== action.value)
-                setCarrito(carritoEliminar)
-                localStorage.setItem("carrito", JSON.stringify(carrito))
-                draft.carrito = carrito
-                break
-            case "vaciarCarrito":
-                setCarrito([])
-                localStorage.removeItem("carrito")
                 break
             case "landingPageSettings":
                 //console.log('action data landingPage:', action.data)
@@ -159,7 +103,10 @@ function App() {
         localStorage.setItem("complexappLanding", JSON.stringify([]))
         //const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
         //setCarrito(carritoLS)
-        dispatch({ type: "setCarrito" })
+        //dispatch({ type: "setCarrito" })
+
+        //     const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
+        //    setCart(carritoLS)
 
         try {
             // await axios
@@ -200,11 +147,11 @@ function App() {
         }
     }, [])
 
-    // UseEffect para grabar en el LS
+    //UseEffect para grabar en el LS
     // useEffect(() => {
-    //     if (carrito?.length === 0) return
-    //     localStorage.setItem("carrito", JSON.stringify(carrito))
-    // }, [carrito])
+    //     if (cart?.length === 0) return
+    //     localStorage.setItem("carrito", JSON.stringify(cart))
+    // }, [cart])
 
     if (isLoading) {
         //console.log("Cargando info...")

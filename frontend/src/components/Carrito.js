@@ -3,22 +3,25 @@ import Page from "./Page"
 import StateContext from "../StateContext"
 import DispatchContext from "../DispatchContext"
 import { TiDeleteOutline } from "react-icons/ti"
-import { Card, ListGroup, Row, Col } from "react-bootstrap"
+import { Container, Row, Col, Image, Card } from "react-bootstrap"
 import { CartContext } from "../context/ShoppingCartContext"
 
 function Carrito() {
     const [cart, setCart] = useContext(CartContext)
 
+    const totalItems = cart.reduce((total, item) => total + parseInt(item.cantidad), 0)
+    const totalPrice = cart.reduce((total, item) => total + item.cantidad * item.precio, 0)
+
     const appState = useContext(StateContext)
     const appDispatch = useContext(DispatchContext)
     const [carrito, setCarrito] = useState(JSON.parse(localStorage.getItem("carrito")) ?? {})
 
-    useEffect(() => {
-        function checkCarrito() {
-            setCarrito(JSON.parse(localStorage.getItem("carrito")))
-        }
-        checkCarrito()
-    }, [appState.carrito])
+    // useEffect(() => {
+    //     function checkCarrito() {
+    //         setCarrito(JSON.parse(localStorage.getItem("carrito")))
+    //     }
+    //     checkCarrito()
+    // }, [appState.carrito])
 
     const eliminarProducto_handled = id_producto => {
         // console.log("Producto a eliminar:", id_producto)
@@ -41,83 +44,92 @@ function Carrito() {
         })
     }
 
-    return (
-        <Page title="Carrito">
-            <h4 className="pb-4">Carrito de Compras</h4>
-            <div className="d-flex">
-                {/* {carrito.map(producto => {
-                    return <p>{producto.id_producto}</p>
-                })} */}
+    const actualizarCantidad = (id_producto, cantidad) => {
+        //const id_producto = producto.id_producto
+        //const cantidad = producto.cantidad
+        //console.log("producto:", id_producto, " cantidad:", cantidad)
 
-                <div className="w-75">
+        setCart(currItems => {
+            return currItems.map(item => {
+                if (item.id_producto === id_producto) {
+                    //console.log("lo encontré")
+                    return { ...item, cantidad: cantidad }
+                } else {
+                    //console.log("no lo encontré")
+                    return item
+                }
+            })
+        })
+    }
+
+    return (
+        <Container fluid>
+            <h4 className="pb-4">Carrito de Compras</h4>
+            <Row>
+                <Col xs={8} style={{ height: "100vh", overflowY: "auto" }}>
                     {cart?.length === 0
                         ? "No hay productos en el carrito"
                         : cart?.map(producto => (
-                              <div className="row pb-3" key={producto.id_producto}>
-                                  <div className="col">
-                                      <Card style={{ width: "50%" }}>
-                                          <div className="d-flex justify-content-center">
-                                              <Card.Img variant="top" src={producto.imagen} style={{ width: "100%", height: "150px" }} />
-                                          </div>
-                                          <Card.Body>
-                                              <Card.Title>{producto.nombre}</Card.Title>
-                                              {/* <Card.Text>{producto.descripcion}</Card.Text> */}
-                                          </Card.Body>
-                                          <ListGroup className="list-group-flush">
-                                              <ListGroup.Item>
-                                                  <Row>
-                                                      <Col>Precio:</Col>
-                                                      <Col>
-                                                          $<span>{producto.precio}</span>
-                                                      </Col>
-                                                  </Row>
-                                              </ListGroup.Item>
-                                              <ListGroup.Item>
-                                                  <Row className="d-flex">
-                                                      <Col>Cantidad:</Col>
-                                                      <Col>
-                                                          <select value={producto.cantidad} onChange={() => {}}>
-                                                              <option value="1">1</option>
-                                                              <option value="2">2</option>
-                                                              <option value="3">3</option>
-                                                              <option value="4">4</option>
-                                                              <option value="5">5</option>
-                                                              <option value="6">6</option>
-                                                              <option value="7">7</option>
-                                                              <option value="8">8</option>
-                                                              <option value="9">9</option>
-                                                              <option value="10">10</option>
-                                                          </select>
-                                                      </Col>
-                                                  </Row>
-                                              </ListGroup.Item>
-                                          </ListGroup>
-                                          <Card.Footer>
-                                              <Row>
-                                                  <Col>
-                                                      <p>Subtotal:</p>
-                                                  </Col>
-                                                  <Col>
-                                                      $<span>{producto.precio * producto.cantidad}</span>
-                                                  </Col>
-                                              </Row>
-                                              <Row>
-                                                  <Col className="d-flex justify-content-center">
-                                                      <TiDeleteOutline size={25} onClick={() => eliminarProducto_handled(producto.id_producto)} title="Eliminar este producto del carrito" style={{ cursor: "pointer" }} />
-                                                  </Col>
-                                              </Row>
-                                          </Card.Footer>
-                                      </Card>
-                                  </div>
+                              <div className="pb-3" key={producto.id_producto}>
+                                  <Row>
+                                      <Col>
+                                          <Image src={producto.imagen} style={{ width: "200px", height: "150px" }} />
+                                      </Col>
+                                      <Col>
+                                          <Row>
+                                              <Col>
+                                                  <h4>{producto.nombre}</h4>
+                                              </Col>
+                                          </Row>
+                                          <Row>
+                                              <Col>Precio: ${producto.precio}</Col>
+                                              <Col>
+                                                  Cantidad:
+                                                  <select value={producto.cantidad} onChange={e => actualizarCantidad(producto.id_producto, e.target.value)}>
+                                                      <option value="1">1</option>
+                                                      <option value="2">2</option>
+                                                      <option value="3">3</option>
+                                                      <option value="4">4</option>
+                                                      <option value="5">5</option>
+                                                      <option value="6">6</option>
+                                                      <option value="7">7</option>
+                                                      <option value="8">8</option>
+                                                      <option value="9">9</option>
+                                                      <option value="10">10</option>
+                                                  </select>
+                                              </Col>
+                                              <Col>
+                                                  <p>
+                                                      Subtotal: $<span>{producto.precio * producto.cantidad}</span>
+                                                  </p>
+                                              </Col>
+                                              <Col className="d-flex justify-content-center align-items-center">
+                                                  <TiDeleteOutline size={25} onClick={() => eliminarProducto_handled(producto.id_producto)} title="Eliminar este producto del carrito" style={{ cursor: "pointer" }} />
+                                              </Col>
+                                          </Row>
+                                      </Col>
+                                  </Row>
+                                  <hr />
                               </div>
                           ))}
-                </div>
-
-                <div className="ticky-top">
-                    <h3>Resumen del Pedido</h3>
-                </div>
-            </div>
-        </Page>
+                </Col>
+                <Col xs={4}>
+                    <div className="position-sticky" style={{ top: 70 }}>
+                        <Card>
+                            <Card.Body>
+                                <Card.Title>Resumen del Carrito</Card.Title>
+                                <Card.Text>
+                                    <strong>Cantidad de artículos:</strong> {totalItems}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>Total a pagar:</strong> ${totalPrice.toFixed(2)}
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                </Col>
+            </Row>
+        </Container>
     )
 }
 

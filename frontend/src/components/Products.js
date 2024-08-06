@@ -93,6 +93,8 @@ function Products() {
                 return [...currItems, data]
             }
         })
+
+        appDispatch({ type: "alertMessage", value: "Producto agregado al carrito", typeAlert: "success" })
     }
 
     return (

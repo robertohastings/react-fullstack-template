@@ -18,21 +18,23 @@ import { CartContext } from "../context/ShoppingCartContext"
 function Header(props) {
     const [cart, setCart] = useContext(CartContext)
 
+    console.log("cart length:", cart)
+
     const quantity = cart.reduce((acc, curr) => {
-        return acc + curr.cantidad
+        return acc + parseInt(curr.cantidad)
     }, 0)
 
     const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
-    const [carrito, setCarrito] = useState([])
+    //const [carrito, setCarrito] = useState([])
     //const [carrito, setCarrito] = useState(appState.carrito ?? [])
 
     //console.log("carrito items:", JSON.parse(localStorage.getItem("carrito")).length)
 
-    useEffect(() => {
-        console.log("shoppingCart", props.shoppingCart)
-        setCarrito(JSON.parse(localStorage.getItem("carrito")))
-    }, [props.shoppingCart])
+    // useEffect(() => {
+    //     console.log("shoppingCart", props.shoppingCart)
+    //     setCarrito(JSON.parse(localStorage.getItem("carrito")))
+    // }, [props.shoppingCart])
 
     // useEffect(() => {
     //     setCarrito(appState.carrito)
@@ -66,7 +68,7 @@ function Header(props) {
 
     return (
         <div className="flex-row my-3 my-md-0">
-            <Navbar bg="dark" variant="dark" expand="lg">
+            <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
                 {/* <Navbar.Brand href="/">Responsive Web Template</Navbar.Brand> */}
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
