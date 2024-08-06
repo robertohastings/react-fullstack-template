@@ -66,24 +66,22 @@ function Carrito() {
         <Container fluid>
             <h4 className="pb-4">Carrito de Compras</h4>
             <Row>
-                <Col xs={8} style={{ height: "100vh", overflowY: "auto" }}>
+                <Col xs={9} style={{ height: "100vh", overflowY: "auto" }}>
                     {cart?.length === 0
                         ? "No hay productos en el carrito"
                         : cart?.map(producto => (
                               <div className="pb-3" key={producto.id_producto}>
                                   <Row>
-                                      <Col>
+                                      <Col xs={3}>
                                           <Image src={producto.imagen} style={{ width: "200px", height: "150px" }} />
                                       </Col>
-                                      <Col>
+                                      <Col xs={9} className="d-flex align-items-center">
                                           <Row>
-                                              <Col>
+                                              <Col xs={4}>
                                                   <h4>{producto.nombre}</h4>
                                               </Col>
-                                          </Row>
-                                          <Row>
-                                              <Col>Precio: ${producto.precio}</Col>
-                                              <Col>
+                                              <Col xs={2}>Precio: ${producto.precio}</Col>
+                                              <Col xs={2}>
                                                   Cantidad:
                                                   <select value={producto.cantidad} onChange={e => actualizarCantidad(producto.id_producto, e.target.value)}>
                                                       <option value="1">1</option>
@@ -98,12 +96,12 @@ function Carrito() {
                                                       <option value="10">10</option>
                                                   </select>
                                               </Col>
-                                              <Col>
+                                              <Col xs={2}>
                                                   <p>
                                                       Subtotal: $<span>{producto.precio * producto.cantidad}</span>
                                                   </p>
                                               </Col>
-                                              <Col className="d-flex justify-content-center align-items-center">
+                                              <Col xs={2} className="d-flex justify-content-center align-items-center">
                                                   <TiDeleteOutline size={25} onClick={() => eliminarProducto_handled(producto.id_producto)} title="Eliminar este producto del carrito" style={{ cursor: "pointer" }} />
                                               </Col>
                                           </Row>
@@ -113,12 +111,12 @@ function Carrito() {
                               </div>
                           ))}
                 </Col>
-                <Col xs={4}>
+                <Col xs={3}>
                     <div className="position-sticky" style={{ top: 70 }}>
                         <Card>
                             <Card.Body>
                                 <Card.Title>Resumen del Carrito</Card.Title>
-                                <Card.Text>
+                                <Card.Text className="pt-3">
                                     <strong>Cantidad de artículos:</strong> {totalItems}
                                 </Card.Text>
                                 <Card.Text>
