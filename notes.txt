@@ -136,110 +136,60 @@ npm config set https-proxy http://10.100.0.100:8080
 npm config rm proxy
 npm config rm https-proxy
 
-CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getProductosListing`(
-	IN limite INT,
-    IN pagina INT,
-    IN prm_id_categoria INT,
-    IN prm_id_proveedor INT,
-    IN prm_existencia INT
-)
-BEGIN
-    SELECT COUNT(*) AS totalRegistros
-    FROM productos;
-    
-    IF (limite > 0) THEN
-    
-        SELECT 	P.id_producto, P.nombre, P.descripcion, 
-				IFNULL(P.id_proveedor, 0) AS id_proveedor, PR.nombre AS Proveedor,
-                IFNULL(P.id_categoria, 0) AS id_categoria,
-                C.nombre AS Categoria,
-                P.precio, P.precio_promocion, P.costo,
-                IFNULL(P.image1, 'https://fiestatijuana.mx/image-not-available.png') AS image1, 
-                IFNULL(P.image2, 'https://fiestatijuana.mx/image-not-available.png') AS image2, 
-                IFNULL(P.image3, 'https://fiestatijuana.mx/image-not-available.png') AS image3,
-                DATE_FORMAT(IFNULL(P.fecha_actualizacion, now()), '%m/%d/%Y %H:%i') AS fecha_actualizacion,
-                CASE WHEN P.activo = 1 THEN 'Si' ELSE 'NO' END AS activo,
-                IFNULL(P.sku, '') AS sku, P.existencia
-		FROM productos P
-        INNER JOIN proveedores PR ON PR.id_empresa = P.id_empresa AND PR.id_proveedor = P.id_proveedor
-        INNER JOIN categorias C ON C.id_empresa = P.id_empresa AND C.id_categoria = P.id_categoria
-        WHERE P.id_categoria = CASE WHEN prm_id_categoria = 0 THEN P.id_categoria ELSE prm_id_categoria END AND
-			  P.id_proveedor = CASE WHEN prm_id_proveedor = 0 THEN P.id_proveedor ELSE prm_id_proveedor END AND
-              1 = CASE 
-					WHEN prm_existencia = 0 THEN 1
-                    WHEN prm_existencia = 1 AND P.existencia > 0 THEN 1
-                    WHEN prm_existencia = 2 AND P.existencia = 0 THEN 1
-                    ELSE 0
-				 END			
-        ORDER BY P.id_empresa, P.id_proveedor
-		LIMIT limite OFFSET pagina;    
-    
-    ELSE
-    
-        SELECT 	P.id_producto, P.nombre, P.descripcion, 
-				IFNULL(P.id_proveedor, 0) AS id_proveedor, PR.nombre AS Proveedor,
-                IFNULL(P.id_categoria, 0) AS id_categoria,
-                C.nombre AS Categoria,
-                P.precio, P.precio_promocion, P.costo,
-                IFNULL(P.image1, 'https://fiestatijuana.mx/image-not-available.png') AS image1, 
-                IFNULL(P.image2, 'https://fiestatijuana.mx/image-not-available.png') AS image2, 
-                IFNULL(P.image3, 'https://fiestatijuana.mx/image-not-available.png') AS image3,
-                DATE_FORMAT(IFNULL(P.fecha_actualizacion, now()), '%m/%d/%Y %H:%i') AS fecha_actualizacion,
-                CASE WHEN P.activo = 1 THEN 'Si' ELSE 'NO' END AS activo,
-                IFNULL(P.sku, '') AS sku, P.existencia
-		FROM productos P
-        INNER JOIN proveedores PR ON PR.id_empresa = P.id_empresa AND PR.id_proveedor = P.id_proveedor
-        INNER JOIN categorias C ON C.id_empresa = P.id_empresa AND C.id_categoria = P.id_categoria
-        WHERE P.id_categoria = CASE WHEN prm_id_categoria = 0 THEN P.id_categoria ELSE prm_id_categoria END AND
-			  P.id_proveedor = CASE WHEN prm_id_proveedor = 0 THEN P.id_proveedor ELSE prm_id_proveedor END        
-        ORDER BY P.id_empresa, P.id_proveedor;
-    
-    END IF;
-END
-
-CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `postProducto`(
-	IN prm_id_empresa INT,
-    IN prm_id_producto INT,
-	IN prm_nombre varchar(200) ,
-	IN prm_descripcion varchar(200),
-	IN prm_id_proveedor bigint(20),
-    IN prm_id_categoria bigint(20),
-	IN prm_precio double, 
-	IN prm_precio_promocion double,
-	IN prm_costo double,
-	IN prm_image1 varchar(255),
-	IN prm_image2 varchar(255),
-	IN prm_image3 varchar(255),
-	IN prm_existencia INT,
-	IN prm_activo TINYINT(4),
-	IN prm_sku varchar(20) 
-)
-BEGIN
-	IF @prm_id_producto = 0 THEN
-		
-        INSERT INTO 
-			productos (nombre, descripcion, id_proveedor, id_categoria, precio,
-					   precio_promocion, costo, image1, image2, image3, existencia,
-                       fecha_creacion, fecha_actualizacion, activo, sku)
-			VALUES (prm_nombre, prm_descripcion, prm_id_proveedor, prm_id_categoria, prm_precio,
-					prm_precio_promocion, prm_costo, prm_image1, prm_image2, prm_image3,
-                    prm_existencia, now(), now(), prm_activo, prm_sku);    
-    ELSE
-    
-        UPDATE productos
-			SET nombre = prm_nombre, descripcion = prm_descripcion,
-				id_proveedor = prm_id_proveedor, id_categoria = prm_id_categoria,
-                precio = prm_precio, precio_promocion = prm_precio_promocion,
-                costo = prm_costo, 
-                image1 = prm_image1, image2 = prm_image2, image3 = prm_image3,
-                existencia = prm_existencia, 
-                fecha_creacion = now(), fecha_actualizacion = now(),
-                activo = prm_activo, sku = prm_sku            
-		WHERE id_empresa = prm_id_empresa AND id_producto = prm_id_producto;    
-    
-    END IF;
-END
-
 agregar en getProductosListing el campo: P.existencia
 cambiar el tipo de dato de activo del catalago de productos a TINYINT(4)
 en el procedimiento postProducto cambiar el tipo de dato del parámetro activo a TINYINT
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getPuntosDeEntrega`(
+	IN limite INT,
+    IN pagina INT   
+)
+BEGIN
+
+	SELECT COUNT(*) AS totalRegistros
+    FROM puntosdeentrega;
+
+    IF (limite > 0) THEN
+		SELECT 	id_puntoDeEntrega, nombre, horario, 
+				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion,
+                CASE WHEN activo = 1 THEN 'Si' ELSE 'NO' END AS activo		
+		FROM puntosdeentrega
+        ORDER BY id_empresa, id_puntoDeEntrega
+		LIMIT limite OFFSET pagina;
+	ELSE 
+		SELECT 	id_puntoDeEntrega, nombre, horario, 
+				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion, 
+				CASE WHEN activo = 1 THEN 'Si' ELSE 'NO' END AS activo
+		FROM puntosdeentrega
+        ORDER BY id_empresa, id_puntoDeEntrega;
+	END IF;
+         
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `postPuntoDeEntrega`(
+	IN prm_id_empresa INT,
+    IN prm_id_puntoDeEntrega INT,
+    IN prm_nombre VARCHAR(200),
+    IN prm_horario VARCHAR(600),
+    IN prm_activo TINYINT
+)
+BEGIN
+
+	IF prm_id_puntoDeEntrega = 0 THEN
+    
+		INSERT INTO puntosdeentrega (id_empresa, nombre, horario, fecha_creacion, fecha_actualizacion, activo)
+		VALUES (prm_id_empresa, prm_nombre, prm_nombre, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP, prm_activo);    
+    
+    ELSE
+		
+        UPDATE puntosdeentrega SET 	nombre = prm_nombre, 
+									horario = prm_nombre,                                  
+									activo = prm_activo,
+									fecha_actualizacion = CURRENT_TIMESTAMP()
+		WHERE id_empresa = prm_id_empresa AND id_puntoDeEntrega = prm_id_puntoDeEntrega;
+    	
+	END IF;
+
+
+END

@@ -6,16 +6,15 @@ import { IoIosAddCircle } from "react-icons/io"
 import { TbRefresh } from "react-icons/tb"
 import * as Yup from "yup"
 import { Formik, useFormik } from "formik"
-import Page from "../../Page"
-import SpinnerButton from "../../Spinner/SpinnerButton"
+import Page from "../Page"
+import SpinnerButton from "../Spinner/SpinnerButton"
 
 const validationSchema = Yup.object({
     nombre: Yup.string().required("El nombre debe ser capturado"),
-    contacto1: Yup.string().required("Contacto 1 debe ser capturado")
-    // descripcion: Yup.string().required("La descripción tiene que ser capturada")
+    horario: Yup.string().required("El Horariodebe ser capturado")
 })
 
-function ListProveedores() {
+function PuntosDeEntrega() {
     const [data, setData] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     const [totalRecords, setTotalRecords] = useState(0)
@@ -27,28 +26,28 @@ function ListProveedores() {
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
 
-    const fetchProducts = async () => {
+    const fetchData = async () => {
         setIsLoaging(true)
 
         try {
-            const response = await Axios.get("/api/compras/getProveedoresListado", {
+            const response = await Axios.get("/api/getPuntosDeEntrega", {
                 params: {
                     limite: rowsPerPage,
                     pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5
                 }
             })
-            console.log("response:", response.data.proveedores)
-            setData(response.data.proveedores)
+            console.log("response:", response.data.puntosDeEntrega)
+            setData(response.data.puntosDeEntrega)
             setTotalRecords(response.data.totalRegistros)
         } catch (error) {
-            console.error("There was an error fetching the products!", error)
+            console.error("There was an error fetching the products!", error.message)
         } finally {
             setIsLoaging(false)
         }
     }
 
     useEffect(() => {
-        fetchProducts()
+        fetchData()
     }, [currentPage])
 
     // Change page
@@ -57,15 +56,8 @@ function ListProveedores() {
     const formik = useFormik({
         //Lo que necesita el formulario
         initialValues: {
-            id_proveedor: 0,
+            id_puntoDeEntrega: 0,
             nombre: "",
-            contacto1: "",
-            contacto2: "",
-            telefono1: "",
-            telefono2: "",
-            whatsapp: "",
-            email1: "",
-            email2: "",
             horario: "",
             activo: 0
         },
@@ -76,52 +68,39 @@ function ListProveedores() {
             setSending(true)
             //console.log("values:", values)
 
-            const proveedor = {
+            const puntoDeEntrega = {
                 id_empresa: 1,
-                id_proveedor: values.id_proveedor,
+                id_puntoDeEntrega: values.id_puntoDeEntrega,
                 nombre: values.nombre,
-                contacto1: values.contacto1,
-                contacto2: values.contacto2,
-                telefono1: values.telefono1,
-                telefono2: values.telefono2,
-                whatsapp: values.whatsapp,
-                email1: values.email1,
-                email2: values.email2,
                 horario: values.horario,
                 activo: values.activo
             }
-            postProveedor(proveedor)
+            postData(puntoDeEntrega)
         }
     })
 
-    const postProveedor = async proveedor => {
+    const postData = async puntoDeEntrega => {
+        console.log("punto de entrega:", puntoDeEntrega)
         try {
-            await Axios.post("/api/compras/postProveedor", proveedor)
+            await Axios.post("/api/postPuntosDeEntrega", puntoDeEntrega)
                 .then(response => {
                     console.log(response)
                 })
                 .catch(error => {
-                    console.log("There was an error updating about us: ", error)
+                    console.log("There was an error updating punto de entrega: ", error.message)
                 })
         } catch (error) {
             console.log("error:", error)
         } finally {
             setSending(false)
             setShow(false)
-            fetchProducts()
+            fetchData()
         }
     }
 
     const edit_handled = row => {
-        formik.values.id_proveedor = row.id_proveedor
+        formik.values.id_puntoDeEntrega = row.id_puntoDeEntrega
         formik.values.nombre = row.nombre
-        formik.values.contacto1 = row.contacto1
-        formik.values.contacto2 = row.contacto2
-        formik.values.telefono1 = row.telefono1
-        formik.values.telefono2 = row.telefono2
-        formik.values.whatsapp = row.whatsapp
-        formik.values.email1 = row.email1
-        formik.values.email2 = row.email2
         formik.values.horario = row.horario
         formik.values.activo = row.activo === "Si" ? 1 : 0
 
@@ -130,25 +109,17 @@ function ListProveedores() {
 
     const Agregar_handled = () => {
         formik.values.id_empresa = 1
-        formik.values.id_proveedor = 0
+        formik.values.id_puntoDeEntrega = 0
         formik.values.nombre = ""
-        formik.values.contacto1 = ""
-        formik.values.contacto2 = ""
-        formik.values.telefono1 = ""
-        formik.values.telefono2 = ""
-        formik.values.whatsapp = ""
-        formik.values.email1 = ""
-        formik.values.email2 = ""
         formik.values.horario = ""
-
         formik.values.activo = 1
         setShow(true)
     }
-    const Refrescar_handled = () => fetchProducts()
+    const Refrescar_handled = () => fetchData()
 
     return (
-        <Page title="ABC Categorias">
-            <h3>ABC Proveedores</h3>
+        <Page>
+            <h4 className="pt-2 pb-3">ABC Puntos de Entrega</h4>
             <div className="gap-2">
                 <div>
                     <Button className="my-3" size="sm" variant="outline-primary" onClick={Agregar_handled}>
@@ -177,11 +148,7 @@ function ListProveedores() {
                     <tr>
                         <th>#Id</th>
                         <th>Nombre</th>
-                        <th>Contacto</th>
-                        <th>Teléfono 1</th>
-                        <th>Teléfono 2</th>
-                        <th>Email</th>
-                        <th>Whatsapp</th>
+                        <th>Horario</th>
                         <th>F. Actualización</th>
                         <th>Activo</th>
                     </tr>
@@ -196,15 +163,10 @@ function ListProveedores() {
                 {!isLoading && (
                     <tbody>
                         {data.map(row => (
-                            <tr key={row.id_proveedor}>
-                                <td className="align-content-center">{row.id_proveedor}</td>
+                            <tr key={row.id_puntoDeEntrega}>
+                                <td className="align-content-center">{row.id_puntoDeEntrega}</td>
                                 <td className="align-content-center">{row.nombre}</td>
-                                <td className="align-content-center">{row.contacto1 !== null ? row.contacto1 : "1"}</td>
-                                <td className="align-content-center">{row.telefono1}</td>
-                                <td className="align-content-center">{row.telefono2}</td>
-                                <td className="align-content-center">{row.email1}</td>
-                                <td className="align-content-center">{row.whatsapp}</td>
-                                <td className="align-content-center">{row.fecha_actualizacion}</td>
+                                <td className="align-content-center">{row.horario}</td>
                                 <td className="align-content-center">{row.activo}</td>
                                 <td className="align-content-center justify-content-center">
                                     <Button size="sm" variant="warning" onClick={() => edit_handled(row)}>
@@ -228,7 +190,7 @@ function ListProveedores() {
             <>
                 <Modal size="lg" show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
                     <Modal.Header closeButton>
-                        <Modal.Title>Proveedor # {formik.values.id_proveedor === 0 ? "nuevo" : formik.values.id_proveedor}</Modal.Title>
+                        <Modal.Title>Punto de Entrega # {formik.values.id_puntoDeEntrega === 0 ? "nuevo" : formik.values.id_puntoDeEntrega}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
@@ -243,60 +205,7 @@ function ListProveedores() {
                             </Row>
                             <Row>
                                 <Col>
-                                    {/* contacto1 */}
-                                    <FloatingLabel label="Contacto 1" className="mb-3">
-                                        <Form.Control type="text" placeholder="Contacto 1" id="contacto1" name="contacto1" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.contacto1} />
-                                        {formik.touched.contacto1 && formik.errors.contacto1 ? <div className="text-danger">{formik.errors.contacto1}</div> : null}
-                                    </FloatingLabel>
-                                </Col>
-                                <Col>
-                                    {/* contacto2 */}
-                                    <FloatingLabel label="Contacto 2" className="mb-3">
-                                        <Form.Control type="text" placeholder="Contacto 2" id="contacto2" name="contacto2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.contacto2} />
-                                        {formik.touched.contacto2 && formik.errors.contacto2 ? <div className="text-danger">{formik.errors.contacto2}</div> : null}
-                                    </FloatingLabel>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    {/* telefono1 */}
-                                    <FloatingLabel label="Teléfono 1" className="mb-3">
-                                        <Form.Control type="text" placeholder="Teléfono 1" id="telefono1" name="telefono1" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.telefono1} />
-                                        {formik.touched.telefono1 && formik.errors.telefono1 ? <div className="text-danger">{formik.errors.telefono1}</div> : null}
-                                    </FloatingLabel>
-                                </Col>
-                                <Col>
-                                    {/* telefono2 */}
-                                    <FloatingLabel label="Teléfono 2" className="mb-3">
-                                        <Form.Control type="text" placeholder="Teléfono 2" id="telefono2" name="telefono2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.telefono2} />
-                                        {formik.touched.telefono2 && formik.errors.telefono2 ? <div className="text-danger">{formik.errors.telefono2}</div> : null}
-                                    </FloatingLabel>
-                                </Col>
-                                <Col>
-                                    {/* whatsapp */}
-                                    <FloatingLabel label="Whatsapp" className="mb-3">
-                                        <Form.Control type="text" placeholder="Whatsapp" id="whatsapp" name="whatsapp" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.whatsapp} />
-                                        {formik.touched.whatsapp && formik.errors.whatsapp ? <div className="text-danger">{formik.errors.whatsapp}</div> : null}
-                                    </FloatingLabel>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    {/* email1 */}
-                                    <FloatingLabel label="Email 1" className="mb-3">
-                                        <Form.Control type="text" placeholder="Email 1" id="email1" name="email1" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.email1} />
-                                        {formik.touched.email1 && formik.errors.email1 ? <div className="text-danger">{formik.errors.email1}</div> : null}
-                                    </FloatingLabel>
-                                </Col>
-                                <Col>
-                                    {/* email2 */}
-                                    <FloatingLabel label="Email 2" className="mb-3">
-                                        <Form.Control type="text" placeholder="Email 2" id="email2" name="email2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.email2} />
-                                        {formik.touched.email2 && formik.errors.email2 ? <div className="text-danger">{formik.errors.email2}</div> : null}
-                                    </FloatingLabel>
-                                </Col>
-                                <Col>
-                                    {/* email2 */}
+                                    {/* Horario */}
                                     <FloatingLabel label="Horario" className="mb-3">
                                         <Form.Control type="text" placeholder="Horario" id="horario" name="horario" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.horario} />
                                         {formik.touched.horario && formik.errors.horario ? <div className="text-danger">{formik.errors.horario}</div> : null}
@@ -332,4 +241,4 @@ function ListProveedores() {
     )
 }
 
-export default ListProveedores
+export default PuntosDeEntrega

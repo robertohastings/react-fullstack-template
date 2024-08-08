@@ -115,3 +115,27 @@ export const putLandingPage_Settings = async (req, res) => {
         })
     }
 }
+
+export const postPuntosDeEntrega = async (req, res) => {
+    console.log("postPuntosDeEntrega")
+    console.log("body:", req.body)
+    const { id_empresa, id_puntoDeEntrega, nombre, horario, activo } = req.body
+
+    try {
+        const [result] = await pool.query("CALL postPuntoDeEntrega(?, ?, ?, ?, ?)", [id_empresa, id_puntoDeEntrega, nombre, horario, activo])
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                message: "Puntos de acceso No se actualizó"
+            })
+        } else {
+            return res.status(200).json({
+                message: "Puntos de accesos actualizados"
+            })
+        }
+    } catch (error) {
+        console.log("Ocurrió un error")
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
+}

@@ -49,22 +49,6 @@ export const getCategorias = async (req, res) => {
     try {
         const { limite, pagina } = req.query
         console.log(limite, pagina)
-        // await pool.query(
-        //     "CALL getCategoriasByPage(?, ?)",
-        //     [limite, pagina], (error, results) => {
-        //     if (error) {
-        //         console.log("Error executing stored procedure")
-        //         res.status(500).json({
-        //             error: "An error ocurred"
-        //         })
-        //         return
-        //     }
-        //     console.log("results", results)
-        //     //return
-        //     const totalRegistros = results[0][0].totalRegistros
-        //     const data = results[1]
-        //     res.json({ status: 200, data, totalRegistros })
-        // })
 
         const rows = await pool.query(`CALL getCategorias(?, ?);`, [limite, pagina])
 
@@ -79,6 +63,31 @@ export const getCategorias = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             error: "An error ocurred"
+        })
+    }
+}
+
+export const getPuntosDeEntrega = async (req, res) => {
+    console.log("here 2")
+    try {
+        const { limite, pagina } = req.query
+        console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getPuntosDeEntrega(?, ?);`, [limite, pagina])
+
+        //console.log(rows)
+
+        //console.log("rows:", rows[0][0][0])
+
+        //console.log("rows:", rows[0][1])
+        res.json({
+            success: true,
+            puntosDeEntrega: rows[0][1],
+            totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: `An error ocurred: ${error.message}`
         })
     }
 }

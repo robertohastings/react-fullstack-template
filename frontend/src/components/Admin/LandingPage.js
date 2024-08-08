@@ -3,6 +3,7 @@ import { Tab, Tabs, Form, Button, Spinner } from "react-bootstrap"
 import JoditEditor from "jodit-react"
 import { IoSaveOutline } from "react-icons/io5"
 import Page from "../Page"
+import PuntosDeEntrega from "./PuntosDeEntrega"
 import StateContext from "../../StateContext"
 import DispatchContext from "../../DispatchContext"
 import Axios from "axios"
@@ -252,6 +253,9 @@ function LandingPage() {
                             {!isSaving && <span>Guardar</span>}
                         </Button>
                     </Form>
+                </Tab>
+                <Tab eventKey="puntosDeAcceso" title="Puntos de Entrega">
+                    <PuntosDeEntrega />
                 </Tab>
             </Tabs>
         </Page>

@@ -9,7 +9,7 @@ function Page(props) {
     }, [props.title])
     return (
         <>
-            <div className="container">{props.children}</div>
+            <div className="container mt-5 pt-2">{props.children}</div>
         </>
     )
 }
