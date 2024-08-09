@@ -220,7 +220,7 @@ function Header(props) {
                                     </NavDropdown.Item>
 
                                     <NavDropdown.Divider />
-                                    <NavDropdown.Item eventKey="4.4" className="d-flex align-items-center gap-2">
+                                    <NavDropdown.Item as={Link} to="Admin/Perfil" eventKey="4.4" className="d-flex align-items-center gap-2">
                                         <RiUser3Line />
                                         Peril
                                     </NavDropdown.Item>

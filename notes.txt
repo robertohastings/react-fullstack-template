@@ -193,3 +193,15 @@ BEGIN
 
 
 END
+
+-- agregar el campo fecha_nacimiento DATE a la tabla Usuarios
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getUsuario`(
+	prm_id_empresa INT,
+    prm_id_usuario INT    
+)
+BEGIN
+	SELECT nombre, apellidos, celular, DATE_FORMAT(fecha_nacimiento,'%Y-%m-%d') AS fecha_nacimiento
+    FROM usuarios
+    WHERE id_empresa = prm_id_empresa AND id_usuario = prm_id_usuario;
+END

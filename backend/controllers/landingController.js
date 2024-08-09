@@ -68,7 +68,7 @@ export const getCategorias = async (req, res) => {
 }
 
 export const getPuntosDeEntrega = async (req, res) => {
-    console.log("here 2")
+    //console.log("here 2")
     try {
         const { limite, pagina } = req.query
         console.log(limite, pagina)

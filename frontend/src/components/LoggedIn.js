@@ -51,7 +51,7 @@ function LoggedIn(props) {
                     }
                 })
                 .then(response => {
-                    console.log(response.data)
+                    console.log("Login response:", response.data)
                     if (response.data.success === false) {
                         seterrorMessage(response.data.data.message)
                     } else {
@@ -59,6 +59,7 @@ function LoggedIn(props) {
                         appDispatch({
                             type: "login",
                             data: {
+                                id_usuario: response.data.data.id_usuario,
                                 token: response.data.data.token,
                                 username: response.data.data.nombre,
                                 avatar: "no-avatar"

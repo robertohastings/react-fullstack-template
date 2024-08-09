@@ -26,6 +26,8 @@ import ListCategorias from "./components/Inventario/Categorias/ListCategorias"
 import ListProveedores from "./components/Compras/Proveedores/ListProveedores"
 import ListProductos from "./components/Inventario/Productos/ListProductos"
 import Carrito from "./components/Carrito"
+import Perfil from "./components/Admin/Perfil/Perfil"
+import { PiEraserFill } from "react-icons/pi"
 
 function App() {
     //const [cart, setCart] = useContext(CartContext)
@@ -41,6 +43,7 @@ function App() {
             typeAlert: ""
         },
         user: {
+            idUser: localStorage.getItem("complexappIdUser"),
             token: localStorage.getItem("complexappToken"),
             username: localStorage.getItem("complexappUsername"),
             avatar: localStorage.getItem("complexappAvatar")
@@ -58,6 +61,7 @@ function App() {
             case "login":
                 draft.loggedIn = true
                 //draft.user = action.data
+                localStorage.setItem("complexappIdUser", action.data.id_usuario)
                 localStorage.setItem("complexappToken", action.data.token)
                 localStorage.setItem("complexappUsername", action.data.username)
                 localStorage.setItem("complexappAvatar", action.data.avatar)
@@ -188,6 +192,7 @@ function App() {
                                     <Route path="/Inventario/Productos/ListProductos" element={<ListProductos />} />
                                     <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
                                     <Route path="/Carrito" element={<Carrito />} />
+                                    <Route path="/Admin/Perfil" element={<Perfil />} />
                                 </Routes>
                             </main>
 
