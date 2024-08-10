@@ -205,3 +205,89 @@ BEGIN
     FROM usuarios
     WHERE id_empresa = prm_id_empresa AND id_usuario = prm_id_usuario;
 END
+
+CREATE TABLE direccion_tipo_identidad (
+    id_empresa BIGINT NOT NULL,
+    id_direccion_tipo_identidad SMALLINT AUTO_INCREMENT,    
+    descripcion VARCHAR(200) NOT NULL,
+    PRIMARY KEY(id_empresa, id_direccion_tipo_identidad),
+    FOREIGN KEY(id_empresa) REFERENCES empresas(id_empresa) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE='MyISAM';
+
+AGREGAR:
+id_direccion_tipo_identidad en la tabla de direcciones
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `postDireccion`(
+	prm_id_empresa INT,
+    prm_id_direccion INT,
+    prm_identidad INT,
+    prm_id_direccion_tipo_identidad INT,
+    prm_direccion_por_defecto BIT,
+    prm_calle VARCHAR(200),
+    prm_numero VARCHAR(20),
+    prm_colonia VARCHAR(200),
+    prm_ciudad VARCHAR(200),
+    prm_estado VARCHAR(200),
+    prm_pais VARCHAR(200),
+    prm_codigo_postal VARCHAR(10)    
+)
+BEGIN
+	DECLARE _direccion VARCHAR(800);
+    SET _direccion = prm_calle + ' ' + prm_numero + ', ' + prm_colonia + ', '+ prm_ciudad + ', ' + prm_estado + ', ' + prm_pais + ', ' + prm_codigo_postal;
+	
+    IF prm_id_direccion = 0 THEN
+    
+		INSERT INTO direcciones 
+			(id_empresa, identidad, id_direccion_tipo_identidad, direccion, calle, numero, colonia, ciudad, estado, pais, codigo_postal,
+            fecha_creacion, fecha_actualizacion)
+            VALUES
+            (prm_id_empresa, prm_identidad, prm_id_direccion_tipo_identidad, _direccion, prm_calle, prm_numero, prm_colonia, prm_ciudad, 
+            prm_estado, prm_pais, prm_codigo_postal, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP);
+	
+    ELSE
+    
+		UPDATE direcciones
+			SET identidad = prm_identidad, id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad, 
+				direccion = _direccion, calle = prm_calle, numero = prm_numero, colonia = prm_colonia, ciudad = prm_ciudad, 
+                estado = prm_estado, pais = prm_pais, codigo_postal = prm_codigo_postal,
+                fecha_actualizacion = CURRENT_TIMESTAMP()
+        WHERE id_empresa = prm_id_empresa AND id_direccion = prm_id_direccion;
+    
+    END IF;
+
+END
+
+TRUNCATE TABLE direcciones;
+ALTER TABLE direcciones DROP COLUMN tipo_identidad;
+AGREGAR EL CAMPO: id_direccion_tipo_identidad COMO PRIMARY KEY EN direcciones
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getDirecciones`(
+	IN limite INT,
+    IN pagina INT,
+    IN prm_id_empresa INT,
+    IN prm_id_direccion_tipo_identidad INT,
+    IN prm_identidad INT
+)
+BEGIN
+
+    SELECT COUNT(*) AS totalRegistros
+    FROM direcciones;
+
+	IF (limite > 0) THEN
+		SELECT 	id_direccion, calle, numero, colonia, ciudad, estado, pais, codigo_postal,
+				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion,
+                CASE WHEN direccion_por_defecto = 1 THEN 'Si' ELSE 'NO' END AS direccion_por_defecto		
+		FROM direcciones
+        WHERE id_empresa = prm_id_empresa AND id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad AND identidad = prm_identidad
+        ORDER BY id_empresa, id_direccion
+		LIMIT limite OFFSET pagina;
+	ELSE 
+		SELECT 	id_direccion, calle, numero, colonia, ciudad, estado, pais, codigo_postal,
+				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion, 
+				CASE WHEN direccion_por_defecto = 1 THEN 'Si' ELSE 'NO' END AS direccion_por_defecto
+		FROM direcciones
+         WHERE id_empresa = prm_id_empresa AND id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad AND identidad = prm_identidad
+        ORDER BY id_empresa, id_direccion;
+	END IF;
+
+END

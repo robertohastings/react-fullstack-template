@@ -179,3 +179,26 @@ export const getUsuario = async (req, res) => {
         })
     }
 }
+
+export const postDireccion = async (req, res) => {
+    //console.log("postPuntosDeEntrega")
+    console.log("body:", req.body)
+    const { id_empresa, id_direccion, identidad, id_direccion_tipo_identidad, direccion_por_defecto, calle, numero, colonia, ciudad, estado, pais, codigo_postal } = req.body
+
+    try {
+        const [result] = await pool.query("CALL postDireccion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [id_empresa, id_direccion, identidad, id_direccion_tipo_identidad, direccion_por_defecto, calle, numero, colonia, ciudad, estado, pais, codigo_postal])
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                message: `Dirección No se actualizó`
+            })
+        } else {
+            return res.status(200).json({
+                message: "Dirección actualizada"
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: `Error: ${error.message}`
+        })
+    }
+}

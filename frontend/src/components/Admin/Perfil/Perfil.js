@@ -6,7 +6,7 @@ import { Tab, Tabs, Form, Button, Spinner } from "react-bootstrap"
 function Perfil() {
     return (
         <Page title="Mi Perfil">
-            <Tabs defaultActiveKey="perfil_menu" id="perfil_tab" className="mb-3" justify>
+            <Tabs defaultActiveKey="Perfil" id="perfil_tab" className="mb-3" justify>
                 <Tab eventKey="Perfil" title="Mi Perfil">
                     <DatosPersonales />
                 </Tab>

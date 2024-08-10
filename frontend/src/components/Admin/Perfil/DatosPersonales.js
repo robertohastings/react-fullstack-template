@@ -19,7 +19,7 @@ function DatosPersonales() {
     const idUser = useContext(StateContext).user.idUser
     const api_url = process.env.REACT_APP_API_URL
     const id_empresa = process.env.REACT_APP_APP_EMPRESA_ID
-    console.log("user:", idUser)
+    //console.log("user:", idUser)
 
     useEffect(() => {
         //obtengo el getUsuario
@@ -42,7 +42,7 @@ function DatosPersonales() {
                         //seterrorMessage(response.data.data.message)
                     } else {
                         //seterrorMessage("")
-                        console.log("response data:", response.data.usuario)
+                        //console.log("response data:", response.data.usuario)
                         setUser({
                             nombre: response.data.usuario.nombre,
                             apellidos: response.data.usuario.apellidos,
@@ -50,7 +50,7 @@ function DatosPersonales() {
                             fecha_nacimiento: response.data.usuario.fecha_nacimiento
                         })
 
-                        console.log("Fecha", response.data.usuario.fecha_nacimiento)
+                        //console.log("Fecha", response.data.usuario.fecha_nacimiento)
 
                         formik.values.nombre = response.data.usuario.nombre
                         formik.values.apellidos = response.data.usuario.apellidos
@@ -78,20 +78,22 @@ function DatosPersonales() {
         onSubmit: async values => {
             const perfil = {
                 id_empresa: 1,
+                id_usuario: idUser,
                 nombre: values.nombre,
                 apellidos: values.apellidos,
                 celular: values.celular,
-                fechaCumple: values.fechaCumple
+                fecha_nacimiento: values.fechaCumple
             }
-            console.log("perfil:", perfil)
-            putUsuario(perfil)
+            //console.log("perfil:", perfil)
+            await putUsuario(perfil)
         }
     })
 
     const putUsuario = async perfil => {
+        console.log("Perfil", perfil)
         setSending(true)
         try {
-            await Axios.put("/api/putUsuario", perfil)
+            await Axios.put(`${api_url}/putUsuario`, perfil)
                 .then(response => {
                     console.log("Respuesta", response)
                 })
