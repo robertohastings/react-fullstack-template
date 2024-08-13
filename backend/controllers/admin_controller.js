@@ -202,3 +202,22 @@ export const postDireccion = async (req, res) => {
         })
     }
 }
+export const getDirecciones = async (req, res) => {
+    console.log("here")
+    try {
+        const { limite, pagina, id_empresa, tipo_identidad, identidad } = req.query
+        //console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getDirecciones(?, ?, ?, ?, ?);`, [limite, pagina, id_empresa, tipo_identidad, identidad])
+
+        res.status(200).json({
+            success: true,
+            direcciones: rows[0][1],
+            totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: "An error ocurred"
+        })
+    }
+}
