@@ -181,7 +181,7 @@ export const getUsuario = async (req, res) => {
 }
 
 export const postDireccion = async (req, res) => {
-    //console.log("postPuntosDeEntrega")
+    console.log("postPuntosDeEntrega")
     console.log("body:", req.body)
     const { id_empresa, id_direccion, identidad, id_direccion_tipo_identidad, direccion_por_defecto, calle, numero, colonia, ciudad, estado, pais, codigo_postal } = req.body
 
@@ -203,7 +203,7 @@ export const postDireccion = async (req, res) => {
     }
 }
 export const getDirecciones = async (req, res) => {
-    console.log("here")
+    //console.log("here")
     try {
         const { limite, pagina, id_empresa, tipo_identidad, identidad } = req.query
         //console.log(limite, pagina)
@@ -214,6 +214,24 @@ export const getDirecciones = async (req, res) => {
             success: true,
             direcciones: rows[0][1],
             totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: "An error ocurred"
+        })
+    }
+}
+export const getPuntosDeEntregaCarrito = async (req, res) => {
+    console.log("getPuntosDeEntregaCarrito:", req.query)
+    try {
+        const { id_empresa, id_direccion_tipo_identidad, identidad } = req.query
+        //console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getPuntosDeEntregaCarrito(?, ?, ?);`, [id_empresa, id_direccion_tipo_identidad, identidad])
+
+        res.status(200).json({
+            success: true,
+            puntosDeEntrega: rows[0][0]
         })
     } catch (error) {
         res.status(500).json({

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
+import Axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
 import StateContext from "../StateContext"
 import DispatchContext from "../DispatchContext"
@@ -9,27 +10,19 @@ import { CartContext } from "../context/ShoppingCartContext"
 function Carrito() {
     const navigate = useNavigate()
     const [cart, setCart] = useContext(CartContext)
+    const [isLoading, setIsLoaging] = useState(false)
+    const [seccion, setSeccion] = useState("resumen")
+    const [puntosDeEntrega, setPuntosDeEntrega] = useState({})
 
     const totalItems = cart.reduce((total, item) => total + parseInt(item.cantidad), 0)
     const totalPrice = cart.reduce((total, item) => total + item.cantidad * item.precio, 0)
 
     const appState = useContext(StateContext)
+    console.log("appState:", appState)
     const appDispatch = useContext(DispatchContext)
-    const [carrito, setCarrito] = useState(JSON.parse(localStorage.getItem("carrito")) ?? {})
-
-    // useEffect(() => {
-    //     function checkCarrito() {
-    //         setCarrito(JSON.parse(localStorage.getItem("carrito")))
-    //     }
-    //     checkCarrito()
-    // }, [appState.carrito])
+    //const [carrito, setCarrito] = useState(JSON.parse(localStorage.getItem("carrito")) ?? {})
 
     const eliminarProducto_handled = id_producto => {
-        // console.log("Producto a eliminar:", id_producto)
-        // appDispatch({ type: "alertMessage", value: "Producto ha sido eliminado", typeAlert: "success" })
-        // appDispatch({ type: "eliminarProducto", value: id_producto })
-        //setCarrito(JSON.parse(localStorage.getItem("carrito")) ?? {})
-
         setCart(currItems => {
             if (currItems.find(item => item.id_producto === id_producto)?.cantidad === 1) {
                 return currItems.filter(item => item.id_producto !== id_producto)
@@ -44,74 +37,110 @@ function Carrito() {
             }
         })
     }
+    const fetchPuntosDeEntrega = async () => {
+        setIsLoaging(true)
+        try {
+            const response = await Axios.get("/api/getPuntosDeEntregaCarrito", {
+                params: {
+                    id_empresa: 1,
+                    id_direccion_tipo_identidad: 1,
+                    identidad: 1
+                }
+            })
+            console.log("response puntos de entrega:", response.data)
+            setPuntosDeEntrega(response.data.puntosDeEntrega)
+        } catch (error) {
+            console.error("There was an error fetching Puntos de Entrega!", error)
+        } finally {
+            setIsLoaging(false)
+        }
+    }
 
     const actualizarCantidad = (id_producto, cantidad) => {
-        //const id_producto = producto.id_producto
-        //const cantidad = producto.cantidad
-        //console.log("producto:", id_producto, " cantidad:", cantidad)
-
         setCart(currItems => {
             return currItems.map(item => {
                 if (item.id_producto === id_producto) {
-                    //console.log("lo encontré")
                     return { ...item, cantidad: cantidad }
                 } else {
-                    //console.log("no lo encontré")
                     return item
                 }
             })
         })
     }
 
-    const handled_PuntoDeEntrega = () => {
-        appDispatch({ type: "showLoggedIn", value: true })
+    const handled_PuntoDeEntrega = async () => {
+        //appDispatch({ type: "showLoggedIn", value: true })
+        setSeccion("puntoDeEntrega")
+        await fetchPuntosDeEntrega()
+        console.log("puntos de entega:", puntosDeEntrega)
+    }
+
+    const handled_RegresarAlCarrito = () => {
+        setSeccion("resumen")
     }
 
     return (
         <Container fluid>
-            <h4 className="pb-4">Carrito de Compras</h4>
+            <h4 className="pb-4 pt-5">{seccion === "resumen" ? "Carrito de Compras" : seccion === "puntoDeEntrega" ? "Punto de Entrega" : ""}</h4>
             <Row>
-                <Col xs={9} style={{ height: "100vh", overflowY: "auto" }}>
-                    {cart?.length === 0
-                        ? "No hay productos en el carrito"
-                        : cart?.map(producto => (
-                              <div className="pb-3" key={producto.id_producto}>
-                                  <Row className="d-flex align-items-center" style={{ borderBottom: "1px solid #ccc", padding: "10px 0" }}>
-                                      <Col xs={2}>
-                                          <Image src={producto.imagen} style={{ width: "150px", height: "100px" }} />
-                                      </Col>
-                                      <Col xs={3}>
-                                          <h5>{producto.nombre}</h5>
-                                      </Col>
-                                      <Col xs={2} className="justify-text-center">
-                                          Precio: ${producto.precio}
-                                      </Col>
-                                      <Col xs={2}>
-                                          Cantidad:{" "}
-                                          <select value={producto.cantidad} onChange={e => actualizarCantidad(producto.id_producto, e.target.value)}>
-                                              <option value="1">1</option>
-                                              <option value="2">2</option>
-                                              <option value="3">3</option>
-                                              <option value="4">4</option>
-                                              <option value="5">5</option>
-                                              <option value="6">6</option>
-                                              <option value="7">7</option>
-                                              <option value="8">8</option>
-                                              <option value="9">9</option>
-                                              <option value="10">10</option>
-                                          </select>
-                                      </Col>
-                                      <Col xs={2}>
-                                          Subtotal: $<span>{producto.precio * producto.cantidad}</span>
-                                      </Col>
-                                      <Col xs={1} className="d-flex justify-content-center align-items-center">
-                                          <TiDeleteOutline size={25} onClick={() => eliminarProducto_handled(producto.id_producto)} title="Eliminar este producto del carrito" style={{ cursor: "pointer" }} />
-                                      </Col>
-                                  </Row>
-                                  {/* <hr /> */}
-                              </div>
-                          ))}
-                </Col>
+                {seccion === "resumen" && (
+                    <>
+                        <Col xs={9} style={{ height: "100vh", overflowY: "auto" }}>
+                            {cart?.length === 0
+                                ? "No hay productos en el carrito"
+                                : cart?.map(producto => (
+                                      <div className="pb-3 px-4" key={producto.id_producto}>
+                                          <Row className="d-flex align-items-center" style={{ borderBottom: "1px solid #ccc", padding: "10px 0" }}>
+                                              <Col xs={2}>
+                                                  <Image src={producto.imagen} style={{ width: "150px", height: "100px" }} />
+                                              </Col>
+                                              <Col xs={3}>
+                                                  <h5>{producto.nombre}</h5>
+                                              </Col>
+                                              <Col xs={2} className="justify-text-center">
+                                                  Precio: ${producto.precio}
+                                              </Col>
+                                              <Col xs={2}>
+                                                  Cantidad:{" "}
+                                                  <select value={producto.cantidad} onChange={e => actualizarCantidad(producto.id_producto, e.target.value)}>
+                                                      <option value="1">1</option>
+                                                      <option value="2">2</option>
+                                                      <option value="3">3</option>
+                                                      <option value="4">4</option>
+                                                      <option value="5">5</option>
+                                                      <option value="6">6</option>
+                                                      <option value="7">7</option>
+                                                      <option value="8">8</option>
+                                                      <option value="9">9</option>
+                                                      <option value="10">10</option>
+                                                  </select>
+                                              </Col>
+                                              <Col xs={2}>
+                                                  Subtotal: $<span>{producto.precio * producto.cantidad}</span>
+                                              </Col>
+                                              <Col xs={1} className="d-flex justify-content-center align-items-center">
+                                                  <TiDeleteOutline size={25} onClick={() => eliminarProducto_handled(producto.id_producto)} title="Eliminar este producto del carrito" style={{ cursor: "pointer" }} />
+                                              </Col>
+                                          </Row>
+                                          {/* <hr /> */}
+                                      </div>
+                                  ))}
+                        </Col>
+                    </>
+                )}
+
+                {seccion === "puntoDeEntrega" && (
+                    <>
+                        <Col xs="9">
+                            <h5>Seleccione un Punto de Entrega:</h5>
+                        </Col>
+                        <Col xs="9">
+                            <h5>Seleccione un Punto de Entrega:</h5>
+                        </Col>
+                    </>
+                )}
+
+                {/* Menú izquierdo */}
                 <Col xs={3}>
                     <div className="position-sticky" style={{ top: 70 }}>
                         <Card>
@@ -127,9 +156,17 @@ function Carrito() {
                             </Card.Body>
                             <Card.Footer>
                                 <Link to={"/Products"}>Seguir comprando</Link>
+                                {seccion === "puntoDeEntrega" && (
+                                    <>
+                                        <br />
+                                        <Link onClick={handled_RegresarAlCarrito}>Regresar al carrito</Link>
+                                        <br />
+                                        <br />
+                                        <Link onClick={handled_RegresarAlCarrito}>Continuar con el Método de Pago</Link>
+                                    </>
+                                )}
                                 <br />
-                                {!appState.loggedIn && <Link onClick={handled_PuntoDeEntrega}>Continuar con el punto de entrega</Link>}
-                                {appState.loggedIn && <Link to={"/"}>Continuar con el punto de entrega</Link>}
+                                {appState.loggedIn && seccion === "resumen" && <Link onClick={handled_PuntoDeEntrega}>Continuar con el punto de entrega</Link>}
                             </Card.Footer>
                         </Card>
                     </div>

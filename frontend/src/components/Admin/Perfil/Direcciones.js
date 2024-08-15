@@ -77,14 +77,14 @@ function Direcciones() {
         //Lo que pasa cuando se envia el formulario
         onSubmit: async values => {
             setSending(true)
-            //console.log("values:", values)
+            console.log("values:", values)
 
             const direccion = {
                 id_empresa: 1,
                 id_direccion: values.id_direccion,
                 identidad: 1,
                 id_direccion_tipo_identidad: 1,
-                direccion_por_defecto: values.direccion_por_defecto,
+                direccion_por_defecto: parseInt(values.direccion_por_defecto),
                 calle: values.calle,
                 numero: values.numero,
                 colonia: values.colonia,
@@ -130,6 +130,7 @@ function Direcciones() {
     }
 
     const Agregar_handled = () => {
+        formik.values.id_direccion = 0
         formik.values.direccion_por_defecto = "No"
         formik.values.calle = ""
         formik.values.numero = ""
@@ -227,7 +228,7 @@ function Direcciones() {
             <>
                 <Modal size="lg" show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
                     <Modal.Header closeButton>
-                        <Modal.Title>Dirección # {formik.values.id_direccion === 0 ? "nueva" : formik.values.id_direccion}</Modal.Title>
+                        <Modal.Title>{formik.values.id_direccion === 0 ? "Nueva dirección:" : `Dirección # ${formik.values.id_direccion}:`}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
@@ -251,20 +252,27 @@ function Direcciones() {
                                 <Col>
                                     {/* Colonia */}
                                     <FloatingLabel label="Colonia" className="mb-3">
-                                        <Form.Control type="text" placeholder="Colonia" id="colonia" name="contacto2" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.colonia} />
+                                        <Form.Control type="text" placeholder="Colonia" id="colonia" name="colonia" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.colonia} />
                                         {formik.touched.colonia && formik.errors.colonia ? <div className="text-danger">{formik.errors.colonia}</div> : null}
                                     </FloatingLabel>
                                 </Col>
                             </Row>
                             <Row>
                                 <Col xs={6}>
+                                    {/* Ciudad */}
+                                    <FloatingLabel label="Ciudad" className="mb-3">
+                                        <Form.Control type="text" placeholder="Ciudad" id="ciudad" name="ciudad" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.ciudad} />
+                                        {formik.touched.ciudad && formik.errors.ciudad ? <div className="text-danger">{formik.errors.ciudad}</div> : null}
+                                    </FloatingLabel>
+                                </Col>
+                                <Col xs={3}>
                                     {/* Estado */}
                                     <FloatingLabel label="Estado" className="mb-3">
                                         <Form.Control type="text" placeholder="Estado" id="estado" name="estado" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.estado} />
                                         {formik.touched.estado && formik.errors.estado ? <div className="text-danger">{formik.errors.estado}</div> : null}
                                     </FloatingLabel>
                                 </Col>
-                                <Col xs={6}>
+                                <Col xs={3}>
                                     {/* País */}
                                     <FloatingLabel label="País" className="mb-3">
                                         <Form.Control type="text" placeholder="País" id="pais" name="pais" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.pais} />

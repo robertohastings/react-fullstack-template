@@ -179,12 +179,12 @@ BEGIN
 	IF prm_id_puntoDeEntrega = 0 THEN
     
 		INSERT INTO puntosdeentrega (id_empresa, nombre, horario, fecha_creacion, fecha_actualizacion, activo)
-		VALUES (prm_id_empresa, prm_nombre, prm_nombre, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP, prm_activo);    
+		VALUES (prm_id_empresa, prm_nombre, prm_horario, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP, prm_activo);    
     
     ELSE
 		
         UPDATE puntosdeentrega SET 	nombre = prm_nombre, 
-									horario = prm_nombre,                                  
+									horario = prm_horario,                                  
 									activo = prm_activo,
 									fecha_actualizacion = CURRENT_TIMESTAMP()
 		WHERE id_empresa = prm_id_empresa AND id_puntoDeEntrega = prm_id_puntoDeEntrega;
@@ -232,17 +232,21 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `postDireccion`(
     prm_codigo_postal VARCHAR(10)    
 )
 BEGIN
-	DECLARE _direccion VARCHAR(800);
-    SET _direccion = prm_calle + ' ' + prm_numero + ', ' + prm_colonia + ', '+ prm_ciudad + ', ' + prm_estado + ', ' + prm_pais + ', ' + prm_codigo_postal;
+
+    DECLARE _direccion VARCHAR(800);
+
+    SET _direccion = CONCAT(prm_calle, ' ', prm_numero, ', ', prm_colonia, ', ', prm_ciudad, ', ', prm_estado, ', ', prm_pais, ', ', prm_codigo_postal);
 	
     IF prm_id_direccion = 0 THEN
     
 		INSERT INTO direcciones 
 			(id_empresa, identidad, id_direccion_tipo_identidad, direccion, calle, numero, colonia, ciudad, estado, pais, codigo_postal,
-            fecha_creacion, fecha_actualizacion)
+            fecha_creacion, fecha_actualizacion, direccion_por_defecto)
             VALUES
             (prm_id_empresa, prm_identidad, prm_id_direccion_tipo_identidad, _direccion, prm_calle, prm_numero, prm_colonia, prm_ciudad, 
-            prm_estado, prm_pais, prm_codigo_postal, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP);
+            prm_estado, prm_pais, prm_codigo_postal, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP, prm_direccion_por_defecto);
+            
+        SET prm_id_direccion = LAST_INSERT_ID();
 	
     ELSE
     
@@ -250,10 +254,16 @@ BEGIN
 			SET identidad = prm_identidad, id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad, 
 				direccion = _direccion, calle = prm_calle, numero = prm_numero, colonia = prm_colonia, ciudad = prm_ciudad, 
                 estado = prm_estado, pais = prm_pais, codigo_postal = prm_codigo_postal,
-                fecha_actualizacion = CURRENT_TIMESTAMP()
-        WHERE id_empresa = prm_id_empresa AND id_direccion = prm_id_direccion;
-    
+                fecha_actualizacion = CURRENT_TIMESTAMP(),
+                direccion_por_defecto = prm_direccion_por_defecto
+        WHERE 	id_empresa = prm_id_empresa AND 
+				id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad  AND 
+                identidad = prm_identidad AND
+                id_direccion = prm_id_direccion;
+                		
     END IF;
+    
+    CALL putRevisaDireccionPorDefecto(prm_id_empresa, prm_id_direccion_tipo_identidad, prm_identidad, prm_id_direccion, prm_direccion_por_defecto);
 
 END
 
@@ -290,4 +300,46 @@ BEGIN
         ORDER BY id_empresa, id_direccion;
 	END IF;
 
+END
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `putRevisaDireccionPorDefecto`(
+	prm_id_empresa INT,
+    prm_id_direccion_tipo_identidad INT,
+    prm_identidad INT,
+    prm_id_direccion INT,
+    prm_direccion_por_defecto BIT
+)
+BEGIN
+	DECLARE cantidadPorDefecto SMALLINT;
+    
+	/*Si es verdadera entonces pongo las demás en false*/
+	IF prm_direccion_por_defecto = true THEN
+		UPDATE direcciones SET direccion_por_defecto = FALSE
+        WHERE 	id_empresa = prm_id_empresa AND 
+				id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad  AND 
+                identidad = prm_identidad AND
+                id_direccion <> prm_id_direccion;
+    END IF;
+    
+    /*Si no hay verdaderas entonces la que se esta modificando la pongo en true*/
+	IF prm_direccion_por_defecto = false THEN
+    
+		IF EXISTS(
+			SELECT IFNULL(COUNT(*), 0) > 0
+			FROM direcciones
+			WHERE 	id_empresa = prm_id_empresa AND 
+					id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad  AND 
+					identidad = prm_identidad AND
+					direccion_por_defecto = TRUE
+        ) THEN         
+
+			UPDATE direcciones SET direccion_por_defecto = TRUE
+			WHERE 	id_empresa = prm_id_empresa AND 
+					id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad  AND 
+					identidad = prm_identidad AND
+					id_direccion = prm_id_direccion;
+		END IF;
+
+                        
+    END IF;
 END
