@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom"
 import StateContext from "../StateContext"
 import DispatchContext from "../DispatchContext"
 import { TiDeleteOutline } from "react-icons/ti"
-import { Container, Row, Col, Image, Card } from "react-bootstrap"
+import { Container, Row, Col, Image, Card, Form } from "react-bootstrap"
 import { CartContext } from "../context/ShoppingCartContext"
 
 function Carrito() {
@@ -12,7 +12,7 @@ function Carrito() {
     const [cart, setCart] = useContext(CartContext)
     const [isLoading, setIsLoaging] = useState(false)
     const [seccion, setSeccion] = useState("resumen")
-    const [puntosDeEntrega, setPuntosDeEntrega] = useState({})
+    const [puntosDeEntrega, setPuntosDeEntrega] = useState([])
 
     const totalItems = cart.reduce((total, item) => total + parseInt(item.cantidad), 0)
     const totalPrice = cart.reduce((total, item) => total + item.cantidad * item.precio, 0)
@@ -47,7 +47,7 @@ function Carrito() {
                     identidad: 1
                 }
             })
-            console.log("response puntos de entrega:", response.data)
+            //console.log("response puntos de entrega:", response.data.puntosDeEntrega)
             setPuntosDeEntrega(response.data.puntosDeEntrega)
         } catch (error) {
             console.error("There was an error fetching Puntos de Entrega!", error)
@@ -72,16 +72,20 @@ function Carrito() {
         //appDispatch({ type: "showLoggedIn", value: true })
         setSeccion("puntoDeEntrega")
         await fetchPuntosDeEntrega()
-        console.log("puntos de entega:", puntosDeEntrega)
+        //console.log("puntos de entega:", puntosDeEntrega)
     }
 
     const handled_RegresarAlCarrito = () => {
         setSeccion("resumen")
     }
 
+    const handled_PuntoSeleccionado = e => {
+        console.log("e", e.target.value)
+    }
+
     return (
         <Container fluid>
-            <h4 className="pb-4 pt-5">{seccion === "resumen" ? "Carrito de Compras" : seccion === "puntoDeEntrega" ? "Punto de Entrega" : ""}</h4>
+            <h4 className="pb-4 pt-5">{seccion === "resumen" ? "Carrito de Compras" : seccion === "puntoDeEntrega" ? "Seleccione el Punto de Entrega o el Domicilio" : ""}</h4>
             <Row>
                 {seccion === "resumen" && (
                     <>
@@ -131,11 +135,33 @@ function Carrito() {
 
                 {seccion === "puntoDeEntrega" && (
                     <>
-                        <Col xs="9">
-                            <h5>Seleccione un Punto de Entrega:</h5>
-                        </Col>
-                        <Col xs="9">
-                            <h5>Seleccione un Punto de Entrega:</h5>
+                        <Col xs={9} style={{ height: "100vh", overflowY: "auto" }}>
+                            {/* {puntosDeEntrega?.length === 0
+                                ? "No hay puntos de entrega y/o direcciones de entrega"
+                                : puntosDeEntrega?.map((puntoEntrega, index) => (
+                                      <div className="pb-3 px-4" key={index}>
+                                          <Row className="d-flex align-items-center" style={{ borderBottom: "1px solid #ccc", padding: "10px 0" }}>
+                                              <Col xs={12}>
+                                                  <p>{puntoEntrega.puntoentrega}</p>
+                                              </Col>
+                                          </Row>
+                                      </div>
+                                  ))} */}
+                            {puntosDeEntrega?.length === 0 && <p>No hay puntos de entrega y/o direcciones de entrega</p>}
+                            {puntosDeEntrega?.length !== 0 && (
+                                <>
+                                    <Form className="px-5">
+                                        {puntosDeEntrega.map((puntoEntrega, index) => (
+                                            <>
+                                                <Form.Check type="radio" id="puntos_entrega" className="pb-3" onChange={handled_PuntoSeleccionado}>
+                                                    <Form.Check.Input type="radio" id={`opt-${index}`} name="punto_entrega" />
+                                                    <Form.Check.Label for={`opt-${index}`}>{`${puntoEntrega.TipoDeEntrega} en: ${puntoEntrega.puntoentrega}`}</Form.Check.Label>
+                                                </Form.Check>
+                                            </>
+                                        ))}
+                                    </Form>
+                                </>
+                            )}
                         </Col>
                     </>
                 )}

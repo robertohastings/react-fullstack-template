@@ -7,6 +7,7 @@ import PuntosDeEntrega from "./PuntosDeEntrega"
 import StateContext from "../../StateContext"
 import DispatchContext from "../../DispatchContext"
 import Axios from "axios"
+import FormasDePago from "./FormasDePago"
 
 function LandingPage() {
     const appState = useContext(StateContext)
@@ -256,6 +257,9 @@ function LandingPage() {
                 </Tab>
                 <Tab eventKey="puntosDeAcceso" title="Puntos de Entrega">
                     <PuntosDeEntrega />
+                </Tab>
+                <Tab eventKey="formasDePago" title="Formas de Pago">
+                    <FormasDePago />
                 </Tab>
             </Tabs>
         </Page>

@@ -343,3 +343,31 @@ BEGIN
                         
     END IF;
 END
+
+CREATE TABLE formas_de_pago (
+    id_empresa BIGINT NOT NULL,
+    id_forma_de_pago SMALLINT AUTO_INCREMENT,    
+    descripcion VARCHAR(200) NOT NULL,
+    informacion_adicional VARCHAR(200) NULL,
+    activo BIT NOT NULL,
+    PRIMARY KEY(id_empresa, id_forma_de_pago),
+    FOREIGN KEY(id_empresa) REFERENCES empresas(id_empresa) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE='MyISAM';
+
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Efectivo - contra entrega', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Tarjeta Débito/Crédito - contra entrega', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Depósito', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Transferencia', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Pago en línea', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Línea de crédito', '', 1);
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getFormasDePago`(
+	prm_id_empresa INT
+)
+BEGIN
+	
+    SELECT id_forma_de_pago, descripcion, informacion_adicional
+    FROM formas_de_pago
+    WHERE id_empresa = prm_id_empresa AND activo = 1;
+    
+END

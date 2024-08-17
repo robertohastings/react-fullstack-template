@@ -118,7 +118,7 @@ function PuntosDeEntrega() {
     const Refrescar_handled = () => fetchData()
 
     return (
-        <Page>
+        <Page title="Landing Page">
             <h4 className="pt-2 pb-3">ABC Puntos de Entrega</h4>
             <div className="gap-2">
                 <div>
