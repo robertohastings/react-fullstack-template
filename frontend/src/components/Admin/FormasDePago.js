@@ -35,6 +35,70 @@ function FormasDePago() {
 
     const Refrescar_handled = () => fetchData()
 
+    const submit_handled = e => {
+        e.preventDefault()
+        console.log("form data:", e)
+        const data = {
+            id_empresa: 1,
+            formasDePago: [
+                {
+                    id_forma_de_pago: 1,
+                    activo: e.target[0].checked === true ? 1 : 0,
+                    informacion_adicional: e.target[1].value
+                },
+                {
+                    id_forma_de_pago: 2,
+                    activo: e.target[2].checked === true ? 1 : 0,
+                    informacion_adicional: e.target[3].value
+                },
+                {
+                    id_forma_de_pago: 3,
+                    activo: e.target[4].checked === true ? 1 : 0,
+                    informacion_adicional: e.target[5].value
+                },
+                {
+                    id_forma_de_pago: 4,
+                    activo: e.target[6].checked === true ? 1 : 0,
+                    informacion_adicional: e.target[7].value
+                },
+                {
+                    id_forma_de_pago: 5,
+                    activo: e.target[8].checked === true ? 1 : 0,
+                    informacion_adicional: e.target[9].value
+                },
+                {
+                    id_forma_de_pago: 6,
+                    activo: e.target[10].checked === true ? 1 : 0,
+                    informacion_adicional: e.target[11].value
+                }
+            ]
+        }
+
+        console.log(data)
+        putFormasDePago(data)
+    }
+
+    const putFormasDePago = async data => {
+        setSending(true)
+        try {
+            await Axios.put("/api/putFormasDePago", data)
+                .then(response => {
+                    console.log(response)
+                    setSending(false)
+                })
+                .catch(error => {
+                    console.log("There was an error updating formas de pago: ", error)
+                    setSending(false)
+                })
+        } catch (error) {
+            console.log("error:", error)
+        } finally {
+            setSending(false)
+            //setShow(false)
+            fetchData()
+        }
+    }
+
     return (
         <Page title="Landing Page">
             <h4 className="pb-1">Formas de Pago</h4>
@@ -44,14 +108,14 @@ function FormasDePago() {
                         <TbRefresh />
                         {isLoading ? ` Refrescando...` : ` Refrescar`}
                     </Button>
-                    <Button className="mx-2 my-3" size="sm" variant="outline-primary" onClick={() => {}}>
+                    {/* <Button className="mx-2 my-3" size="sm" variant="outline-primary" onClick={() => {}}>
                         {sending && <SpinnerButton mensaje="Guardando..." />}
                         {!sending && "Guardar"}
-                    </Button>
+                    </Button> */}
                 </div>
 
                 <div className="mb-3">
-                    <Form>
+                    <Form onSubmit={submit_handled}>
                         {data.map((formaDePago, index) => (
                             <div key={index}>
                                 <Row>
@@ -62,11 +126,15 @@ function FormasDePago() {
                                         </Form.Check>
                                     </Col>
                                     <Col xs={8} className="mb-3">
-                                        <Form.Control size="md" type="text" placeholder="Datos adicionales" defaultValue={formaDePago.informacion_adicional} />
+                                        <Form.Control size="md" type="text" placeholder="Datos adicionales" defaultValue={formaDePago.informacion_adicional} name="formaDePago" />
                                     </Col>
                                 </Row>
                             </div>
                         ))}
+                        <Button className="mx-2 my-3" size="sm" variant="outline-primary" type="submit">
+                            {sending && <SpinnerButton mensaje="Guardando..." />}
+                            {!sending && "Guardar"}
+                        </Button>
                     </Form>
                 </div>
             </div>

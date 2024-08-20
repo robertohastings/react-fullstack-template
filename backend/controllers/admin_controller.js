@@ -257,3 +257,22 @@ export const getFormasDePago = async (req, res) => {
         })
     }
 }
+export const putFormasDePago = async (req, res) => {
+    console.log("body putFormasDePago:", req.body)
+    const { id_empresa, formasDePago } = req.body
+    console.log("id_empresa", id_empresa)
+    console.log("formasDePago", formasDePago)
+
+    try {
+        await pool.query("CALL putFormasDePago(?, ?)", [id_empresa, JSON.stringify(formasDePago)], (error, results) => {
+            if (error) {
+                return res.status(500).json({ error: error.message })
+            }
+            res.status(200).json({ message: "Formas de pago actualizadas exitosamente", results })
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: `Error: ${error.message}`
+        })
+    }
+}
