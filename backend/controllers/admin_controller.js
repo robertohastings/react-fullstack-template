@@ -258,21 +258,42 @@ export const getFormasDePago = async (req, res) => {
     }
 }
 export const putFormasDePago = async (req, res) => {
-    console.log("body putFormasDePago:", req.body)
+    //console.log("body putFormasDePago:", req.body)
     const { id_empresa, formasDePago } = req.body
-    console.log("id_empresa", id_empresa)
-    console.log("formasDePago", formasDePago)
+    //console.log("id_empresa", id_empresa)
+    //console.log("formasDePago", formasDePago)
+
+    // try {
+    //     await pool.query("CALL putFormasDePago(?, ?)", [id_empresa, JSON.stringify(formasDePago)], (error, results) => {
+    //         if (error) {
+    //             console.log("ocurrió un error 1")
+    //             return res.status(500).json({ error: error.message })
+    //         }
+    //         return res.status(200).json({ message: "Formas de pago actualizadas exitosamente", results })
+    //     })
+    // } catch (error) {
+    //     console.log("ocurrió un error 2")
+    //     return res.status(500).json({
+    //         message: `Error: ${error.message}`
+    //     })
+    // }
 
     try {
-        await pool.query("CALL putFormasDePago(?, ?)", [id_empresa, JSON.stringify(formasDePago)], (error, results) => {
-            if (error) {
-                return res.status(500).json({ error: error.message })
-            }
-            res.status(200).json({ message: "Formas de pago actualizadas exitosamente", results })
-        })
+        const [result] = await pool.query("CALL putFormasDePago(?, ?)", [id_empresa, JSON.stringify(formasDePago)])
+
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                message: "No se realizó actualización"
+            })
+        } else {
+            return res.status(200).json({
+                message: "Formas de pago actualizadas exitosamente"
+            })
+        }
     } catch (error) {
+        console.log("Ocurrió un error")
         res.status(500).json({
-            message: `Error: ${error.message}`
+            message: `Error: ${error}`
         })
     }
 }

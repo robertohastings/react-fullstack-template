@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import Axios from "axios"
-import { Button, Col, Form, Row } from "react-bootstrap"
+import { Button, Col, Form, Row, Spinner } from "react-bootstrap"
 import Page from "../Page"
 
 import { TbRefresh } from "react-icons/tb"
@@ -24,7 +24,7 @@ function FormasDePago() {
                     id_empresa: 1
                 }
             })
-            console.log("response:", response.data.formasDePago)
+            console.log("response formas de pago:", response.data.formasDePago)
             setData(response.data.formasDePago)
         } catch (error) {
             console.error("There was an error fetching the products!", error.message)
@@ -38,7 +38,7 @@ function FormasDePago() {
     const submit_handled = e => {
         e.preventDefault()
         console.log("form data:", e)
-        const data = {
+        const dataUpdated = {
             id_empresa: 1,
             formasDePago: [
                 {
@@ -74,14 +74,14 @@ function FormasDePago() {
             ]
         }
 
-        console.log(data)
-        putFormasDePago(data)
+        console.log(dataUpdated)
+        putFormasDePago(dataUpdated)
     }
 
-    const putFormasDePago = async data => {
+    const putFormasDePago = async dataUpdated => {
         setSending(true)
         try {
-            await Axios.put("/api/putFormasDePago", data)
+            await Axios.put("/api/putFormasDePago", dataUpdated)
                 .then(response => {
                     console.log(response)
                     setSending(false)
@@ -114,29 +114,45 @@ function FormasDePago() {
                     </Button> */}
                 </div>
 
-                <div className="mb-3">
-                    <Form onSubmit={submit_handled}>
-                        {data.map((formaDePago, index) => (
-                            <div key={index}>
-                                <Row>
-                                    <Col xs={4} className="p-0">
-                                        <Form.Check type="checkbox" id="forma_de_pago" className="pb-3" onChange={() => {}}>
-                                            <Form.Check.Input type="checkbox" id={`opt-${index}`} name="forma_de_pago" />
-                                            <Form.Check.Label for={`opt-${index}`}>{`${formaDePago.descripcion}`}</Form.Check.Label>
-                                        </Form.Check>
-                                    </Col>
-                                    <Col xs={8} className="mb-3">
-                                        <Form.Control size="md" type="text" placeholder="Datos adicionales" defaultValue={formaDePago.informacion_adicional} name="formaDePago" />
-                                    </Col>
-                                </Row>
-                            </div>
-                        ))}
-                        <Button className="mx-2 my-3" size="sm" variant="outline-primary" type="submit">
-                            {sending && <SpinnerButton mensaje="Guardando..." />}
-                            {!sending && "Guardar"}
-                        </Button>
-                    </Form>
-                </div>
+                {isLoading ? (
+                    <div className="d-flex justify-content-center">
+                        <Spinner animation="grow" />
+                    </div>
+                ) : (
+                    <div className="mb-3">
+                        <Form onSubmit={submit_handled}>
+                            {data.map((formaDePago, index) => (
+                                <div key={index}>
+                                    <Row>
+                                        <Col xs={4} className="p-0">
+                                            <Form.Check type="checkbox" id="forma_de_pago" className="pb-3">
+                                                <Form.Check.Input
+                                                    type="checkbox"
+                                                    id={`opt-${index}`}
+                                                    name="forma_de_pago"
+                                                    defaultChecked={formaDePago.defaultChecked === "true"}
+                                                    onChange={e => {
+                                                        // Manejar el cambio de estado del checkbox
+                                                        const updatedData = data.map(d => (d.id_forma_de_pago === formaDePago.id_forma_de_pago ? { ...d, defaultChecked: e.target.checked.toString() } : d))
+                                                        setData(updatedData)
+                                                    }}
+                                                />
+                                                <Form.Check.Label for={`opt-${index}`}>{`${formaDePago.descripcion}`}</Form.Check.Label>
+                                            </Form.Check>
+                                        </Col>
+                                        <Col xs={8} className="mb-3">
+                                            <Form.Control size="md" type="text" placeholder="Datos adicionales" defaultValue={formaDePago.informacion_adicional} name="formaDePago" />
+                                        </Col>
+                                    </Row>
+                                </div>
+                            ))}
+                            <Button className="mx-2 my-3" size="sm" variant="outline-primary" type="submit">
+                                {sending && <SpinnerButton mensaje="Guardando..." />}
+                                {!sending && "Guardar"}
+                            </Button>
+                        </Form>
+                    </div>
+                )}
             </div>
         </Page>
     )
