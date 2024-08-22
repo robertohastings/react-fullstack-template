@@ -13,6 +13,9 @@ function Carrito() {
     const [isLoading, setIsLoaging] = useState(false)
     const [seccion, setSeccion] = useState("resumen")
     const [puntosDeEntrega, setPuntosDeEntrega] = useState([])
+    const [puntoDeEntregaSeleccionado, setPuntoDeEntregaSeleccionado] = useState({})
+    const [formasDePago, setFormasDePago] = useState([])
+    const [formaDePagoSeleccionada, setFormaDePagoSeleccionada] = useState({})
 
     const totalItems = cart.reduce((total, item) => total + parseInt(item.cantidad), 0)
     const totalPrice = cart.reduce((total, item) => total + item.cantidad * item.precio, 0)
@@ -55,6 +58,22 @@ function Carrito() {
             setIsLoaging(false)
         }
     }
+    const fetchFormasDePago = async () => {
+        setIsLoaging(true)
+        try {
+            const response = await Axios.get("/api/getFormasDePago", {
+                params: {
+                    id_empresa: 1
+                }
+            })
+            console.log("response formas de Pago:", response.data.formasDePago)
+            setFormasDePago(response.data.formasDePago)
+        } catch (error) {
+            console.error("There was an error fetching Formas De Pago!", error)
+        } finally {
+            setIsLoaging(false)
+        }
+    }
 
     const actualizarCantidad = (id_producto, cantidad) => {
         setCart(currItems => {
@@ -75,12 +94,23 @@ function Carrito() {
         //console.log("puntos de entega:", puntosDeEntrega)
     }
 
+    const handled_FormasDePago = async () => {
+        setSeccion("formasDePago")
+        await fetchFormasDePago()
+    }
+
     const handled_RegresarAlCarrito = () => {
         setSeccion("resumen")
     }
 
-    const handled_PuntoSeleccionado = e => {
-        console.log("e", e.target.value)
+    const handled_PuntoSeleccionado = puntoEntrega => {
+        console.log("Punto entrega seleccionado", puntoEntrega)
+        setPuntoDeEntregaSeleccionado(puntoEntrega)
+    }
+
+    const handled_FormaDePagoSeleccionada = formaDePago => {
+        console.log("Forma de pago seleccionada", formaDePago)
+        setPuntoDeEntregaSeleccionado(puntoEntrega)
     }
 
     return (
@@ -153,9 +183,31 @@ function Carrito() {
                                     <Form className="px-5">
                                         {puntosDeEntrega.map((puntoEntrega, index) => (
                                             <>
-                                                <Form.Check type="radio" id="puntos_entrega" className="pb-3" onChange={handled_PuntoSeleccionado}>
-                                                    <Form.Check.Input type="radio" id={`opt-${index}`} name="punto_entrega" />
+                                                <Form.Check type="radio" id={`puntoEntrega-${index}`} className="pb-3" key={index}>
+                                                    <Form.Check.Input type="radio" id={`opt-${index}`} name="punto_entrega" onChange={e => handled_PuntoSeleccionado(puntoEntrega)} />
                                                     <Form.Check.Label for={`opt-${index}`}>{`${puntoEntrega.TipoDeEntrega} en: ${puntoEntrega.puntoentrega}`}</Form.Check.Label>
+                                                </Form.Check>
+                                            </>
+                                        ))}
+                                    </Form>
+                                </>
+                            )}
+                        </Col>
+                    </>
+                )}
+
+                {seccion === "formasDePago" && (
+                    <>
+                        <Col xs={9} style={{ height: "100vh", overflowY: "auto" }}>
+                            {formasDePago?.length === 0 && <p>No hay formas de pago definidas</p>}
+                            {formasDePago?.length !== 0 && (
+                                <>
+                                    <Form className="px-5">
+                                        {formasDePago.map((formaDePago, index) => (
+                                            <>
+                                                <Form.Check type="radio" id={`formaDePago-${index}`} className="pb-3" key={index}>
+                                                    <Form.Check.Input type="radio" id={`opt-${index}`} name="forma de pago" onChange={e => handled_PuntoSeleccionado(formaDePago)} />
+                                                    <Form.Check.Label for={`opt-${index}`}>{`${formaDePago.descripcion} : ${formaDePago.informacion_adicional}`}</Form.Check.Label>
                                                 </Form.Check>
                                             </>
                                         ))}
@@ -179,20 +231,37 @@ function Carrito() {
                                 <Card.Text>
                                     <strong>Total a pagar:</strong> ${totalPrice.toFixed(2)}
                                 </Card.Text>
+                                {puntoDeEntregaSeleccionado && (
+                                    <>
+                                        <Card.Text>
+                                            <strong>Punto de Entrega Seleccionado:</strong>
+                                            <p className="mt-1">{puntoDeEntregaSeleccionado.puntoentrega}</p>
+                                        </Card.Text>
+                                    </>
+                                )}
                             </Card.Body>
                             <Card.Footer>
-                                <Link to={"/Products"}>Seguir comprando</Link>
+                                {appState.loggedIn && seccion === "resumen" && (
+                                    <>
+                                        <Link onClick={handled_PuntoDeEntrega}>Continuar con el punto de entrega</Link>
+                                        <br />
+                                        <br />
+                                    </>
+                                )}
+
                                 {seccion === "puntoDeEntrega" && (
                                     <>
+                                        <Link onClick={handled_FormasDePago}>Continuar con la forma de pago</Link>
+                                        <br />
                                         <br />
                                         <Link onClick={handled_RegresarAlCarrito}>Regresar al carrito</Link>
                                         <br />
-                                        <br />
-                                        <Link onClick={handled_RegresarAlCarrito}>Continuar con el Método de Pago</Link>
                                     </>
                                 )}
+
+                                <Link to={"/Products"}>Seguir comprando</Link>
+
                                 <br />
-                                {appState.loggedIn && seccion === "resumen" && <Link onClick={handled_PuntoDeEntrega}>Continuar con el punto de entrega</Link>}
                             </Card.Footer>
                         </Card>
                     </div>
