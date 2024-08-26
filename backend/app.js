@@ -10,6 +10,7 @@ import adminRoutes from "./routes/admin.routes.js"
 import inventarioRoutes from "./routes/inventario.routes.js"
 import uploadRoutes from "./routes/upload.routes.js"
 import comprasRoutes from "./routes/compras.routes.js"
+import catalogosRoutes from "./routes/catalogos.routes.js"
 
 const app = express()
 //const PORT = process.env.PORT || 8080
@@ -33,6 +34,7 @@ app.use("/api/", adminRoutes)
 app.use("/api/", inventarioRoutes)
 app.use("/api/", uploadRoutes)
 app.use("/api/", comprasRoutes)
+app.use("/api/", catalogosRoutes)
 
 app.get("/api", (req, res) => {
     res.send("Hola mundo from backend! 5")

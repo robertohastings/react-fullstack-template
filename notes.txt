@@ -140,234 +140,32 @@ agregar en getProductosListing el campo: P.existencia
 cambiar el tipo de dato de activo del catalago de productos a TINYINT(4)
 en el procedimiento postProducto cambiar el tipo de dato del parámetro activo a TINYINT
 
+CREATE TABLE `visitas` (
+  `id_empresa` bigint(20) NOT NULL,
+  `id_visita` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_cliente` bigint(20) NOT NULL,
+  `nombre` varchar(90) COLLATE latin1_spanish_ci NOT NULL,
+  `comentarios` varchar(800) COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id_empresa`,`id_visita`),
+  KEY `id_empresa_cliente` (`id_empresa`,`id_cliente`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getPuntosDeEntrega`(
-	IN limite INT,
-    IN pagina INT   
-)
-BEGIN
+CREATE TABLE `clientes` (
+  `id_empresa` bigint(20) NOT NULL,
+  `id_cliente` bigint(20) NOT NULL AUTO_INCREMENT,
+  `empresa` varchar(200) COLLATE latin1_spanish_ci NOT NULL,
+  `nombre` varchar(200) COLLATE latin1_spanish_ci NOT NULL,
+  `telefonos` varchar(90) COLLATE latin1_spanish_ci NOT NULL,
+  `celulares` varchar(90) COLLATE latin1_spanish_ci NOT NULL,
+  `fecha_ultima_visita` datetime NULL,
+  `fecha_ultima_compra` datetime NULL,
+  PRIMARY KEY (`id_empresa`,`id_cliente`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
-	SELECT COUNT(*) AS totalRegistros
-    FROM puntosdeentrega;
+INSERT INTO clientes (id_empresa, empresa, nombre, telefonos, celulares) VALUES (1, 'HostRegio', 'Roberto Vázquez Hastings', '818.252.2653', '818.252.2653');
+INSERT INTO clientes (id_empresa, empresa, nombre, telefonos, celulares) VALUES (1, 'Ferreteria La Moderna', 'Roberto Vázquez Hastings', '818.252.2653', '818.252.2653');
 
-    IF (limite > 0) THEN
-		SELECT 	id_puntoDeEntrega, nombre, horario, 
-				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion,
-                CASE WHEN activo = 1 THEN 'Si' ELSE 'NO' END AS activo		
-		FROM puntosdeentrega
-        ORDER BY id_empresa, id_puntoDeEntrega
-		LIMIT limite OFFSET pagina;
-	ELSE 
-		SELECT 	id_puntoDeEntrega, nombre, horario, 
-				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion, 
-				CASE WHEN activo = 1 THEN 'Si' ELSE 'NO' END AS activo
-		FROM puntosdeentrega
-        ORDER BY id_empresa, id_puntoDeEntrega;
-	END IF;
-         
-END
+update crm.direcciones set id_direccion_tipo_identidad = 1
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `postPuntoDeEntrega`(
-	IN prm_id_empresa INT,
-    IN prm_id_puntoDeEntrega INT,
-    IN prm_nombre VARCHAR(200),
-    IN prm_horario VARCHAR(600),
-    IN prm_activo TINYINT
-)
-BEGIN
-
-	IF prm_id_puntoDeEntrega = 0 THEN
-    
-		INSERT INTO puntosdeentrega (id_empresa, nombre, horario, fecha_creacion, fecha_actualizacion, activo)
-		VALUES (prm_id_empresa, prm_nombre, prm_horario, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP, prm_activo);    
-    
-    ELSE
-		
-        UPDATE puntosdeentrega SET 	nombre = prm_nombre, 
-									horario = prm_horario,                                  
-									activo = prm_activo,
-									fecha_actualizacion = CURRENT_TIMESTAMP()
-		WHERE id_empresa = prm_id_empresa AND id_puntoDeEntrega = prm_id_puntoDeEntrega;
-    	
-	END IF;
-
-
-END
-
--- agregar el campo fecha_nacimiento DATE a la tabla Usuarios
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getUsuario`(
-	prm_id_empresa INT,
-    prm_id_usuario INT    
-)
-BEGIN
-	SELECT nombre, apellidos, celular, DATE_FORMAT(fecha_nacimiento,'%Y-%m-%d') AS fecha_nacimiento
-    FROM usuarios
-    WHERE id_empresa = prm_id_empresa AND id_usuario = prm_id_usuario;
-END
-
-CREATE TABLE direccion_tipo_identidad (
-    id_empresa BIGINT NOT NULL,
-    id_direccion_tipo_identidad SMALLINT AUTO_INCREMENT,    
-    descripcion VARCHAR(200) NOT NULL,
-    PRIMARY KEY(id_empresa, id_direccion_tipo_identidad),
-    FOREIGN KEY(id_empresa) REFERENCES empresas(id_empresa) ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE='MyISAM';
-
-AGREGAR:
-id_direccion_tipo_identidad en la tabla de direcciones
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `postDireccion`(
-	prm_id_empresa INT,
-    prm_id_direccion INT,
-    prm_identidad INT,
-    prm_id_direccion_tipo_identidad INT,
-    prm_direccion_por_defecto BIT,
-    prm_calle VARCHAR(200),
-    prm_numero VARCHAR(20),
-    prm_colonia VARCHAR(200),
-    prm_ciudad VARCHAR(200),
-    prm_estado VARCHAR(200),
-    prm_pais VARCHAR(200),
-    prm_codigo_postal VARCHAR(10)    
-)
-BEGIN
-
-    DECLARE _direccion VARCHAR(800);
-
-    SET _direccion = CONCAT(prm_calle, ' ', prm_numero, ', ', prm_colonia, ', ', prm_ciudad, ', ', prm_estado, ', ', prm_pais, ', ', prm_codigo_postal);
-	
-    IF prm_id_direccion = 0 THEN
-    
-		INSERT INTO direcciones 
-			(id_empresa, identidad, id_direccion_tipo_identidad, direccion, calle, numero, colonia, ciudad, estado, pais, codigo_postal,
-            fecha_creacion, fecha_actualizacion, direccion_por_defecto)
-            VALUES
-            (prm_id_empresa, prm_identidad, prm_id_direccion_tipo_identidad, _direccion, prm_calle, prm_numero, prm_colonia, prm_ciudad, 
-            prm_estado, prm_pais, prm_codigo_postal, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP, prm_direccion_por_defecto);
-            
-        SET prm_id_direccion = LAST_INSERT_ID();
-	
-    ELSE
-    
-		UPDATE direcciones
-			SET identidad = prm_identidad, id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad, 
-				direccion = _direccion, calle = prm_calle, numero = prm_numero, colonia = prm_colonia, ciudad = prm_ciudad, 
-                estado = prm_estado, pais = prm_pais, codigo_postal = prm_codigo_postal,
-                fecha_actualizacion = CURRENT_TIMESTAMP(),
-                direccion_por_defecto = prm_direccion_por_defecto
-        WHERE 	id_empresa = prm_id_empresa AND 
-				id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad  AND 
-                identidad = prm_identidad AND
-                id_direccion = prm_id_direccion;
-                		
-    END IF;
-    
-    CALL putRevisaDireccionPorDefecto(prm_id_empresa, prm_id_direccion_tipo_identidad, prm_identidad, prm_id_direccion, prm_direccion_por_defecto);
-
-END
-
-TRUNCATE TABLE direcciones;
-ALTER TABLE direcciones DROP COLUMN tipo_identidad;
-AGREGAR EL CAMPO: id_direccion_tipo_identidad COMO PRIMARY KEY EN direcciones
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getDirecciones`(
-	IN limite INT,
-    IN pagina INT,
-    IN prm_id_empresa INT,
-    IN prm_id_direccion_tipo_identidad INT,
-    IN prm_identidad INT
-)
-BEGIN
-
-    SELECT COUNT(*) AS totalRegistros
-    FROM direcciones;
-
-	IF (limite > 0) THEN
-		SELECT 	id_direccion, calle, numero, colonia, ciudad, estado, pais, codigo_postal,
-				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion,
-                CASE WHEN direccion_por_defecto = 1 THEN 'Si' ELSE 'NO' END AS direccion_por_defecto		
-		FROM direcciones
-        WHERE id_empresa = prm_id_empresa AND id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad AND identidad = prm_identidad
-        ORDER BY id_empresa, id_direccion
-		LIMIT limite OFFSET pagina;
-	ELSE 
-		SELECT 	id_direccion, calle, numero, colonia, ciudad, estado, pais, codigo_postal,
-				DATE_FORMAT(fecha_actualizacion, '%m/%d/%Y %H:%i') AS fecha_actualizacion, 
-				CASE WHEN direccion_por_defecto = 1 THEN 'Si' ELSE 'NO' END AS direccion_por_defecto
-		FROM direcciones
-         WHERE id_empresa = prm_id_empresa AND id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad AND identidad = prm_identidad
-        ORDER BY id_empresa, id_direccion;
-	END IF;
-
-END
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `putRevisaDireccionPorDefecto`(
-	prm_id_empresa INT,
-    prm_id_direccion_tipo_identidad INT,
-    prm_identidad INT,
-    prm_id_direccion INT,
-    prm_direccion_por_defecto BIT
-)
-BEGIN
-	DECLARE cantidadPorDefecto SMALLINT;
-    
-	/*Si es verdadera entonces pongo las demás en false*/
-	IF prm_direccion_por_defecto = true THEN
-		UPDATE direcciones SET direccion_por_defecto = FALSE
-        WHERE 	id_empresa = prm_id_empresa AND 
-				id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad  AND 
-                identidad = prm_identidad AND
-                id_direccion <> prm_id_direccion;
-    END IF;
-    
-    /*Si no hay verdaderas entonces la que se esta modificando la pongo en true*/
-	IF prm_direccion_por_defecto = false THEN
-    
-		IF EXISTS(
-			SELECT IFNULL(COUNT(*), 0) > 0
-			FROM direcciones
-			WHERE 	id_empresa = prm_id_empresa AND 
-					id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad  AND 
-					identidad = prm_identidad AND
-					direccion_por_defecto = TRUE
-        ) THEN         
-
-			UPDATE direcciones SET direccion_por_defecto = TRUE
-			WHERE 	id_empresa = prm_id_empresa AND 
-					id_direccion_tipo_identidad = prm_id_direccion_tipo_identidad  AND 
-					identidad = prm_identidad AND
-					id_direccion = prm_id_direccion;
-		END IF;
-
-                        
-    END IF;
-END
-
-CREATE TABLE formas_de_pago (
-    id_empresa BIGINT NOT NULL,
-    id_forma_de_pago SMALLINT AUTO_INCREMENT,    
-    descripcion VARCHAR(200) NOT NULL,
-    informacion_adicional VARCHAR(200) NULL,
-    activo BIT NOT NULL,
-    PRIMARY KEY(id_empresa, id_forma_de_pago),
-    FOREIGN KEY(id_empresa) REFERENCES empresas(id_empresa) ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE='MyISAM';
-
-INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Efectivo - contra entrega', '', 1);
-INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Tarjeta Débito/Crédito - contra entrega', '', 1);
-INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Depósito', '', 1);
-INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Transferencia', '', 1);
-INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Pago en línea', '', 1);
-INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Línea de crédito', '', 1);
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getFormasDePago`(
-	prm_id_empresa INT
-)
-BEGIN
-	
-    SELECT id_forma_de_pago, descripcion, informacion_adicional
-    FROM formas_de_pago
-    WHERE id_empresa = prm_id_empresa AND activo = 1;
-    
-END
+ALTER TABLE `crm`.`direcciones` 
+ADD COLUMN `id_direccion_tipo_identidad`int(11) NULL AFTER `id_empresa`;
