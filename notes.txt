@@ -169,3 +169,41 @@ update crm.direcciones set id_direccion_tipo_identidad = 1
 
 ALTER TABLE `crm`.`direcciones` 
 ADD COLUMN `id_direccion_tipo_identidad`int(11) NULL AFTER `id_empresa`;
+
+
+ALTER TABLE `crm`.`visitas` 
+ADD COLUMN `fecha_inicio` DATETIME NULL AFTER `comentarios`,
+ADD COLUMN `fecha_final` DATETIME NULL AFTER `fecha_inicio`,
+ADD COLUMN `latitud` DOUBLE NULL AFTER `fecha_final`,
+ADD COLUMN `longitud` DOUBLE NULL AFTER `latitud`;
+ADD COLUMN `id_usuario` BIGINT NULL AFTER `id_cliente`;
+
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `postVisita`(
+	p_id_empresa BIGINT,
+    p_id_visita BIGINT,
+    p_id_cliente BIGINT,
+    p_id_usuario BIGINT,
+    p_nombre VARCHAR(0),
+    p_comentarios VARCHAR(800),
+    p_fecha_inicio DATETIME,
+    p_fecha_final DATETIME,
+    p_latitud DOUBLE,
+    p_longitud DOUBLE    
+)
+BEGIN
+
+	IF p_id_visita = 0 THEN
+		
+        INSERT INTO visitas (id_empresa, id_cliente, id_usuario, nombre, comentarios, fecha_inicio, latidud, longitud)
+			VALUES (p_id_empresa, p_id_cliente, p_id_usuario, p_nombre, p_comentarios, p_fecha_inicio, p_latitud, p_longitud);
+            
+		SET p_id_visita = LAST_INSERT_ID();
+        
+	ELSE
+    
+		UPDATE visitas SET id_cliente = p_id_cliente, nombre = p_nombre, comentarios = p_comentarios, fecha_final = p_fecha_final
+        WHERE id_empresa = p_id_empresa AND id_visita = p_id_visita;
+							
+	END IF;
+
+END
