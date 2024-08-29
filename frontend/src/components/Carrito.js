@@ -23,7 +23,6 @@ function Carrito() {
     const appState = useContext(StateContext)
     console.log("appState:", appState)
     const appDispatch = useContext(DispatchContext)
-    //const [carrito, setCarrito] = useState(JSON.parse(localStorage.getItem("carrito")) ?? {})
 
     const eliminarProducto_handled = id_producto => {
         setCart(currItems => {
@@ -90,6 +89,8 @@ function Carrito() {
     const handled_PuntoDeEntrega = async () => {
         //appDispatch({ type: "showLoggedIn", value: true })
         setSeccion("puntoDeEntrega")
+        setPuntoDeEntregaSeleccionado({})
+        setFormaDePagoSeleccionada({})
         await fetchPuntosDeEntrega()
         //console.log("puntos de entega:", puntosDeEntrega)
     }
@@ -101,6 +102,8 @@ function Carrito() {
 
     const handled_RegresarAlCarrito = () => {
         setSeccion("resumen")
+        setPuntoDeEntregaSeleccionado({})
+        setFormaDePagoSeleccionada({})
     }
 
     const handled_PuntoSeleccionado = puntoEntrega => {
@@ -110,7 +113,13 @@ function Carrito() {
 
     const handled_FormaDePagoSeleccionada = formaDePago => {
         console.log("Forma de pago seleccionada", formaDePago)
-        setPuntoDeEntregaSeleccionado(puntoEntrega)
+        setFormaDePagoSeleccionada(formaDePago)
+    }
+
+    const handled_LoggedIn = () => {
+        //alert("Click")
+        appDispatch({ type: "showLoggedIn", value: true })
+        console.log("despueés del dispatch")
     }
 
     return (
@@ -123,7 +132,7 @@ function Carrito() {
                             {cart?.length === 0
                                 ? "No hay productos en el carrito"
                                 : cart?.map(producto => (
-                                      <div className="pb-3 px-4" key={producto.id_producto}>
+                                      <div className="pb-3 px-4 border rounded" key={producto.id_producto}>
                                           <Row className="d-flex align-items-center" style={{ borderBottom: "1px solid #ccc", padding: "10px 0" }}>
                                               <Col xs={2}>
                                                   <Image src={producto.imagen} style={{ width: "150px", height: "100px" }} />
@@ -180,7 +189,7 @@ function Carrito() {
                             {puntosDeEntrega?.length === 0 && <p>No hay puntos de entrega y/o direcciones de entrega</p>}
                             {puntosDeEntrega?.length !== 0 && (
                                 <>
-                                    <Form className="px-5">
+                                    <Form className="px-5 border rounded pt-3">
                                         {puntosDeEntrega.map((puntoEntrega, index) => (
                                             <>
                                                 <Form.Check type="radio" id={`puntoEntrega-${index}`} className="pb-3" key={index}>
@@ -202,12 +211,14 @@ function Carrito() {
                             {formasDePago?.length === 0 && <p>No hay formas de pago definidas</p>}
                             {formasDePago?.length !== 0 && (
                                 <>
-                                    <Form className="px-5">
+                                    <Form className="px-5 border rounded pt-3">
                                         {formasDePago.map((formaDePago, index) => (
                                             <>
                                                 <Form.Check type="radio" id={`formaDePago-${index}`} className="pb-3" key={index}>
-                                                    <Form.Check.Input type="radio" id={`opt-${index}`} name="forma de pago" onChange={e => handled_PuntoSeleccionado(formaDePago)} />
-                                                    <Form.Check.Label for={`opt-${index}`}>{`${formaDePago.descripcion} : ${formaDePago.informacion_adicional}`}</Form.Check.Label>
+                                                    <Form.Check.Input type="radio" id={`opt-${index}`} name="forma de pago" onChange={e => handled_FormaDePagoSeleccionada(formaDePago)} />
+
+                                                    {formaDePago.informacion_adicional && <Form.Check.Label for={`opt-${index}`}>{`${formaDePago.descripcion} : ${formaDePago.informacion_adicional}`}</Form.Check.Label>}
+                                                    {!formaDePago.informacion_adicional && <Form.Check.Label for={`opt-${index}`}>{`${formaDePago.descripcion}`}</Form.Check.Label>}
                                                 </Form.Check>
                                             </>
                                         ))}
@@ -229,9 +240,20 @@ function Carrito() {
                                     <strong>Cantidad de artículos:</strong> {totalItems}
                                 </Card.Text>
                                 <Card.Text>
-                                    <strong>Total a pagar:</strong> ${totalPrice.toFixed(2)}
+                                    <p>
+                                        <strong>Total a pagar:</strong> ${totalPrice.toFixed(2)}
+                                    </p>
+
+                                    {formaDePagoSeleccionada.id_forma_de_pago && (
+                                        <>
+                                            <p className="pt-0">
+                                                <strong>Forma de Pago: </strong>
+                                                {formaDePagoSeleccionada.descripcion}
+                                            </p>
+                                        </>
+                                    )}
                                 </Card.Text>
-                                {puntoDeEntregaSeleccionado && (
+                                {puntoDeEntregaSeleccionado.puntoentrega && (
                                     <>
                                         <Card.Text>
                                             <strong>Punto de Entrega Seleccionado:</strong>
@@ -241,25 +263,62 @@ function Carrito() {
                                 )}
                             </Card.Body>
                             <Card.Footer>
-                                {appState.loggedIn && seccion === "resumen" && (
-                                    <>
-                                        <Link onClick={handled_PuntoDeEntrega}>Continuar con el punto de entrega</Link>
-                                        <br />
-                                        <br />
-                                    </>
-                                )}
+                                {
+                                    /*appState.loggedIn && */ seccion === "resumen" && (
+                                        <>
+                                            <Link onClick={handled_PuntoDeEntrega}>Continuar con el Punto de Entrega</Link>
+                                            <br />
+                                            <br />
+                                            <Link to={"/Products"}>Seguir comprando</Link>
+                                            <br />
+                                        </>
+                                    )
+                                }
 
                                 {seccion === "puntoDeEntrega" && (
                                     <>
-                                        <Link onClick={handled_FormasDePago}>Continuar con la forma de pago</Link>
+                                        {puntoDeEntregaSeleccionado.puntoentrega && (
+                                            <>
+                                                <Link onClick={handled_FormasDePago}>Continuar con la Forma de Pago</Link>
+                                                <br />
+                                            </>
+                                        )}
                                         <br />
+                                        <Link onClick={handled_RegresarAlCarrito}>Regresar al Carrito</Link>
                                         <br />
-                                        <Link onClick={handled_RegresarAlCarrito}>Regresar al carrito</Link>
+                                        <Link to={"/Products"}>Seguir comprando</Link>
                                         <br />
                                     </>
                                 )}
 
-                                <Link to={"/Products"}>Seguir comprando</Link>
+                                {seccion === "formasDePago" && (
+                                    <>
+                                        {formaDePagoSeleccionada.id_forma_de_pago && (
+                                            <>
+                                                {console.log("loggedIn:", appState.loggedIn)}
+                                                {!appState.loggedIn && (
+                                                    <>
+                                                        <Link onClick={handled_LoggedIn}>Generar pedido</Link>
+                                                        <br />
+                                                    </>
+                                                )}
+                                                {appState.loggedIn && (
+                                                    <>
+                                                        <Link onClick={handled_FormasDePago}>Generar pedido</Link>
+                                                        <br />
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
+                                        <br />
+                                        <Link onClick={handled_PuntoDeEntrega}>Regresar a Puntos de Entrega</Link>
+                                        <br />
+                                        <Link onClick={handled_RegresarAlCarrito}>Regresar al Carrito</Link>
+                                        <br />
+                                        <Link to={"/Products"}>Seguir comprando</Link>
+                                        <br />
+                                    </>
+                                )}
 
                                 <br />
                             </Card.Footer>
