@@ -140,43 +140,15 @@ agregar en getProductosListing el campo: P.existencia
 cambiar el tipo de dato de activo del catalago de productos a TINYINT(4)
 en el procedimiento postProducto cambiar el tipo de dato del parámetro activo a TINYINT
 
-CREATE TABLE `visitas` (
-  `id_empresa` bigint(20) NOT NULL,
-  `id_visita` bigint(20) NOT NULL AUTO_INCREMENT,
-  `id_cliente` bigint(20) NOT NULL,
-  `nombre` varchar(90) COLLATE latin1_spanish_ci NOT NULL,
-  `comentarios` varchar(800) COLLATE latin1_spanish_ci NOT NULL,
-  PRIMARY KEY (`id_empresa`,`id_visita`),
-  KEY `id_empresa_cliente` (`id_empresa`,`id_cliente`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
-CREATE TABLE `clientes` (
-  `id_empresa` bigint(20) NOT NULL,
-  `id_cliente` bigint(20) NOT NULL AUTO_INCREMENT,
-  `empresa` varchar(200) COLLATE latin1_spanish_ci NOT NULL,
-  `nombre` varchar(200) COLLATE latin1_spanish_ci NOT NULL,
-  `telefonos` varchar(90) COLLATE latin1_spanish_ci NOT NULL,
-  `celulares` varchar(90) COLLATE latin1_spanish_ci NOT NULL,
-  `fecha_ultima_visita` datetime NULL,
-  `fecha_ultima_compra` datetime NULL,
-  PRIMARY KEY (`id_empresa`,`id_cliente`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+USE CRM;
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Efectivo - contra entrega', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Tarjeta Débito/Crédito - contra entrega', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Depósito', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Transferencia', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Pago en línea', '', 1);
+INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo) VALUES (1, 'Línea de crédito', '', 1);
 
-INSERT INTO clientes (id_empresa, empresa, nombre, telefonos, celulares) VALUES (1, 'HostRegio', 'Roberto Vázquez Hastings', '818.252.2653', '818.252.2653');
-INSERT INTO clientes (id_empresa, empresa, nombre, telefonos, celulares) VALUES (1, 'Ferreteria La Moderna', 'Roberto Vázquez Hastings', '818.252.2653', '818.252.2653');
-
-update crm.direcciones set id_direccion_tipo_identidad = 1
-
-ALTER TABLE `crm`.`direcciones` 
-ADD COLUMN `id_direccion_tipo_identidad`int(11) NULL AFTER `id_empresa`;
-
-
-ALTER TABLE `crm`.`visitas` 
-ADD COLUMN `fecha_inicio` DATETIME NULL AFTER `comentarios`,
-ADD COLUMN `fecha_final` DATETIME NULL AFTER `fecha_inicio`,
-ADD COLUMN `latitud` DOUBLE NULL AFTER `fecha_final`,
-ADD COLUMN `longitud` DOUBLE NULL AFTER `latitud`;
-ADD COLUMN `id_usuario` BIGINT NULL AFTER `id_cliente`;
 
 CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `postVisita`(
 	p_id_empresa BIGINT,
@@ -207,3 +179,55 @@ BEGIN
 	END IF;
 
 END
+
+CREATE TABLE pedido_estatus (
+    id_empresa BIGINT NOT NULL,
+    id_pedido_estatus SMALLINT AUTO_INCREMENT,
+    descripcion VARCHAR(100) NOT NULL,
+    orden SMALLINT NOT NULL,
+    PRIMARY KEY(id_empresa, id_pedido_estatus),
+    FOREIGN KEY (id_empresa) REFERENCES empresas(id_empresa) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE='MyISAM';
+
+INSERT INTO pedido_estatus (id_empresa, descripcion, orden) VALUES
+	(1, 'Recibido', 0),
+    (1, 'En proceso', 1),
+    (1, 'Terminado', 2),
+    (1, 'En camino', 3),
+    (1, 'Entregado', 4);
+
+CREATE TABLE pedidos(
+    id_empresa BIGINT NOT NULL,
+	id_pedido BIGINT AUTO_INCREMENT,    
+    id_usuario BIGINT NOT NULL,
+    id_cliente BIGINT NOT NULL,
+    id_direccion BIGINT NOT NULL,
+    id_pedido_estatus SMALLINT NOT NULL,
+    id_forma_de_pago SMALLINT NOT NULL,
+    total DOUBLE PRECISION NOT NULL,
+    importe_pagado DOUBLE PRECISION NULL,
+    saldo DOUBLE PRECISION NOT NULL,    
+    fecha_creacion DATETIME NOT NULL,
+    fecha_actualizacion DATETIME NOT NULL,
+    PRIMARY KEY (id_empresa, id_pedido),
+    FOREIGN KEY(id_empresa) REFERENCES empresas(id_empresa) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(id_empresa, id_usuario) REFERENCES usuarios(id_empresa, id_usuario) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(id_empresa, id_direccion) REFERENCES direcciones(id_empresa, id_direccion) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (id_empresa, id_pedido_estatus) REFERENCES pedido_estatus(id_empresa, id_pedido) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(id_empresa, id_forma_de_pago) REFERENCES formas_de_pago(id_empresa, id_forma_de_pago) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE='MyISAM';
+
+CREATE TABLE pedidos_detalle(
+    id_empresa BIGINT NOT NULL,
+    id_pedido_detalle BIGINT AUTO_INCREMENT,
+	id_pedido BIGINT NOT NULL,
+    id_producto BIGINT NOT NULL,
+    cantidad INT NOT NULL,
+    subtotal DOUBLE PRECISION NOT NULL,
+    fecha_creacion DATETIME NOT NULL,
+    fecha_actualizacion DATETIME NOT NULL,
+    PRIMARY KEY(id_empresa, id_pedido, id_pedido_detalle),
+    FOREIGN KEY(id_empresa) REFERENCES empresas(id_empresa) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(id_empresa, id_pedido) REFERENCES pedidos(id_empresa, id_pedido) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(id_empresa, id_producto) REFERENCES productos(id_empresa, id_producto) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE='MyISAM';
