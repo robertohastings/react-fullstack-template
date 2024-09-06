@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `crm` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_spanish_ci */;
-USE `crm`;
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: crm
@@ -79,6 +77,36 @@ LOCK TABLES `categorias` WRITE;
 /*!40000 ALTER TABLE `categorias` DISABLE KEYS */;
 INSERT INTO `categorias` VALUES (1,1,'Caja de Filete tilapia','Bolsa de Filete Tilapia, contiene 4 piezas.',NULL,'2023-12-10 00:00:00','2024-07-26 15:02:01',0),(9,1,'Testing 3','Testing 3','','2024-07-13 03:39:42','2024-07-13 03:39:42',2),(2,1,'Pollo','Boneless, Pechuga Agrosuper (sin piel), Milanesa CORDON BLUEA, Piernas KFC.','https://res.cloudinary.com/ddhxa9igj/image/upload/v1721880979/nir/1_cat_2.jpg','2023-12-10 00:00:00','2024-07-25 11:55:12',1),(8,1,'Testing 2','Testing 2','','2024-07-13 03:36:26','2024-07-13 03:36:26',1),(3,1,'Vegetales','Aros de cebolla, Papa frita','https://res.cloudinary.com/ddhxa9igj/image/upload/v1702245584/nir/papasyaros_nt79jw.jpg','2023-12-10 00:00:00','2023-12-10 00:00:00',1),(4,1,'Puerco','Tocino','https://res.cloudinary.com/ddhxa9igj/image/upload/v1702245824/nir/tocino_jhkilr.jpg','2023-12-10 00:00:00','2023-12-10 00:00:00',1),(5,1,'Lacteos','Leche, Quesos',NULL,'2024-07-04 00:00:00','2024-07-05 17:31:58',0),(6,1,'Mascotas','Croquetas perros y gatos',NULL,'2024-07-04 00:00:00','2024-07-05 17:31:58',0),(7,1,'Testing','Testing',NULL,'2024-07-05 18:13:27','2024-07-05 18:13:27',0);
 /*!40000 ALTER TABLE `categorias` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `clientes`
+--
+
+DROP TABLE IF EXISTS `clientes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `clientes` (
+  `id_empresa` bigint(20) NOT NULL,
+  `id_cliente` bigint(20) NOT NULL AUTO_INCREMENT,
+  `empresa` varchar(200) COLLATE latin1_spanish_ci NOT NULL,
+  `nombre` varchar(200) COLLATE latin1_spanish_ci NOT NULL,
+  `telefonos` varchar(90) COLLATE latin1_spanish_ci NOT NULL,
+  `celulares` varchar(90) COLLATE latin1_spanish_ci NOT NULL,
+  `fecha_ultima_visita` datetime DEFAULT NULL,
+  `fecha_ultima_compra` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_empresa`,`id_cliente`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clientes`
+--
+
+LOCK TABLES `clientes` WRITE;
+/*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
+INSERT INTO `clientes` VALUES (1,1,'HostRegio','Roberto Vázquez Hastings','818.252.2653','818.252.2653',NULL,NULL),(1,2,'Ferreteria La Moderna','Roberto Vázquez Hastings','818.252.2653','818.252.2653',NULL,NULL);
+/*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -228,6 +256,102 @@ LOCK TABLES `landingpage` WRITE;
 /*!40000 ALTER TABLE `landingpage` DISABLE KEYS */;
 INSERT INTO `landingpage` VALUES (1,1,'Testing 2','<p>Services</p><ol><li>One</li><br></ol>','<p>Productos</p><ol><li>Pescado</li><li>Pollo</li><br></ol>',1,1,0,0,0);
 /*!40000 ALTER TABLE `landingpage` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pedido_estatus`
+--
+
+DROP TABLE IF EXISTS `pedido_estatus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pedido_estatus` (
+  `id_empresa` bigint(20) NOT NULL,
+  `id_pedido_estatus` smallint(6) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(100) COLLATE latin1_spanish_ci NOT NULL,
+  `orden` smallint(6) NOT NULL,
+  PRIMARY KEY (`id_empresa`,`id_pedido_estatus`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pedido_estatus`
+--
+
+LOCK TABLES `pedido_estatus` WRITE;
+/*!40000 ALTER TABLE `pedido_estatus` DISABLE KEYS */;
+INSERT INTO `pedido_estatus` VALUES (1,1,'Recibido',0),(1,2,'En proceso',1),(1,3,'Terminado',2),(1,4,'En camino',3),(1,5,'Entregado',4);
+/*!40000 ALTER TABLE `pedido_estatus` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pedidos`
+--
+
+DROP TABLE IF EXISTS `pedidos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pedidos` (
+  `id_empresa` bigint(20) NOT NULL,
+  `id_pedido` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_usuario` bigint(20) NOT NULL,
+  `id_cliente` bigint(20) NOT NULL,
+  `id_direccion` bigint(20) DEFAULT NULL,
+  `id_pedido_estatus` smallint(6) NOT NULL,
+  `id_forma_de_pago` smallint(6) NOT NULL,
+  `total` double NOT NULL,
+  `importe_pagado` double DEFAULT NULL,
+  `saldo` double NOT NULL,
+  `fecha_creacion` datetime NOT NULL,
+  `fecha_actualizacion` datetime NOT NULL,
+  PRIMARY KEY (`id_empresa`,`id_pedido`),
+  KEY `id_empresa` (`id_empresa`,`id_usuario`),
+  KEY `id_empresa_2` (`id_empresa`,`id_direccion`),
+  KEY `id_empresa_3` (`id_empresa`,`id_pedido_estatus`),
+  KEY `id_empresa_4` (`id_empresa`,`id_forma_de_pago`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pedidos`
+--
+
+LOCK TABLES `pedidos` WRITE;
+/*!40000 ALTER TABLE `pedidos` DISABLE KEYS */;
+INSERT INTO `pedidos` VALUES (1,1,1,1,1,1,1,0,NULL,0,'2024-09-05 17:11:58','2024-09-05 17:11:58'),(1,2,1,1,1,1,1,250,0,250,'2024-09-05 17:34:31','2024-09-05 17:34:31'),(1,3,1,1,0,1,1,250,0,250,'2024-09-05 18:31:43','2024-09-05 18:31:43');
+/*!40000 ALTER TABLE `pedidos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pedidos_detalle`
+--
+
+DROP TABLE IF EXISTS `pedidos_detalle`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pedidos_detalle` (
+  `id_empresa` bigint(20) NOT NULL,
+  `id_pedido_detalle` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_pedido` bigint(20) NOT NULL,
+  `id_producto` bigint(20) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `precio` double DEFAULT NULL,
+  `subtotal` double NOT NULL,
+  `fecha_creacion` datetime NOT NULL,
+  `fecha_actualizacion` datetime NOT NULL,
+  PRIMARY KEY (`id_empresa`,`id_pedido_detalle`,`id_pedido`),
+  KEY `id_empresa` (`id_empresa`,`id_producto`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pedidos_detalle`
+--
+
+LOCK TABLES `pedidos_detalle` WRITE;
+/*!40000 ALTER TABLE `pedidos_detalle` DISABLE KEYS */;
+INSERT INTO `pedidos_detalle` VALUES (1,1,2,1,1,250,250,'2024-09-05 17:34:31','2024-09-05 17:34:31'),(1,2,3,1,1,250,250,'2024-09-05 18:31:43','2024-09-05 18:31:43');
+/*!40000 ALTER TABLE `pedidos_detalle` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -452,6 +576,38 @@ LOCK TABLES `usuarios_roles` WRITE;
 /*!40000 ALTER TABLE `usuarios_roles` DISABLE KEYS */;
 INSERT INTO `usuarios_roles` VALUES (1,1,1,'2023-12-10 00:00:00','2023-12-10 00:00:00');
 /*!40000 ALTER TABLE `usuarios_roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `visitas`
+--
+
+DROP TABLE IF EXISTS `visitas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `visitas` (
+  `id_empresa` bigint(20) NOT NULL,
+  `id_visita` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_cliente` bigint(20) NOT NULL,
+  `id_usuario` bigint(20) DEFAULT NULL,
+  `nombre` varchar(90) COLLATE latin1_spanish_ci NOT NULL,
+  `comentarios` varchar(800) COLLATE latin1_spanish_ci NOT NULL,
+  `fecha_inicio` datetime DEFAULT NULL,
+  `fecha_final` datetime DEFAULT NULL,
+  `latitud` double DEFAULT NULL,
+  `longitud` double DEFAULT NULL,
+  PRIMARY KEY (`id_empresa`,`id_visita`),
+  KEY `id_empresa_cliente` (`id_empresa`,`id_cliente`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `visitas`
+--
+
+LOCK TABLES `visitas` WRITE;
+/*!40000 ALTER TABLE `visitas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `visitas` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1130,6 +1286,77 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `postPedido` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `postPedido`(
+	IN p_id_empresa BIGINT,
+    IN p_id_usuario BIGINT,
+    IN p_id_cliente BIGINT,
+    IN p_tipoDeEntrega VARCHAR(10),
+    IN p_identidad_tipoDeEntrega INT,
+    IN p_id_forma_de_pago SMALLINT,  
+    IN p_partidas_pedido  JSON
+)
+BEGIN
+	DECLARE p_id_pedido BIGINT;
+    DECLARE partida JSON;
+    DECLARE idx INT DEFAULT 0;  
+    DECLARE total_pedido DOUBLE;
+    DECLARE subtotal DOUBLE;
+    DECLARE p_id_direccion BIGINT;
+    
+    IF p_tipoDeEntrega = 'Recoger' THEN 
+		SET p_id_direccion = 0;
+	ELSE 
+		SET p_id_direccion = p_identidad_tipoDeEntrega;
+    END IF;
+
+	INSERT INTO pedidos (id_empresa, id_usuario, id_cliente, id_direccion, id_pedido_estatus, id_forma_de_pago, fecha_creacion, fecha_actualizacion)	
+		VALUES (p_id_empresa, p_id_usuario, p_id_cliente, p_id_direccion, 1, p_id_forma_de_pago, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+        
+	SET p_id_pedido = LAST_INSERT_ID();
+    
+    SET total_pedido = 0;
+    -- Lógica para procesar los datos    
+    WHILE idx < JSON_LENGTH(p_partidas_pedido) DO
+        SET partida = JSON_EXTRACT(p_partidas_pedido, CONCAT('$[', idx, ']'));
+        
+        -- Extraer los campos individuales
+        SET @id_producto = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.id_producto'));
+        SET @cantidad = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.cantidad'));
+        SET @precio = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.precio'));
+
+        -- Aquí puedes realizar la operación que desees con los datos
+        -- Por ejemplo, insertar o actualizar en una tabla
+        
+        SET subtotal = @cantidad * @precio;
+        SET total_pedido = total_pedido + subtotal;
+        
+		INSERT INTO pedidos_detalle (id_empresa, id_pedido, id_producto, cantidad, precio, subtotal, fecha_creacion, fecha_actualizacion)    
+			VALUES (p_id_empresa, p_id_pedido, @id_producto, @cantidad, @precio, subtotal, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP() );
+
+        SET idx = idx + 1;
+    END WHILE; 
+    
+    UPDATE pedidos SET total = total_pedido, importe_pagado = 0, saldo = total_pedido 
+    WHERE id_empresa = p_id_empresa AND 
+		  id_pedido = p_id_pedido;
+    
+	SELECT p_id_pedido AS id_pedido;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `postProducto` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1307,6 +1534,50 @@ BEGIN
     	
 	END IF;
 
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `postVisita` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `postVisita`(	
+	p_id_empresa BIGINT,
+    p_id_visita BIGINT,
+    p_id_cliente BIGINT,
+    p_id_usuario BIGINT,
+    p_nombre VARCHAR(0),
+    p_comentarios VARCHAR(800),
+    p_fecha_inicio DATETIME,
+    p_fecha_final DATETIME,
+    p_latitud DOUBLE,
+    p_longitud DOUBLE    
+)
+BEGIN
+
+	IF p_id_visita = 0 THEN
+		
+        INSERT INTO visitas (id_empresa, id_cliente, id_usuario, nombre, comentarios, fecha_inicio, latidud, longitud)
+			VALUES (p_id_empresa, p_id_cliente, p_id_usuario, p_nombre, p_comentarios, p_fecha_inicio, p_latitud, p_longitud);
+            
+		SET p_id_visita = LAST_INSERT_ID();
+        
+	ELSE
+    
+		UPDATE visitas SET id_cliente = p_id_cliente, nombre = p_nombre, comentarios = p_comentarios, fecha_final = p_fecha_final
+        WHERE id_empresa = p_id_empresa AND id_visita = p_id_visita;
+							
+	END IF;
 
 END ;;
 DELIMITER ;
@@ -1685,4 +1956,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-20 18:30:30
+-- Dump completed on 2024-09-06 12:48:00
