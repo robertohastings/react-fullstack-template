@@ -90,3 +90,47 @@ export const postProducto = async (req, res) => {
         })
     }
 }
+
+export const postVisita = async (req, res) => {
+    console.log("Body:", req.body)
+    const { id_empresa, id_visita, id_cliente, id_usuario, nombre, comentarios, fecha_inicio, fecha_final, latitud, longitud } = req.body
+
+    try {
+        const [result] = await pool.query("CALL postVisita(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [id_empresa, id_visita, id_cliente, id_usuario, nombre, comentarios, fecha_inicio, fecha_final, latitud, longitud])
+
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                message: "No se realizó actualización"
+            })
+        } else {
+            return res.status(200).json({
+                success: true,
+                id_visita: id_visita,
+                message: "Visita actualizada"
+            })
+        }
+    } catch (error) {
+        console.log(`Ocurrió un error ${error.message}`)
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
+}
+export const getVisitasByIdUsuario = async (req, res) => {
+    console.log("getVisitasByIdUsuario:", req.query)
+    try {
+        const { id_empresa, id_usuario } = req.query
+        //console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getVisitasByIdUsuario(?, ?);`, [id_empresa, id_usuario])
+
+        res.status(200).json({
+            success: true,
+            visitas: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
