@@ -178,6 +178,14 @@ function Carrito() {
             setIsSavingPedido(false)
         }
     }
+    const handled_CerrarModal = () => {
+        setShowModal(false)
+
+        // if (isPedidoCreated) {
+        //TODO: Implementar el vaciado del carrito
+        //TODO: Implementar el navigate a Admin/Perfil
+        // }
+    }
 
     return (
         <Container fluid>
@@ -405,7 +413,7 @@ function Carrito() {
                                 {!isSavingPedido && "Si"}
                             </Button>
                         )}
-                        <Button type="button" variant="primary" onClick={() => setShowModal(false)}>
+                        <Button type="button" variant="primary" onClick={handled_CerrarModal}>
                             {isPedidoCreated && "Salir"}
                             {!isPedidoCreated && "Regresar"}
                         </Button>
