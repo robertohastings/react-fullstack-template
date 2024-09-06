@@ -282,3 +282,29 @@ export const putFormasDePago = async (req, res) => {
         })
     }
 }
+export const postPedido = async (req, res) => {
+    console.log("body postPedido:", req.body)
+    const { id_empresa, id_usuario, id_cliente, tipo_de_entrega, identidad_tipo_de_entrega, id_forma_de_pago, partidas_pedido } = req.body
+    //console.log("id_empresa", id_empresa)
+    //console.log("formasDePago", formasDePago)
+
+    try {
+        const [result] = await pool.query("CALL postPedido(?, ?, ?, ?, ?, ?, ?)", [id_empresa, id_usuario, id_cliente, tipo_de_entrega, identidad_tipo_de_entrega, id_forma_de_pago, JSON.stringify(partidas_pedido)])
+
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                message: "No se realizó actualización"
+            })
+        } else {
+            return res.status(200).json({
+                message: "Pedido generado exitosamente",
+                data: res.data
+            })
+        }
+    } catch (error) {
+        console.log("Ocurrió un error")
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
+}

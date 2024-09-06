@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom"
 import StateContext from "../StateContext"
 import DispatchContext from "../DispatchContext"
 import { TiDeleteOutline } from "react-icons/ti"
-import { Container, Row, Col, Image, Card, Form } from "react-bootstrap"
+import { Container, Row, Col, Image, Card, Form, Modal, Button } from "react-bootstrap"
 import { CartContext } from "../context/ShoppingCartContext"
 
 function Carrito() {
@@ -16,6 +16,10 @@ function Carrito() {
     const [puntoDeEntregaSeleccionado, setPuntoDeEntregaSeleccionado] = useState({})
     const [formasDePago, setFormasDePago] = useState([])
     const [formaDePagoSeleccionada, setFormaDePagoSeleccionada] = useState({})
+    const [pedido, setPedido] = useState({})
+    const [showModal, setShowModal] = useState(false)
+    const [isSavingPedido, setIsSavingPedido] = useState(false)
+    const [isPedidoCreated, setIsPedidoCreated] = useState(false)
 
     const totalItems = cart.reduce((total, item) => total + parseInt(item.cantidad), 0)
     const totalPrice = cart.reduce((total, item) => total + item.cantidad * item.precio, 0)
@@ -92,7 +96,6 @@ function Carrito() {
         setPuntoDeEntregaSeleccionado({})
         setFormaDePagoSeleccionada({})
         await fetchPuntosDeEntrega()
-        //console.log("puntos de entega:", puntosDeEntrega)
     }
 
     const handled_FormasDePago = async () => {
@@ -120,6 +123,60 @@ function Carrito() {
         //alert("Click")
         appDispatch({ type: "showLoggedIn", value: true })
         console.log("despueés del dispatch")
+    }
+
+    const handleCloseModal = () => {
+        setShowModal(false)
+    }
+
+    const handled_ConfirmarPedido = () => {
+        console.log("Punto de Entrega Selecconado:", puntoDeEntregaSeleccionado)
+        console.log("Forma de Pago Seleccionada:", formaDePagoSeleccionada)
+        console.log("cart:", cart)
+        setPedido({
+            id_empresa: 1,
+            id_usuario: 1,
+            id_cliente: 1,
+            tipo_de_entrega: puntoDeEntregaSeleccionado.TipoDeEntrega,
+            identidad_tipo_de_entrega: puntoDeEntregaSeleccionado.Identidad,
+            id_forma_de_pago: formaDePagoSeleccionada.id_forma_de_pago,
+            partidas_pedido: cart.map(item => ({
+                id_producto: item.id_producto,
+                cantidad: item.cantidad,
+                precio: item.precio
+            }))
+        })
+        setShowModal(true)
+    }
+
+    const handled_GenearPedido = () => {
+        //setShowModal(false)
+        console.log("Pedido:", pedido)
+        handled_GenerarPedido()
+
+        //DONE: hacer el postPedido
+        //DONE: Mostrar un modal con el número de pedido generado
+        //TODO: Redirigir a la pantalla de perfil despues de dar salir
+        //TODO: Eliminar carrito de compras
+        //TODO: Agregar en el menú usuarios/perfil => Pedidos, con el detalle del pedido.
+    }
+    const handled_GenerarPedido = async e => {
+        setIsSavingPedido(true)
+
+        try {
+            await Axios.post("/api/postPedido", pedido)
+                .then(response => {
+                    setIsPedidoCreated(true)
+                    console.log(response)
+                })
+                .catch(error => {
+                    console.log("There was an error updating pedido: ", error)
+                })
+        } catch (error) {
+            console.log("error:", error)
+        } finally {
+            setIsSavingPedido(false)
+        }
     }
 
     return (
@@ -304,13 +361,15 @@ function Carrito() {
                                                 )}
                                                 {appState.loggedIn && (
                                                     <>
-                                                        <Link onClick={handled_FormasDePago}>Generar pedido</Link>
+                                                        <Link onClick={handled_ConfirmarPedido}>Generar pedido</Link>
                                                         <br />
                                                     </>
                                                 )}
                                             </>
                                         )}
                                         <br />
+                                        {/* <Link onClick={handled_VerPedido}>Ver Pedido</Link>
+                                        <br /> */}
                                         <Link onClick={handled_PuntoDeEntrega}>Regresar a Puntos de Entrega</Link>
                                         <br />
                                         <Link onClick={handled_RegresarAlCarrito}>Regresar al Carrito</Link>
@@ -326,6 +385,33 @@ function Carrito() {
                     </div>
                 </Col>
             </Row>
+
+            {/* Modal confirmación del pedido */}
+            <>
+                <Modal size="sm" show={showModal} onHide={handleCloseModal} backdrop="static" keyboard={false} centered>
+                    {/* <Modal.Header closeButton>
+                        <Modal.Title>Confirmación de Pedido</Modal.Title>
+                    </Modal.Header> */}
+                    <Modal.Body>
+                        <p className="text-center fs-5 p-2 m-0">
+                            {isPedidoCreated && "Pedido Generado"}
+                            {!isPedidoCreated && "¿ Desea genear el pedido ?"}
+                        </p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        {!isPedidoCreated && (
+                            <Button variant="warning" onClick={handled_GenearPedido}>
+                                {isSavingPedido && "Generando pedido..."}
+                                {!isSavingPedido && "Si"}
+                            </Button>
+                        )}
+                        <Button type="button" variant="primary" onClick={() => setShowModal(false)}>
+                            {isPedidoCreated && "Salir"}
+                            {!isPedidoCreated && "Regresar"}
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </>
         </Container>
     )
 }
