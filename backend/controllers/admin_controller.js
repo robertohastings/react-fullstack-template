@@ -308,3 +308,21 @@ export const postPedido = async (req, res) => {
         })
     }
 }
+export const getPedidoDetalle = async (req, res) => {
+    console.log("getPedidoDetalle:", req.query)
+    try {
+        const { id_empresa, id_usuario } = req.query
+        //console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getPedidoDetalle(?, ?);`, [id_empresa, id_usuario])
+
+        res.status(200).json({
+            success: true,
+            pedidos: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: "An error ocurred"
+        })
+    }
+}

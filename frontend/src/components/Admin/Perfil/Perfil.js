@@ -2,12 +2,16 @@ import React from "react"
 import Page from "../../Page"
 import DatosPersonales from "./DatosPersonales"
 import Direcciones from "./Direcciones"
+import MisPedidos from "./MisPedidos"
 import { Tab, Tabs, Form, Button, Spinner } from "react-bootstrap"
 
 function Perfil() {
     return (
         <Page title="Mi Perfil">
-            <Tabs defaultActiveKey="Perfil" id="perfil_tab" className="mb-3" justify>
+            <Tabs defaultActiveKey="MisPedidos" id="perfil_tab" className="mb-3" justify>
+                <Tab eventKey="MisPedidos" title="Mis Pedidos">
+                    <MisPedidos />
+                </Tab>
                 <Tab eventKey="Perfil" title="Mi Perfil">
                     <DatosPersonales />
                 </Tab>

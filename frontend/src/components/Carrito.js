@@ -168,6 +168,8 @@ function Carrito() {
                 .then(response => {
                     setIsPedidoCreated(true)
                     console.log(response)
+                    setCart([])
+                    navigate("/Admin/Perfil")
                 })
                 .catch(error => {
                     console.log("There was an error updating pedido: ", error)
@@ -182,8 +184,9 @@ function Carrito() {
         setShowModal(false)
 
         // if (isPedidoCreated) {
-        //TODO: Implementar el vaciado del carrito
-        //TODO: Implementar el navigate a Admin/Perfil
+        //TODO: Implementar el vaciado del carrito -> DONE!
+        //TODO: Implementar el navigate a Admin/Perfil -> DONE!
+        //TODO: AGREGAR el id_puntoDeEntrega en la creación del pedido.
         // }
     }
 
