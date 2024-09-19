@@ -1,0 +1,42 @@
+.column {
+    /*height: 500px;  Ajusta según el tamaño de la pantalla */
+    /*overflow-y: auto;  Permite el scroll vertical */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* .sticky-header {
+    position: sticky;
+    top: 35px;
+    background-color: white;
+    z-index: 1000;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+} */
+
+.sticky-header {
+    margin-top: 40px;
+    background-color: white;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    z-index: 1000;
+}
+
+.scrollable {
+    flex-grow: 1; /* El área de la lista de pedidos ocupa todo el espacio restante */
+    overflow-y: auto; /* Solo la lista de pedidos tiene scroll */
+    max-height: 400px; /* Puedes ajustar el máximo de la altura de la lista */
+}
+
+.pedido-list {
+    padding: 10px;
+}
+
+.pedido-item {
+    margin: 5px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

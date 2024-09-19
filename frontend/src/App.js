@@ -28,6 +28,7 @@ import ListProductos from "./components/Inventario/Productos/ListProductos"
 import Carrito from "./components/Carrito"
 import Perfil from "./components/Admin/Perfil/Perfil"
 import { PiEraserFill } from "react-icons/pi"
+import PedidoCanvas from "./components/Inventario/Canvas/PedidoCanvas"
 
 function App() {
     //const [cart, setCart] = useContext(CartContext)
@@ -190,6 +191,7 @@ function App() {
                                     <Route path="/Admin/LandingPage" element={<LandingPage />} />
                                     <Route path="/Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
                                     <Route path="/Inventario/Productos/ListProductos" element={<ListProductos />} />
+                                    <Route path="/Inventario/Canvas/PedidoCanvas" element={<PedidoCanvas />} />
                                     <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
                                     <Route path="/Carrito" element={<Carrito />} />
                                     <Route path="/Admin/Perfil" element={<Perfil />} />

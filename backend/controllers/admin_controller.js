@@ -326,3 +326,21 @@ export const getPedidoDetalle = async (req, res) => {
         })
     }
 }
+export const getPedidoCanvas = async (req, res) => {
+    console.log("getPedidoCanvas:", req.query)
+    try {
+        const { id_empresa } = req.query
+        //console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getPedidoCanvas(?);`, [id_empresa])
+
+        res.status(200).json({
+            success: true,
+            pedidos: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: "An error ocurred"
+        })
+    }
+}
