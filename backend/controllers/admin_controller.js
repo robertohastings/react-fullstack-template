@@ -344,3 +344,26 @@ export const getPedidoCanvas = async (req, res) => {
         })
     }
 }
+export const putPedidoEstatus = async (req, res) => {
+    console.log("body putPedidoEstatus:", req.body)
+    const { id_empresa, id_pedido, id_pedido_estatus } = req.body
+
+    try {
+        const [result] = await pool.query("CALL putPedidoEstatus(?, ?, ?)", [id_empresa, id_pedido, id_pedido_estatus])
+
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                message: "No se realizó actualización"
+            })
+        } else {
+            return res.status(200).json({
+                message: "Estatus pedido actualizado exitosamente"
+            })
+        }
+    } catch (error) {
+        console.log("Ocurrió un error")
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
+}

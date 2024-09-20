@@ -11,7 +11,7 @@ import { GrNext } from "react-icons/gr"
 
 const ItemType = "PEDIDO"
 
-const Pedido = ({ pedido, movePedido }) => {
+const Pedido = ({ pedido, movePedido, setPedidoStatus }) => {
     const [showModal, setShowModal] = useState(false)
     const [{ isDragging }, drag] = useDrag({
         type: ItemType,
@@ -30,6 +30,22 @@ const Pedido = ({ pedido, movePedido }) => {
         style: "currency",
         currency: "MXN"
     })
+
+    const handled_NextEstatus = (id_pedido, current_estatus) => {
+        var next_estatus = ""
+        if (current_estatus === "Recibido") {
+            next_estatus = "En proceso"
+        } else if (current_estatus === "En proceso") {
+            next_estatus = "Terminado"
+        } else if (current_estatus === "Terminado") {
+            next_estatus = "En camino"
+        } else if (current_estatus === "En camino") {
+            next_estatus = "Entregado"
+        }
+        setPedidoStatus(id_pedido, next_estatus)
+
+        //alert(`#Pedido: ${id_pedido}, estatus actual: ${current_estatus}, siguiente estatus: ${next_estatus}`)
+    }
 
     return (
         <>
@@ -52,7 +68,7 @@ const Pedido = ({ pedido, movePedido }) => {
                         <Button variant="btn btn-outline-primary btn-sm" style={{ width: "60px" }} onClick={() => setShowModal(true)}>
                             <FaSearch />
                         </Button>
-                        <Button variant="btn btn-outline-primary btn-sm" style={{ width: "60px" }}>
+                        <Button variant="btn btn-outline-primary btn-sm" style={{ width: "60px" }} onClick={() => handled_NextEstatus(pedido.id_pedido, pedido.estatus_pedido)}>
                             <GrNext />
                         </Button>
                     </div>
@@ -62,29 +78,32 @@ const Pedido = ({ pedido, movePedido }) => {
             <div>
                 <Modal size="xl" show={showModal} onHide={handleCloseModal} backdrop="static" keyboard={false} centered>
                     <Modal.Title>
-                        {/* <p className="p-3">{`# Pedido: ${pedido.id_pedido}`}</p> */}
-                        <Table striped bordered hover>
-                            <thead className="fs-6">
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Estatus</th>
-                                    <th>Forma de Pago</th>
-                                    <th>Lugar de Entrega</th>
-                                    <th className="text-end">Saldo</th>
-                                    <th className="text-end">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody className="fs-6">
-                                <tr key={`tr_${pedido.id_pedido}`}>
-                                    <td className="align-content-center">{pedido.fecha_creacion}</td>
-                                    <td>{pedido.estatus_pedido}</td>
-                                    <td>{pedido.formaDePago}</td>
-                                    <td>{pedido.lugarDeEntrega}</td>
-                                    <td className="text-end">{formatter.format(pedido.Saldo)}</td>
-                                    <td className="text-end">{formatter.format(pedido.total)}</td>
-                                </tr>
-                            </tbody>
-                        </Table>
+                        <div className="m-3">
+                            <Table striped bordered hover>
+                                <thead className="fs-6">
+                                    <tr>
+                                        <th># Pedido</th>
+                                        <th>Fecha</th>
+                                        <th>Estatus</th>
+                                        <th>Forma de Pago</th>
+                                        <th>Lugar de Entrega</th>
+                                        <th className="text-end">Saldo</th>
+                                        <th className="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="fs-6">
+                                    <tr key={`tr_${pedido.id_pedido}`}>
+                                        <td className="align-content-center text-center">{pedido.id_pedido}</td>
+                                        <td className="align-content-center">{pedido.fecha_creacion}</td>
+                                        <td>{pedido.estatus_pedido}</td>
+                                        <td>{pedido.formaDePago}</td>
+                                        <td>{pedido.lugarDeEntrega}</td>
+                                        <td className="text-end">{formatter.format(pedido.Saldo)}</td>
+                                        <td className="text-end">{formatter.format(pedido.total)}</td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+                        </div>
                     </Modal.Title>
                     <Modal.Body>
                         <Table striped bordered hover>
@@ -145,7 +164,7 @@ const Pedido = ({ pedido, movePedido }) => {
 const EstatusColumn = ({ estatus, pedidos, movePedido, setPedidoStatus }) => {
     const [, drop] = useDrop({
         accept: ItemType,
-        drop: item => setPedidoStatus(item.id_pedido, estatus)
+        drop: item => setPedidoStatus(item.id, estatus)
     })
 
     return (
@@ -156,7 +175,7 @@ const EstatusColumn = ({ estatus, pedidos, movePedido, setPedidoStatus }) => {
 
             <div className="pedido-list scrollable">
                 {pedidos.map(pedido => (
-                    <Pedido key={pedido.id_pedido} pedido={pedido} movePedido={movePedido} />
+                    <Pedido key={pedido.id_pedido} pedido={pedido} movePedido={movePedido} setPedidoStatus={setPedidoStatus} />
                 ))}
             </div>
         </Col>
@@ -189,18 +208,38 @@ function PedidoCanvas() {
         }
     }
 
-    const setPedidoStatus = (id, newStatus) => {
-        alert("Actualiza estatus pedido")
-        // Actualizar estatus del pedido en el backend
-        // Axios
-        //   .put(`/api/pedidos/${id}/putActualizaPedidoEstatus`, { status: newStatus })
-        //   .then(() => {
-        //     setPedidos((prevPedidos) =>
-        //       prevPedidos.map((pedido) =>
-        //         pedido.id === id ? { ...pedido, status: newStatus } : pedido
-        //       )
-        //     );
-        //   });
+    const setPedidoStatus = async (id_pedido, newStatus) => {
+        alert(`Actualiza estatus pedido No: ${id_pedido} a: ${newStatus}`)
+
+        var next_id_pedido_estatus = 0
+        if (newStatus === "Recibido") {
+            next_id_pedido_estatus = 1
+        } else if (newStatus === "En proceso") {
+            next_id_pedido_estatus = 2
+        } else if (newStatus === "Terminado") {
+            next_id_pedido_estatus = 3
+        } else if (newStatus === "En camino") {
+            next_id_pedido_estatus = 4
+        }
+
+        try {
+            await Axios.put("/api/putPedidoEstatus", { id_empresa: 1, id_pedido: id_pedido, id_pedido_estatus: next_id_pedido_estatus })
+                .then(response => {
+                    console.log(response)
+                    setPedidos(prevPedidos => prevPedidos.map(pedido => (pedido.id_pedido === id_pedido ? { ...pedido, status: newStatus } : pedido)))
+                })
+                .catch(error => {
+                    console.log("There was an error updating pedido: ", error)
+                })
+        } catch (error) {
+            console.log("error:", error)
+        } finally {
+        }
+
+        // //Actualizar estatus del pedido en el backend
+        // Axios.put(`/api/putPedidoEstatus`, { id_empresa: 1, id_pedido: id_pedido, id_pedido_estatus: next_id_pedido_estatus }).then(() => {
+        //     setPedidos(prevPedidos => prevPedidos.map(pedido => (pedido.id_pedido === id_pedido ? { ...pedido, status: newStatus } : pedido)))
+        // })
     }
 
     const estatusColumns = ["Recibido", "En Proceso", "Terminado", "En Camino", "Entregado", "Cancelado"]
