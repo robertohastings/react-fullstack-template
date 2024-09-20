@@ -40,6 +40,16 @@ CREATE TABLE `blog` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `blog`
+--
+
+LOCK TABLES `blog` WRITE;
+/*!40000 ALTER TABLE `blog` DISABLE KEYS */;
+INSERT INTO `blog` VALUES (1,1,'2024-01-21 19:16:01','2024-01-21 19:16:01','NUEVO PRODUCTO: Pechuga agrosuper sin piel','NUEVO PRODUCTO: Pechuga agrosuper sin piel',_binary '',5,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702245261/nir/pechuga_agrosuper_l9tn8n.jpg',1),(1,2,'2024-01-24 02:13:21','2024-01-24 02:13:21','NUEVO PRODUCTO: Milanesa Cordon Bleu. Bolsa con 7 piezas','NUEVO PRODUCTO: Milanesa Cordon Bleu. Bolsa con 7 piezas',_binary '',6,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702253266/nir/cordon-bleu_egaz5t.jpg',1),(1,3,'2024-01-24 02:14:30','2024-01-24 02:14:30','Pierna de pollo KFC. Bolsa con 10 piezas','Pierna de pollo KFC. Bolsa con 10 piezas',_binary '',6,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702268973/nir/pierna-kfc_edgehq.png',1),(1,4,'2024-01-24 02:18:42','2024-01-24 02:18:42','Paquete de Tocino Big Buy 453 GR.','Paquete de Tocino Big Buy 453 GR.',_binary '',6,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702253721/nir/tocino-big-buy_as4eom.webp',1);
+/*!40000 ALTER TABLE `blog` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `categorias`
 --
 
@@ -58,6 +68,16 @@ CREATE TABLE `categorias` (
   PRIMARY KEY (`id_empresa`,`id_categoria`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categorias`
+--
+
+LOCK TABLES `categorias` WRITE;
+/*!40000 ALTER TABLE `categorias` DISABLE KEYS */;
+INSERT INTO `categorias` VALUES (1,1,'Caja de Filete tilapia','Bolsa de Filete Tilapia, contiene 4 piezas.',NULL,'2023-12-10 00:00:00','2024-07-26 15:02:01',0),(9,1,'Testing 3','Testing 3','','2024-07-13 03:39:42','2024-07-13 03:39:42',2),(2,1,'Pollo','Boneless, Pechuga Agrosuper (sin piel), Milanesa CORDON BLUEA, Piernas KFC.','https://res.cloudinary.com/ddhxa9igj/image/upload/v1721880979/nir/1_cat_2.jpg','2023-12-10 00:00:00','2024-07-25 11:55:12',1),(8,1,'Testing 2','Testing 2','','2024-07-13 03:36:26','2024-07-13 03:36:26',1),(3,1,'Vegetales','Aros de cebolla, Papa frita','https://res.cloudinary.com/ddhxa9igj/image/upload/v1702245584/nir/papasyaros_nt79jw.jpg','2023-12-10 00:00:00','2023-12-10 00:00:00',1),(4,1,'Puerco','Tocino','https://res.cloudinary.com/ddhxa9igj/image/upload/v1702245824/nir/tocino_jhkilr.jpg','2023-12-10 00:00:00','2023-12-10 00:00:00',1),(5,1,'Lacteos','Leche, Quesos',NULL,'2024-07-04 00:00:00','2024-07-05 17:31:58',0),(6,1,'Mascotas','Croquetas perros y gatos',NULL,'2024-07-04 00:00:00','2024-07-05 17:31:58',0),(7,1,'Testing','Testing',NULL,'2024-07-05 18:13:27','2024-07-05 18:13:27',0);
+/*!40000 ALTER TABLE `categorias` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `clientes`
@@ -80,6 +100,16 @@ CREATE TABLE `clientes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `clientes`
+--
+
+LOCK TABLES `clientes` WRITE;
+/*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
+INSERT INTO `clientes` VALUES (1,1,'HostRegio','Roberto Vázquez Hastings','818.252.2653','818.252.2653',NULL,NULL),(1,2,'Ferreteria La Moderna','Roberto Vázquez Hastings','818.252.2653','818.252.2653',NULL,NULL);
+/*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `direccion_tipo_identidad`
 --
 
@@ -93,6 +123,16 @@ CREATE TABLE `direccion_tipo_identidad` (
   PRIMARY KEY (`id_empresa`,`id_direccion_tipo_identidad`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `direccion_tipo_identidad`
+--
+
+LOCK TABLES `direccion_tipo_identidad` WRITE;
+/*!40000 ALTER TABLE `direccion_tipo_identidad` DISABLE KEYS */;
+INSERT INTO `direccion_tipo_identidad` VALUES (1,1,'Usuario'),(1,2,'Proveedor');
+/*!40000 ALTER TABLE `direccion_tipo_identidad` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `direcciones`
@@ -125,6 +165,16 @@ CREATE TABLE `direcciones` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `direcciones`
+--
+
+LOCK TABLES `direcciones` WRITE;
+/*!40000 ALTER TABLE `direcciones` DISABLE KEYS */;
+INSERT INTO `direcciones` VALUES (1,1,1,1,_binary '\0','Privada del Estanque 135, Fracc. Palmas Diamante, San Nicolás de los Garza., Nuevo León, México, 66478','Privada del Estanque','135','Fracc. Palmas Diamante','San Nicolás de los Garza.','Nuevo León','México','66478',NULL,NULL,'2024-08-09 18:11:30','2024-08-14 12:45:01'),(2,1,1,1,_binary '\0','Italia 122, Fracc. Santa Fé, Monterrey., Nuevo León, México, 64540','Italia','122','Fracc. Santa Fé','Monterrey.','Nuevo León','México','64540',NULL,NULL,'2024-08-13 18:12:48','2024-08-14 12:45:36'),(3,1,1,1,_binary '','ITALIA2 122, FRACCIONAMIENTO SANTA FE, MONTERREY., NUEVO LEÓN, México, 64540','ITALIA2','122','FRACCIONAMIENTO SANTA FE','MONTERREY.','NUEVO LEÓN','México','64540',NULL,NULL,'2024-08-13 18:18:45','2024-08-14 12:45:52');
+/*!40000 ALTER TABLE `direcciones` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `empresas`
 --
 
@@ -138,6 +188,16 @@ CREATE TABLE `empresas` (
   PRIMARY KEY (`id_empresa`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `empresas`
+--
+
+LOCK TABLES `empresas` WRITE;
+/*!40000 ALTER TABLE `empresas` DISABLE KEYS */;
+INSERT INTO `empresas` VALUES (1,'Congelados NIR','https://res.cloudinary.com/ddhxa9igj/image/upload/v1702230600/nir/LogoNIR_fd22wq.png'),(2,'Sorteos','https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png');
+/*!40000 ALTER TABLE `empresas` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `formas_de_pago`
@@ -155,6 +215,16 @@ CREATE TABLE `formas_de_pago` (
   PRIMARY KEY (`id_empresa`,`id_forma_de_pago`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `formas_de_pago`
+--
+
+LOCK TABLES `formas_de_pago` WRITE;
+/*!40000 ALTER TABLE `formas_de_pago` DISABLE KEYS */;
+INSERT INTO `formas_de_pago` VALUES (1,1,'Efectivo - contra entrega','',1),(1,2,'Tarjeta Débito/Crédito - contra entrega','',1),(1,3,'Depósito','Cuenta:1243',1),(1,4,'Transferencia','Clabe Interbancaria: 123456',1),(1,5,'Pago en línea','',1),(1,6,'Línea de crédito','$6000',1);
+/*!40000 ALTER TABLE `formas_de_pago` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `landingpage`
@@ -179,6 +249,16 @@ CREATE TABLE `landingpage` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `landingpage`
+--
+
+LOCK TABLES `landingpage` WRITE;
+/*!40000 ALTER TABLE `landingpage` DISABLE KEYS */;
+INSERT INTO `landingpage` VALUES (1,1,'Testing 2','<p>Services</p><ol><li>One</li><br></ol>','<p>Productos</p><ol><li>Pescado</li><li>Pollo</li><br></ol>',1,1,0,0,0);
+/*!40000 ALTER TABLE `landingpage` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `pedido_estatus`
 --
 
@@ -193,6 +273,16 @@ CREATE TABLE `pedido_estatus` (
   PRIMARY KEY (`id_empresa`,`id_pedido_estatus`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pedido_estatus`
+--
+
+LOCK TABLES `pedido_estatus` WRITE;
+/*!40000 ALTER TABLE `pedido_estatus` DISABLE KEYS */;
+INSERT INTO `pedido_estatus` VALUES (1,1,'Recibido',0),(1,2,'En Proceso',1),(1,3,'Terminado',2),(1,4,'En Camino',3),(1,5,'Entregado',4);
+/*!40000 ALTER TABLE `pedido_estatus` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `pedidos`
@@ -224,6 +314,16 @@ CREATE TABLE `pedidos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `pedidos`
+--
+
+LOCK TABLES `pedidos` WRITE;
+/*!40000 ALTER TABLE `pedidos` DISABLE KEYS */;
+INSERT INTO `pedidos` VALUES (1,1,1,1,1,NULL,1,1,0,NULL,0,'2024-09-05 17:11:58','2024-09-05 17:11:58'),(1,2,1,1,1,0,1,1,250,0,250,'2024-09-05 17:34:31','2024-09-05 17:34:31'),(1,3,1,1,0,1,0,1,250,0,250,'2024-09-05 18:31:43','2024-09-05 18:31:43'),(1,4,1,1,0,1,0,1,390,0,390,'2024-09-12 18:09:11','2024-09-12 18:09:11');
+/*!40000 ALTER TABLE `pedidos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `pedidos_detalle`
 --
 
@@ -244,6 +344,16 @@ CREATE TABLE `pedidos_detalle` (
   KEY `id_empresa` (`id_empresa`,`id_producto`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pedidos_detalle`
+--
+
+LOCK TABLES `pedidos_detalle` WRITE;
+/*!40000 ALTER TABLE `pedidos_detalle` DISABLE KEYS */;
+INSERT INTO `pedidos_detalle` VALUES (1,1,2,1,1,250,250,'2024-09-05 17:34:31','2024-09-05 17:34:31'),(1,2,3,1,1,250,250,'2024-09-05 18:31:43','2024-09-05 18:31:43'),(1,3,4,4,2,130,260,'2024-09-12 18:09:11','2024-09-12 18:09:11'),(1,4,4,5,1,130,130,'2024-09-12 18:09:11','2024-09-12 18:09:11');
+/*!40000 ALTER TABLE `pedidos_detalle` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `productos`
@@ -277,6 +387,16 @@ CREATE TABLE `productos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `productos`
+--
+
+LOCK TABLES `productos` WRITE;
+/*!40000 ALTER TABLE `productos` DISABLE KEYS */;
+INSERT INTO `productos` VALUES (1,1,'Caja de Filete tilapia','Caja de Filete Tilapia, contiene 4.5 KG aprox.',1,1,260,250,200,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702245043/nir/filete_tilapia_lkscvm.webp','https://fiestatijuana.mx/image-not-available.png','https://fiestatijuana.mx/image-not-available.png',0,'2024-07-26 17:43:09','2024-07-26 17:43:09',1,''),(2,1,'Caja de Filete tilapias','Bolsa de Filete Tilapia, contiene 4 piezas',1,1,80,1,20,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702245043/nir/filete_tilapia_lkscvm.webp','https://fiestatijuana.mx/image-not-available.png','https://fiestatijuana.mx/image-not-available.png',1,'2024-07-26 17:26:15','2024-07-26 17:26:15',1,'ABC'),(3,1,'Camarón comptelero','Bolsa de Camarón comptelero.',1,1,150,0,0,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702249673/nir/camaron_coctelero_dtxd4d.jpg',NULL,NULL,0,'2023-12-11 00:00:00','2023-12-11 00:00:00',1,NULL),(4,1,'Boneless','Bolsa de Boneless 1 KG.',1,2,130,0,0,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702253038/nir/boneless-natural_lmtjzy.png',NULL,NULL,0,'2023-12-11 00:00:00','2023-12-11 00:00:00',1,NULL),(5,1,'Pechuga agrosuper','Pechuga agrosuper natural sin piel. Contiene 4 piezas',1,2,130,0,0,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702245261/nir/pechuga_agrosuper_l9tn8n.jpg',NULL,NULL,0,'2023-12-11 00:00:00','2023-12-11 00:00:00',1,NULL),(6,1,'Milenesa Cordon Bleu','Milanesa Cordon Bleu. Bolsa con 7 piezas',1,2,130,0,0,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702253266/nir/cordon-bleu_egaz5t.jpg',NULL,NULL,0,'2023-12-11 00:00:00','2023-12-11 00:00:00',1,NULL),(7,1,'Pierna de pollo KFC','Pierna de pollo KFC. Bolsa con 10 piezas',1,2,130,0,0,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702268973/nir/pierna-kfc_edgehq.png',NULL,NULL,0,'2023-12-11 00:00:00','2023-12-11 00:00:00',1,NULL),(8,1,'Aros de cebolla','Bolsa de aros de cebolla.',1,3,150,0,0,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702253406/nir/aros-cebolla_dx53ek.jpg',NULL,NULL,0,'2023-12-11 00:00:00','2023-12-11 00:00:00',1,NULL),(9,1,'Papa a la francesa','Bolsa de papas a la francesa',1,3,100,1.5,0,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702253552/nir/papas-a-la-francesa_vgywg5.jpg',NULL,NULL,0,'2023-12-11 00:00:00','2023-12-11 00:00:00',1,NULL),(10,1,'Tocino','Paquete de Tocino Big Buy 453 GR.',1,4,100,1.5,0,'https://res.cloudinary.com/ddhxa9igj/image/upload/v1702253721/nir/tocino-big-buy_as4eom.webp',NULL,NULL,0,'2023-12-11 00:00:00','2023-12-11 00:00:00',1,NULL);
+/*!40000 ALTER TABLE `productos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `proveedores`
 --
 
@@ -303,6 +423,16 @@ CREATE TABLE `proveedores` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `proveedores`
+--
+
+LOCK TABLES `proveedores` WRITE;
+/*!40000 ALTER TABLE `proveedores` DISABLE KEYS */;
+INSERT INTO `proveedores` VALUES (1,1,'Agrowings',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `proveedores` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `provider`
 --
 
@@ -315,6 +445,16 @@ CREATE TABLE `provider` (
   PRIMARY KEY (`id_provider`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `provider`
+--
+
+LOCK TABLES `provider` WRITE;
+/*!40000 ALTER TABLE `provider` DISABLE KEYS */;
+INSERT INTO `provider` VALUES (1,'Local'),(2,'Google'),(3,'Facebook');
+/*!40000 ALTER TABLE `provider` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `puntosdeentrega`
@@ -336,6 +476,16 @@ CREATE TABLE `puntosdeentrega` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `puntosdeentrega`
+--
+
+LOCK TABLES `puntosdeentrega` WRITE;
+/*!40000 ALTER TABLE `puntosdeentrega` DISABLE KEYS */;
+INSERT INTO `puntosdeentrega` VALUES (1,1,'Citadel (Estacionamiento Sears)','Sábados de 4:00 - 6:00 P.M.','2024-08-07 15:24:47','2024-08-14 12:49:52',1);
+/*!40000 ALTER TABLE `puntosdeentrega` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `roles`
 --
 
@@ -352,6 +502,16 @@ CREATE TABLE `roles` (
   UNIQUE KEY `nombre` (`nombre`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles`
+--
+
+LOCK TABLES `roles` WRITE;
+/*!40000 ALTER TABLE `roles` DISABLE KEYS */;
+INSERT INTO `roles` VALUES (1,1,'master','2023-12-10 00:00:00','2023-12-10 00:00:00'),(2,1,'admin','2023-12-10 00:00:00','2023-12-10 00:00:00');
+/*!40000 ALTER TABLE `roles` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `usuarios`
@@ -382,6 +542,16 @@ CREATE TABLE `usuarios` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `usuarios`
+--
+
+LOCK TABLES `usuarios` WRITE;
+/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+INSERT INTO `usuarios` VALUES (1,1,'rob.hst@gmail.com','Roberto','Vazquez Hastings','8110170557',NULL,'$2b$08$DuJlVb7GckLTD6XXICNxBu9.BT1.7VBL/kl0zXvbn074L9J5ylDX6','2023-12-10 00:00:00','2023-12-10 00:00:00','2024-03-30 23:41:28',NULL,'1970-06-25');
+/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `usuarios_roles`
 --
 
@@ -398,6 +568,16 @@ CREATE TABLE `usuarios_roles` (
   KEY `id_empresa` (`id_empresa`,`id_rol`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `usuarios_roles`
+--
+
+LOCK TABLES `usuarios_roles` WRITE;
+/*!40000 ALTER TABLE `usuarios_roles` DISABLE KEYS */;
+INSERT INTO `usuarios_roles` VALUES (1,1,1,'2023-12-10 00:00:00','2023-12-10 00:00:00');
+/*!40000 ALTER TABLE `usuarios_roles` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `visitas`
@@ -421,6 +601,15 @@ CREATE TABLE `visitas` (
   KEY `id_empresa_cliente` (`id_empresa`,`id_cliente`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `visitas`
+--
+
+LOCK TABLES `visitas` WRITE;
+/*!40000 ALTER TABLE `visitas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `visitas` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping routines for database 'crm'
@@ -589,6 +778,63 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getPedidoCanvas` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getPedidoCanvas`(
+	IN p_id_empresa BIGINT
+)
+BEGIN
+
+	SELECT 	P.id_pedido, P.fecha_creacion, P.id_cliente, 
+			P.id_direccion,
+            P.id_puntoDeEntrega,
+            PS.descripcion AS estatus_pedido,	
+            CASE WHEN P.id_direccion = 1 
+				THEN CONCAT(D.calle , ' No: ' , D.numero , 'Colonia: ' , D.colonia)
+                ELSE PE.nombre
+			END AS lugarDeEntrega,
+            FP.descripcion AS formaDePago,
+            SUM(PD.cantidad) AS totalPiezas,
+            P.total, P.Saldo,
+            CONCAT(
+				'[', GROUP_CONCAT(
+						CONCAT(
+							'{
+								"id_producto":', PD.id_producto , 
+                                ', "cantidad":', PD.cantidad , 
+                                ', "precio":', PD.precio , 
+                                ', "subtotal":', PD.subtotal , 
+                                ', "producto":', '"' , ( SELECT nombre FROM productos PR WHERE PR.id_empresa = P.id_empresa AND PR.id_producto = PD.id_producto ) , '"' , 
+                                ', "imagen":', '"' , ( SELECT image1 FROM productos PR WHERE PR.id_empresa = P.id_empresa AND PR.id_producto = PD.id_producto ) , '"' ,
+							'}'
+						)
+                    ),
+				']'
+            ) AS detalle_pedido
+    FROM pedidos P
+    INNER JOIN formas_de_pago FP ON FP.id_forma_de_pago = P.id_forma_de_pago
+    INNER JOIN pedido_estatus PS on PS.id_pedido_estatus = P.id_pedido_estatus
+    INNER JOIN pedidos_detalle PD ON PD.id_empresa = P.id_empresa AND PD.id_pedido = P.id_pedido
+    LEFT JOIN puntosdeentrega PE ON PE.id_empresa = P.id_empresa AND PE.id_puntoDeEntrega = P.id_puntoDeEntrega
+    LEFT JOIN direcciones D ON D.id_empresa = P.id_empresa AND D.id_direccion = P.id_direccion
+    WHERE P.id_empresa = p_id_empresa
+    GROUP BY P.id_pedido, P.fecha_creacion, P.id_cliente, P.id_direccion, P.id_pedido_estatus, PS.descripcion, P.id_forma_de_pago, FP.descripcion, P.total, P.Saldo
+    ORDER BY P.id_empresa, P.id_usuario, P.id_pedido DESC;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `getPedidoDetalle` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -610,6 +856,7 @@ BEGIN
 	SELECT 	P.id_pedido, P.fecha_creacion, P.id_cliente, 
 			P.id_direccion,
             P.id_puntoDeEntrega,
+            PS.descripcion AS estatus_pedido,
             JSON_OBJECT(
 				'id_pedido_estatus', P.id_pedido_estatus, 
 				'descripcion', PS.descripcion
@@ -1717,6 +1964,31 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `putPedidoEstatus` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `putPedidoEstatus`(
+	IN prm_id_empresa BIGINT,
+    IN prm_id_pedido BIGINT,
+    IN prm_id_pedido_estatus INT
+)
+BEGIN
+
+	UPDATE pedidos SET id_pedido_estatus = prm_id_pedido_estatus WHERE id_empresa = prm_id_empresa AND id_pedido = prm_id_pedido;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `putRevisaDireccionPorDefecto` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1833,4 +2105,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-14 12:32:03
+-- Dump completed on 2024-09-20 17:56:17
