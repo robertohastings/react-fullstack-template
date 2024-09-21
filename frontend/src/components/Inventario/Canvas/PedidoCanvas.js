@@ -209,24 +209,28 @@ function PedidoCanvas() {
     }
 
     const setPedidoStatus = async (id_pedido, newStatus) => {
-        alert(`Actualiza estatus pedido No: ${id_pedido} a: ${newStatus}`)
+        //alert(`Actualiza estatus pedido No: ${id_pedido} a: ${newStatus}`)
 
         var next_id_pedido_estatus = 0
         if (newStatus === "Recibido") {
             next_id_pedido_estatus = 1
-        } else if (newStatus === "En proceso") {
+        } else if (newStatus === "En Proceso") {
             next_id_pedido_estatus = 2
         } else if (newStatus === "Terminado") {
             next_id_pedido_estatus = 3
-        } else if (newStatus === "En camino") {
+        } else if (newStatus === "En Camino") {
             next_id_pedido_estatus = 4
+        } else if (newStatus === "Entregado") {
+            next_id_pedido_estatus = 5
         }
+        console.log(`Actualiza estatus pedido No: ${id_pedido} a: ${newStatus} id_estatus_pedid: ${next_id_pedido_estatus}`)
 
         try {
             await Axios.put("/api/putPedidoEstatus", { id_empresa: 1, id_pedido: id_pedido, id_pedido_estatus: next_id_pedido_estatus })
                 .then(response => {
-                    console.log(response)
-                    setPedidos(prevPedidos => prevPedidos.map(pedido => (pedido.id_pedido === id_pedido ? { ...pedido, status: newStatus } : pedido)))
+                    //console.log(response)
+                    //setPedidos(prevPedidos => prevPedidos.map(pedido => (pedido.id_pedido === id_pedido ? { ...pedido, estatus_pedido: newStatus } : pedido)))
+                    fetchMisPedidos()
                 })
                 .catch(error => {
                     console.log("There was an error updating pedido: ", error)
