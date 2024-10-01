@@ -2,7 +2,7 @@ import "./PedidoCanvas.css"
 import React, { useState, useEffect } from "react"
 //import Page from "../../Page"
 import Axios from "axios"
-//import SpinnerButton from "../../Spinner/SpinnerButton"
+import SpinnerButton from "../../Spinner/SpinnerButton"
 import { Card, Col, Container, Row, Button, Modal, Table, Image } from "react-bootstrap"
 import { useDrag, useDrop, DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
@@ -34,12 +34,12 @@ const Pedido = ({ pedido, movePedido, setPedidoStatus }) => {
     const handled_NextEstatus = (id_pedido, current_estatus) => {
         var next_estatus = ""
         if (current_estatus === "Recibido") {
-            next_estatus = "En proceso"
-        } else if (current_estatus === "En proceso") {
+            next_estatus = "En Proceso"
+        } else if (current_estatus === "En Proceso") {
             next_estatus = "Terminado"
         } else if (current_estatus === "Terminado") {
-            next_estatus = "En camino"
-        } else if (current_estatus === "En camino") {
+            next_estatus = "En Camino"
+        } else if (current_estatus === "En Camino") {
             next_estatus = "Entregado"
         }
         setPedidoStatus(id_pedido, next_estatus)
@@ -184,13 +184,14 @@ const EstatusColumn = ({ estatus, pedidos, movePedido, setPedidoStatus }) => {
 
 function PedidoCanvas() {
     const [pedidos, setPedidos] = useState([])
+    const [isLoading, setIsLoaging] = useState(false)
 
     useEffect(() => {
         fetchMisPedidos()
     }, [])
 
     const fetchMisPedidos = async () => {
-        //setIsLoaging(true)
+        setIsLoaging(true)
 
         try {
             const response = await Axios.get("/api/getPedidoCanvas", {
@@ -204,7 +205,7 @@ function PedidoCanvas() {
         } catch (error) {
             console.error("There was an error fetching the pedidos!", error)
         } finally {
-            //setIsLoaging(false)
+            setIsLoaging(false)
         }
     }
 
@@ -223,7 +224,7 @@ function PedidoCanvas() {
         } else if (newStatus === "Entregado") {
             next_id_pedido_estatus = 5
         }
-        console.log(`Actualiza estatus pedido No: ${id_pedido} a: ${newStatus} id_estatus_pedid: ${next_id_pedido_estatus}`)
+        console.log(`Actualiza estatus pedido No: ${id_pedido} a: ${newStatus} id_estatus_pedido: ${next_id_pedido_estatus}`)
 
         try {
             await Axios.put("/api/putPedidoEstatus", { id_empresa: 1, id_pedido: id_pedido, id_pedido_estatus: next_id_pedido_estatus })
@@ -251,6 +252,15 @@ function PedidoCanvas() {
     return (
         <DndProvider backend={HTML5Backend}>
             <Container fluid>
+                <Row>
+                    <Col>
+                        <Button variant="link" className="mt-5" onClick={fetchMisPedidos}>
+                            {!isLoading && "Actualizar"}
+                            {isLoading && <SpinnerButton mensaje="Actualizando..." />}
+                        </Button>
+                    </Col>
+                </Row>
+
                 <Row>
                     {estatusColumns.map(estatus => (
                         <EstatusColumn key={estatus} estatus={estatus} pedidos={pedidos.filter(pedido => pedido.estatus_pedido === estatus)} setPedidoStatus={setPedidoStatus} />
