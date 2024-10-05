@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react"
 import HtmlReactParser from "html-react-parser"
 import StateContext from "../StateContext"
-import { Col, Form, Row, Card, ListGroup, Button, Container } from "react-bootstrap"
+import { Col, Form, Row, Card, ListGroup, Button, Container, Image } from "react-bootstrap"
 import DispatchContext from "../DispatchContext"
 
 import Page from "./Page"
@@ -97,11 +97,29 @@ function Products() {
         appDispatch({ type: "alertMessage", value: "Producto agregado al carrito", typeAlert: "success" })
     }
 
+    // Dividimos las categorías en filas de 4
+    const rows = []
+    for (let i = 0; i < dataCategories.length; i += 4) {
+        rows.push(dataCategories.slice(i, i + 4))
+    }
+
     return (
         <Page title="Productos">
             <h2 className="mt-0 mb-0">Productos</h2>
 
             {/* <div style={{backgroundColor: "lightgrey"}} className="mb-5 p-3" dangerouslySetInnerHTML={{ __html: contenido }}></div> */}
+
+            <div>
+                {rows.map((row, rowIndex) => (
+                    <Row key={rowIndex} className="mb-4">
+                        {row.map(category => (
+                            <Col key={category.id_categoria} xs={12} md={3}>
+                                <Image src={category.imagen} thumbnail fluid />
+                            </Col>
+                        ))}
+                    </Row>
+                ))}
+            </div>
 
             <div className="mt-1 d-flex justify-content-center">
                 <Form>

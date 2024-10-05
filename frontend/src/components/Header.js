@@ -101,7 +101,9 @@ function Header(props) {
                             {/* Ventas */}
                             <Nav>
                                 <NavDropdown title="Ventas" id="nav-ventas" drop="start">
-                                    <NavDropdown.Item>Cotizar</NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to={"Ventas/Cotizar"}>
+                                        Cotizar
+                                    </NavDropdown.Item>
                                     <NavDropdown.Item>Colocar Remisión</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>

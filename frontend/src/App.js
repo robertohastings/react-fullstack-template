@@ -29,6 +29,7 @@ import Carrito from "./components/Carrito"
 import Perfil from "./components/Admin/Perfil/Perfil"
 import { PiEraserFill } from "react-icons/pi"
 import PedidoCanvas from "./components/Inventario/Canvas/PedidoCanvas"
+import Cotizar from "./components/Ventas/Cotizar/Cotizar"
 
 function App() {
     //const [cart, setCart] = useContext(CartContext)
@@ -195,6 +196,7 @@ function App() {
                                     <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
                                     <Route path="/Carrito" element={<Carrito />} />
                                     <Route path="/Admin/Perfil" element={<Perfil />} />
+                                    <Route path="/Ventas/Cotizar" element={<Cotizar />} />
                                 </Routes>
                             </main>
 
