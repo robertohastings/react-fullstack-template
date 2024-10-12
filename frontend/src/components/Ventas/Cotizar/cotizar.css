@@ -4,6 +4,7 @@
     height: 100vh; /* Fija la altura de la columna */
     overflow-y: auto; /* Habilita el scroll vertical */
     padding: 15px;
+    margin-top: 20px;
 }
 
 .categories-scroll {
@@ -19,9 +20,10 @@
 
 .category-image {
     width: 100%;
-    height: 125px;
+    height: 80px;
     object-fit: cover;
     border-radius: 8px;
+    border-color: black;
 }
 
 .category-name-overlay {
@@ -38,7 +40,7 @@
 /* Estilos de los productos */
 .product-image {
     width: 100px;
-    height: 50px;
+    height: 60px;
     /* object-fit: cover; */
     /* border-radius: 8px; */
     border-radius: 10px 0 0 10px;
@@ -46,7 +48,7 @@
 
 .product-card {
     border-radius: 10px; /* Bordes redondeados */
-    height: 250px; /* Altura fija para que todas las Cards sean del mismo tamaño */
+    height: 350px; /* Altura fija para que todas las Cards sean del mismo tamaño */
 }
 
 .product-card .card-title {
@@ -57,4 +59,26 @@
 .product-card .card-text {
     font-size: 1rem; /* Ajusta el tamaño del texto */
     margin-bottom: 5px;
+}
+
+.product-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Soporte para navegadores basados en WebKit (Chrome, Safari, etc.) */
+    line-clamp: 2; /* Propiedad estándar para compatibilidad futura */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.resumen-column {
+    background-color: #f8f9fa;
+    height: 100vh; /* Fija la altura de la columna */
+    overflow-y: auto; /* Habilita el scroll vertical */
+    padding: 10px;
+    margin-top: 22px;
+}
+
+.resumen-scroll {
+    display: flex;
+    flex-direction: column;
 }
