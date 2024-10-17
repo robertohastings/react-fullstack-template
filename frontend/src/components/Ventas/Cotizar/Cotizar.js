@@ -4,6 +4,7 @@ import Axios from "axios"
 //import SpinnerButton from "../../Spinner/SpinnerButton"
 import "./cotizar.css"
 import { FaPlus, FaMinus, FaRegTrashAlt, FaShoppingCart, FaMotorcycle, FaSearch } from "react-icons/fa"
+import CustomModal from "../../../tools/CustomModal"
 
 function Cotizar() {
     const [isLoading, setIsLoaging] = useState(false)
@@ -14,6 +15,22 @@ function Cotizar() {
     const [quantities, setQuantities] = useState({})
     const totalPrice = detallePedido.reduce((total, item) => total + item.cantidad * item.precio, 0)
     const totalItems = detallePedido.reduce((total, item) => total + parseInt(item.cantidad), 0)
+
+    //Definición del Modal
+    const [modalParams, setModalParams] = useState(null)
+    const showModal = ({ title, question, buttons }) => {
+        return new Promise(resolve => {
+            setModalParams({
+                title,
+                question,
+                buttons,
+                onClose: value => {
+                    setModalParams(null) // Cierra el modal
+                    resolve(value) // Retorna el valor seleccionado
+                }
+            })
+        })
+    }
 
     useEffect(() => {
         fetchCategorias()
@@ -178,6 +195,33 @@ function Cotizar() {
         return "$" + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
     }
 
+    const LimpiarCaptura_handled = async () => {
+        setDetallePedido([])
+        await showModal({
+            title: "Información",
+            question: "La captura fue eliminada",
+            buttons: [{ label: "Ok", value: "yes", variant: "primary" }]
+        })
+    }
+
+    const LimpiarCaptura_handleOpenModal = async () => {
+        const result = await showModal({
+            title: "Confirmar Acción",
+            question: "¿ Está seguro de eliminar los productos capturados ?",
+            buttons: [
+                { label: "Si", value: "yes", variant: "primary" },
+                { label: "No", value: "no", variant: "danger" }
+                // { label: 'Back', value: 'back', variant: 'secondary' },
+            ]
+        })
+        //console.log("Selected Option:", result)
+        if (result === "yes") {
+            LimpiarCaptura_handled()
+        } else {
+            alert("No")
+        }
+    }
+
     return (
         <Container fluid>
             <Row>
@@ -262,13 +306,13 @@ function Cotizar() {
                             <Col>
                                 <ButtonToolbar className="justify-content-around">
                                     <ButtonGroup size="">
-                                        <Button size="sm" variant="danger" style={{ width: "60px" }} title="Lipiar captura e iniciar de nuevo">
+                                        <Button size="sm" variant="danger" style={{ width: "60px" }} title="Lipiar captura e iniciar de nuevo" onClick={LimpiarCaptura_handleOpenModal} disabled={detallePedido.length === 0}>
                                             <FaRegTrashAlt size={25} />
                                         </Button>
-                                        <Button size="sm" variant="warning" style={{ width: "100px" }} title="Definir tipo de entrega: Domiclio ó Recoge">
+                                        <Button size="sm" variant="warning" style={{ width: "100px" }} title="Definir tipo de entrega: Domiclio ó Recoge" disabled={detallePedido.length === 0}>
                                             <FaMotorcycle size={30} />
                                         </Button>
-                                        <Button size="sm" variant="success" style={{ width: "100px" }}>
+                                        <Button size="sm" variant="success" style={{ width: "100px" }} disabled={detallePedido.length === 0}>
                                             Crear Pedido
                                         </Button>
                                         <Button size="sm" variant="info" style={{ width: "100px" }}>
@@ -320,6 +364,9 @@ function Cotizar() {
                     </div>
                 </Col>
             </Row>
+
+            {/* Se defino el modal para mostrarse, código fijo */}
+            {modalParams && <CustomModal show={true} title={modalParams.title} question={modalParams.question} buttons={modalParams.buttons} onClose={modalParams.onClose} />}
         </Container>
     )
 }
