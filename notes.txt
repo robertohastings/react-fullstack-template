@@ -232,61 +232,19 @@ CREATE TABLE pedidos_detalle(
     FOREIGN KEY(id_empresa, id_producto) REFERENCES productos(id_empresa, id_producto) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE='MyISAM';
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `postPedido`(
-	IN p_id_empresa BIGINT,
-    IN p_id_usuario BIGINT,
-    IN p_id_cliente BIGINT,
-    IN p_tipoDeEntrega VARCHAR(10),
-    IN p_identidad_tipoDeEntrega INT,
-    IN p_id_forma_de_pago SMALLINT,  
-    IN p_partidas_pedido  JSON
-)
-BEGIN
-	DECLARE p_id_pedido BIGINT;
-    DECLARE partida JSON;
-    DECLARE idx INT DEFAULT 0;  
-    DECLARE total_pedido DOUBLE;
-    DECLARE subtotal DOUBLE;
-    DECLARE p_id_direccion BIGINT;
-    
-    IF p_tipoDeEntrega = 'Recoger' THEN 
-		SET p_id_direccion = 0;
-	ELSE 
-		SET p_id_direccion = p_identidad_tipoDeEntrega;
-    END IF;
 
-	INSERT INTO pedidos (id_empresa, id_usuario, id_cliente, id_direccion, id_pedido_estatus, id_forma_de_pago, fecha_creacion, fecha_actualizacion)	
-		VALUES (p_id_empresa, p_id_usuario, p_id_cliente, p_id_direccion, 1, p_id_forma_de_pago, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
-        
-	SET p_id_pedido = LAST_INSERT_ID();
-    
-    SET total_pedido = 0;
-    -- Lógica para procesar los datos    
-    WHILE idx < JSON_LENGTH(p_partidas_pedido) DO
-        SET partida = JSON_EXTRACT(p_partidas_pedido, CONCAT('$[', idx, ']'));
-        
-        -- Extraer los campos individuales
-        SET @id_producto = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.id_producto'));
-        SET @cantidad = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.cantidad'));
-        SET @precio = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.precio'));
-
-        -- Aquí puedes realizar la operación que desees con los datos
-        -- Por ejemplo, insertar o actualizar en una tabla
-        
-        SET subtotal = @cantidad * @precio;
-        SET total_pedido = total_pedido + subtotal;
-        
-		INSERT INTO pedidos_detalle (id_empresa, id_pedido, id_producto, cantidad, precio, subtotal, fecha_creacion, fecha_actualizacion)    
-			VALUES (p_id_empresa, p_id_pedido, @id_producto, @cantidad, @precio, subtotal, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP() );
-
-        SET idx = idx + 1;
-    END WHILE; 
-    
-    UPDATE pedidos SET total = total_pedido, importe_pagado = 0, saldo = total_pedido 
-    WHERE id_empresa = p_id_empresa AND 
-		  id_pedido = p_id_pedido;
-    
-	SELECT p_id_pedido AS id_pedido;
-END
-
--- COMPARAR tablas de pedido y partidas pedido
+┌─ Flutter Fix ──────────────────────────────────────────────────────────────────────────────────┐
+│ The plugin background_service requires a higher Android SDK version.                           │
+│ Fix this issue by adding the following to the file                                             │
+│ /Users/robertovazquezhasting/development/apps/geolocator/geo_locator/android/app/build.gradle: │
+│ android {                                                                                      │
+│   defaultConfig {                                                                              │
+│     minSdkVersion 24                                                                           │
+│   }                                                                                            │
+│ }  
+│                                                                                                │
+│ Following this change, your app will not be available to users running Android SDKs below 24.  │
+│ Consider searching for a version of this plugin that supports these lower versions of the      │
+│ Android SDK instead.                                                                           │
+│ For more information, see: https://flutter.dev/to/review-gradle-config                         │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
