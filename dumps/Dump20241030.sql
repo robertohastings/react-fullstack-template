@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `crm` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_spanish_ci */;
+USE `crm`;
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: crm
@@ -185,6 +187,7 @@ CREATE TABLE `empresas` (
   `id_empresa` bigint(20) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(300) COLLATE latin1_spanish_ci NOT NULL,
   `logo` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `host` varchar(100) COLLATE latin1_spanish_ci NOT NULL,
   PRIMARY KEY (`id_empresa`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -195,7 +198,7 @@ CREATE TABLE `empresas` (
 
 LOCK TABLES `empresas` WRITE;
 /*!40000 ALTER TABLE `empresas` DISABLE KEYS */;
-INSERT INTO `empresas` VALUES (1,'Congelados NIR','https://res.cloudinary.com/ddhxa9igj/image/upload/v1702230600/nir/LogoNIR_fd22wq.png'),(2,'Sorteos','https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png');
+INSERT INTO `empresas` VALUES (1,'Congelados NIR','https://res.cloudinary.com/ddhxa9igj/image/upload/v1702230600/nir/LogoNIR_fd22wq.png',''),(2,'Sorteos','https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png','');
 /*!40000 ALTER TABLE `empresas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -224,6 +227,30 @@ LOCK TABLES `formas_de_pago` WRITE;
 /*!40000 ALTER TABLE `formas_de_pago` DISABLE KEYS */;
 INSERT INTO `formas_de_pago` VALUES (1,1,'Efectivo - contra entrega','',1),(1,2,'Tarjeta Débito/Crédito - contra entrega','',1),(1,3,'Depósito','Cuenta:1243',1),(1,4,'Transferencia','Clabe Interbancaria: 123456',1),(1,5,'Pago en línea','',1),(1,6,'Línea de crédito','$6000',1);
 /*!40000 ALTER TABLE `formas_de_pago` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `hosts`
+--
+
+DROP TABLE IF EXISTS `hosts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `hosts` (
+  `host` varchar(200) COLLATE latin1_spanish_ci NOT NULL,
+  `id_empresa` int(11) NOT NULL,
+  PRIMARY KEY (`host`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `hosts`
+--
+
+LOCK TABLES `hosts` WRITE;
+/*!40000 ALTER TABLE `hosts` DISABLE KEYS */;
+INSERT INTO `hosts` VALUES ('localhost',1);
+/*!40000 ALTER TABLE `hosts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -620,4 +647,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-04 18:06:46
+-- Dump completed on 2024-10-30 18:22:43

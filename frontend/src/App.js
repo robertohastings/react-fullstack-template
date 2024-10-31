@@ -114,6 +114,9 @@ function App() {
         //     const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
         //    setCart(carritoLS)
 
+        const hostname = window.location.hostname
+        console.log(`hostname: ${hostname}`)
+
         try {
             // await axios
             //     .get("/api/landingPage")
@@ -131,7 +134,8 @@ function App() {
                 .get("/api/getLandingPage", {
                     params: {
                         id_empresa: 1,
-                        id_landingPage: 1
+                        id_landingPage: 1,
+                        hostname
                     }
                 })
                 .then(response => {
@@ -140,6 +144,7 @@ function App() {
                     setIsLoading(false)
                     //dispatch({ type: "landingPage", data: response.data.landingPage })
                     localStorage.setItem("complexappLanding", JSON.stringify(response.data.landingPage))
+                    localStorage.setItem("hostregioTenant", JSON.stringify(response.data.landingPage.idEmpresa))
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)

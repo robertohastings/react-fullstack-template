@@ -19,12 +19,13 @@ export const getProductosByCategoria = async (req, res) => {
 export const getLandingPage = async (req, res) => {
     try {
         //console.log('here')
-        const { id_empresa, id_landingPage } = req.query
-        const rows = await pool.query(`CALL getLandingPage( ?, ?);`, [id_empresa, id_landingPage])
+        const { id_empresa, id_landingPage, hostname } = req.query
+        const rows = await pool.query(`CALL getLandingPage( ?, ?, ?);`, [id_empresa, id_landingPage, hostname])
         //console.log(rows[0][0][0]);
         const data = {
             success: true,
             landingPage: {
+                idEmpresa: rows[0][0][0].id_empresa,
                 quienesSomos: rows[0][0][0].quienes_somos,
                 servicios: rows[0][0][0].servicios,
                 productos: rows[0][0][0].productos,
