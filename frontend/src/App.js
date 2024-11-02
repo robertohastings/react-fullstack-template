@@ -6,6 +6,7 @@ import { useImmerReducer } from "use-immer"
 import StateContext from "./StateContext"
 import DispatchContext from "./DispatchContext"
 import ShoppingCartProvider, { CartContext } from "./context/ShoppingCartContext"
+import { setEncryptedItem, getDecryptedItem } from "./tools/Utils"
 
 //My Components
 import Header from "./components/Header"
@@ -53,7 +54,8 @@ function App() {
         isSearchOpen: false,
         isChatOpen: false,
         unreadReadChatCount: 0,
-        landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
+        //landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
+        landingPage: getDecryptedItem("hostregioLandingPage"),
         notifications: false
         //carrito: JSON.parse(localStorage.getItem("carrito")) ?? []
     }
@@ -144,7 +146,10 @@ function App() {
                     setIsLoading(false)
                     //dispatch({ type: "landingPage", data: response.data.landingPage })
                     localStorage.setItem("complexappLanding", JSON.stringify(response.data.landingPage))
-                    localStorage.setItem("hostregioTenant", JSON.stringify(response.data.landingPage.idEmpresa))
+                    //localStorage.setItem("hostregioTenant", JSON.stringify(response.data.landingPage.idEmpresa))
+
+                    setEncryptedItem("hostregioTenant", response.data.landingPage.idEmpresa)
+                    setEncryptedItem("hostregioLandingPage", response.data.landingPage)
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)
