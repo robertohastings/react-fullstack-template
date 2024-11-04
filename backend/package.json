@@ -6,7 +6,8 @@
     "type": "module",
     "scripts": {
         "start": "nodemon app",
-        "watch": "nodemon app"
+        "watch": "nodemon app",
+        "server": "node app.js"
     },
     "keywords": [],
     "author": "",
