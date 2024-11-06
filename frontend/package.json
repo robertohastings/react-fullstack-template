@@ -10,6 +10,7 @@
         "axios": "^1.7.2",
         "bootstrap": "^5.3.3",
         "cropperjs": "^1.6.2",
+        "cross-env": "^7.0.3",
         "crypto-js": "^4.2.0",
         "dotenv": "^16.4.5",
         "formik": "^2.4.6",
@@ -27,12 +28,12 @@
         "yup": "^1.4.0"
     },
     "scripts": {
-        "start": "react-scripts --openssl-legacy-provider start",
+        "start": "cross-env PORT=3001 react-scripts --openssl-legacy-provider start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
     },
-    "proxy": "http://localhost:8080",
+    "proxy": "http://localhost:3000",
     "eslintConfig": {
         "extends": [
             "react-app",

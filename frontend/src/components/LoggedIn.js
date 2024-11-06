@@ -5,6 +5,7 @@ import DispatchContext from "../DispatchContext"
 import { PiCopySimple, PiGoogleLogo } from "react-icons/pi"
 import { LuUserCircle2 } from "react-icons/lu"
 import axios from "axios"
+import { getDecryptedItem } from "../tools/Utils"
 
 function LoggedIn(props) {
     const api_url = process.env.REACT_APP_API_URL
@@ -29,23 +30,14 @@ function LoggedIn(props) {
         setPassword(e.target.value)
     }
     const handled_In = async () => {
-        // console.log("api_url:", api_url, "id_empresa:", id_empresa)
-        // console.log("email:", email, "password:", password)
-        // console.log(`${api_url}/usersLogin`)
+        const id_empresa = getDecryptedItem("hostregioTenant")
+        console.log(`Empresa: ${id_empresa}`)
         try {
-            // const response = await axios.get(`${api_url}/usersLogin`, {
-            //     params: {
-            //         id_empresa: id_empresa,
-            //         email: email,
-            //         password: password
-            //     }
-            // })
-            // console.log(response.data)
             setIsFetching(true)
             await axios
                 .get(`${api_url}/usersLogin`, {
                     params: {
-                        id_empresa: id_empresa,
+                        id_empresa,
                         email: email,
                         password: password
                     }
