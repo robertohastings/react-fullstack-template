@@ -1,10 +1,10 @@
-import React, { useContext, useState, useEffect } from "react"
+import React, { useContext } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
-import { Navbar, Nav, NavDropdown, Dropdown, Image, Badge } from "react-bootstrap"
+import { Navbar, Nav, NavDropdown } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { RiUser3Line } from "react-icons/ri"
 import { CiLogout } from "react-icons/ci"
-import { PiGoogleLogo } from "react-icons/pi"
+//import { PiGoogleLogo } from "react-icons/pi"
 import { PiPassword } from "react-icons/pi"
 import { IoMdNotifications } from "react-icons/io"
 import { MdOutlineLocalGroceryStore } from "react-icons/md"
@@ -12,7 +12,7 @@ import { MdLocalGroceryStore } from "react-icons/md"
 
 import DispatchContext from "../DispatchContext"
 import StateContext from "../StateContext"
-import Carrito from "./Carrito"
+//import Carrito from "./Carrito"
 import { CartContext } from "../context/ShoppingCartContext"
 
 function Header(props) {

@@ -2,14 +2,14 @@ import React, { useContext, useState } from "react"
 import { Link } from "react-router-dom"
 import { Modal, Form, Button, Row, Col, Container, Spinner } from "react-bootstrap"
 import DispatchContext from "../DispatchContext"
-import { PiCopySimple, PiGoogleLogo } from "react-icons/pi"
+import { PiGoogleLogo } from "react-icons/pi"
 import { LuUserCircle2 } from "react-icons/lu"
 import axios from "axios"
 import { getDecryptedItem } from "../tools/Utils"
 
 function LoggedIn(props) {
     const api_url = process.env.REACT_APP_API_URL
-    const id_empresa = process.env.REACT_APP_APP_EMPRESA_ID
+    //const id_empresa = process.env.REACT_APP_APP_EMPRESA_ID
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import Axios from "axios"
-import SpinnerButton from "../../Spinner/SpinnerButton"
+//import SpinnerButton from "../../Spinner/SpinnerButton"
 import { Accordion, Button, Spinner, Table, Image } from "react-bootstrap"
 
 function MisPedidos() {

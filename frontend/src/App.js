@@ -1,5 +1,5 @@
 // frontend/src/App.js
-import React, { useEffect, useState, useContext } from "react"
+import React, { useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import axios from "axios"
 import { useImmerReducer } from "use-immer"
@@ -28,13 +28,13 @@ import ListProveedores from "./components/Compras/Proveedores/ListProveedores"
 import ListProductos from "./components/Inventario/Productos/ListProductos"
 import Carrito from "./components/Carrito"
 import Perfil from "./components/Admin/Perfil/Perfil"
-import { PiEraserFill } from "react-icons/pi"
+//import { PiEraserFill } from "react-icons/pi"
 import PedidoCanvas from "./components/Inventario/Canvas/PedidoCanvas"
 import Cotizar from "./components/Ventas/Cotizar/Cotizar"
 
 function App() {
     //const [cart, setCart] = useContext(CartContext)
-    const [data, setData] = useState({})
+    //const [data, setData] = useState({})
     const [isLoading, setIsLoading] = useState(true)
 
     const initialState = {
@@ -142,7 +142,7 @@ function App() {
                 })
                 .then(response => {
                     console.log("dataLanding:", response.data)
-                    setData(response.data)
+                    //setData(response.data)
                     setIsLoading(false)
                     //dispatch({ type: "landingPage", data: response.data.landingPage })
                     localStorage.setItem("complexappLanding", JSON.stringify(response.data.landingPage))

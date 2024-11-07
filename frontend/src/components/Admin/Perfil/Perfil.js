@@ -3,7 +3,7 @@ import Page from "../../Page"
 import DatosPersonales from "./DatosPersonales"
 import Direcciones from "./Direcciones"
 import MisPedidos from "./MisPedidos"
-import { Tab, Tabs, Form, Button, Spinner } from "react-bootstrap"
+import { Tab, Tabs } from "react-bootstrap"
 
 function Perfil() {
     return (

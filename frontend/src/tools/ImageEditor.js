@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react"
-import { Row, Col, Button } from "react-bootstrap"
+import { Row, Col } from "react-bootstrap"
 import Cropper from "cropperjs"
 import "cropperjs/dist/cropper.css"
 

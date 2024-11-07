@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 // import Container from "./Container"
-import Container from "react-bootstrap/Container"
+//import Container from "react-bootstrap/Container"
 
 function Page(props) {
     useEffect(() => {
