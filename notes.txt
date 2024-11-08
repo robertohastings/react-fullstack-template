@@ -233,18 +233,67 @@ CREATE TABLE pedidos_detalle(
 ) ENGINE='MyISAM';
 
 
-┌─ Flutter Fix ──────────────────────────────────────────────────────────────────────────────────┐
-│ The plugin background_service requires a higher Android SDK version.                           │
-│ Fix this issue by adding the following to the file                                             │
-│ /Users/robertovazquezhasting/development/apps/geolocator/geo_locator/android/app/build.gradle: │
-│ android {                                                                                      │
-│   defaultConfig {                                                                              │
-│     minSdkVersion 24                                                                           │
-│   }                                                                                            │
-│ }  
-│                                                                                                │
-│ Following this change, your app will not be available to users running Android SDKs below 24.  │
-│ Consider searching for a version of this plugin that supports these lower versions of the      │
-│ Android SDK instead.                                                                           │
-│ For more information, see: https://flutter.dev/to/review-gradle-config                         │
-└────────────────────────────────────────────────────────────────────────────────────────────────┘
+CREATE DEFINER=`root`@`localhost` PROCEDURE `postHost`(
+	IN prm_nombre VARCHAR(300),
+    IN prm_logo VARCHAR(255),
+	IN prm_host VARCHAR(100)
+)
+BEGIN
+
+	/*ALTA EN EMPRESAS*/
+    DECLARE idEmpresa BIGINT;
+    INSERT INTO empresas (nombre, logo, host) VALUES (prm_nombre, prm_logo, prm_host);
+    SET idEmpresa = last_insert_id();
+
+	/*ALTA DE HOST*/
+	IF NOT EXISTS(
+		SELECT 1 
+        FROM hosts H
+        WHERE H.host = prm_host
+    ) 
+    THEN 
+		INSERT INTO hosts (host, id_empresa) VALUES (prm_host, idEmpresa);
+	ELSE 
+		UPDATE hosts SET id_empresa = idEmpresa WHERE host = prm_host;
+	END IF;
+    
+    /*ALTA DE LANDING PAGE*/
+    INSERT INTO landingpage VALUES (id_empresa, quienes_somos, servicios, productos, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos, mostrar_sitioEnMantenimiento);
+    SELECT idEmpresa, L.quienes_somos, L.servicios, L.productos, 1, 1, 1, 1, 0
+    FROM landingpage L 
+    WHERE L.id_empresa = 1 AND L.id_landingpage = 1;
+    
+    /*ALTA DE USUARIO MASTER*/
+    INSERT INTO usuarios (id_empresa, email, nombre, apellidos, celular, imagen, password, fecha_nacimiento, fecha_creacion, fecha_actualizacion)
+    SELECT idEmpresa, U.email, U.nombre, U.apellidos, U.celular, U.imagen, U.password, U.fecha_nacimiento, current_timestamp(), current_timestamp()
+    FROM usuarios U
+    WHERE U.id_usuario = 1 AND U.id_empresa = 1;
+    
+    /*ALTA DE DIRECCION*/
+    INSERT INTO direcciones (id_empresa, id_direccion_tipo_identidad, identidad, direccion_por_defecto, fecha_creacion)
+		VALUES (idEmpresa, 1, 1, 1, current_timestamp());
+    
+    /*ALTA DE direccion_tipo_identidad*/
+    INSERT INTO direccion_tipo_identidad (id_empresa, descripcion) VALUES (idEmpresa, 'Usuario');
+    INSERT INTO direccion_tipo_identidad (id_empresa, descripcion) VALUES (idEmpresa, 'Proveedor');
+    
+    /*ALTA DE FORMAS DE PAGO*/
+    /*/Efectivo*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 1 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 1; 
+    /*/Tarjeta contra entrega*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 0 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 2;     
+    /*/Deposito*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 1 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 3;   
+    /*/Transferencia*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 1 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 4; 
+    /*/Pago en Linea*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 0 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 5;         
+    /*/Linea de Crédito*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 0 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 6;      
+END
