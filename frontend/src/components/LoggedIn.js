@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react"
 import { Link } from "react-router-dom"
 import { Modal, Form, Button, Row, Col, Container, Spinner } from "react-bootstrap"
 import DispatchContext from "../DispatchContext"
+import StateContext from "../StateContext"
 import { PiGoogleLogo } from "react-icons/pi"
 import { LuUserCircle2 } from "react-icons/lu"
 import axios from "axios"
@@ -17,6 +18,7 @@ function LoggedIn(props) {
     const [isFetching, setIsFetching] = useState(false)
 
     const appDispatch = useContext(DispatchContext)
+    const appState = useContext(StateContext)
 
     const handledClose = () => {
         appDispatch({ type: "showLoggedIn", value: false })
@@ -30,6 +32,7 @@ function LoggedIn(props) {
         setPassword(e.target.value)
     }
     const handled_In = async () => {
+        console.log(`IdEmpresa desde el state: ${appState.idEmpresa}`)
         const id_empresa = getDecryptedItem("hostregioTenant")
         console.log(`Empresa: ${id_empresa}`)
         try {

@@ -1,5 +1,5 @@
 // frontend/src/App.js
-import React, { useEffect, useState } from "react"
+import React, { act, useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import axios from "axios"
 import { useImmerReducer } from "use-immer"
@@ -38,6 +38,7 @@ function App() {
     const [isLoading, setIsLoading] = useState(true)
 
     const initialState = {
+        idEmpresa: getDecryptedItem("hostregioTenant"),
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
         showLoggedIn: false,
         flashMessages: [],
@@ -62,6 +63,9 @@ function App() {
 
     function ourReducer(draft, action) {
         switch (action.type) {
+            case "tenant":
+                setEncryptedItem("hostregioTenant", action.data)
+                break
             case "login":
                 draft.loggedIn = true
                 //draft.user = action.data
@@ -144,12 +148,14 @@ function App() {
                     console.log("dataLanding:", response.data)
                     //setData(response.data)
                     setIsLoading(false)
-                    //dispatch({ type: "landingPage", data: response.data.landingPage })
+                    //c
                     localStorage.setItem("complexappLanding", JSON.stringify(response.data.landingPage))
                     //localStorage.setItem("hostregioTenant", JSON.stringify(response.data.landingPage.idEmpresa))
 
                     setEncryptedItem("hostregioTenant", response.data.landingPage.idEmpresa)
                     setEncryptedItem("hostregioLandingPage", response.data.landingPage)
+
+                    dispatch({ type: "tenant", data: response.data.landingPage.idEmpresa })
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)
