@@ -100,7 +100,7 @@ function Home() {
                     {/* Quiénes Somos */}
                     <section className="about-section">
                         <h2>¿Quiénes Somos?</h2>
-                        <p>Somos una empresa dedicada a ofrecer servicios de hosting, registro de dominios y desarrollo de aplicaciones web y móvil. Nuestra misión es brindar soluciones digitales confiables y seguras para empresas y emprendedores que buscan destacar en el mundo digital.</p>
+                        <p>{appState.landingPage.quienesSomos}</p>
                     </section>
 
                     {/* Servicios */}
@@ -185,7 +185,7 @@ function Home() {
                     <footer className="footer">
                         <Row>
                             <Col md={6}>
-                                <p>© 2024 Tu Empresa. Todos los derechos reservados.</p>
+                                <p>Síguenos en:</p>
                             </Col>
                             <Col md={6} className="social-media">
                                 <Link href="#" className="social-icon">

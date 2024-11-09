@@ -78,7 +78,7 @@ function Header(props) {
                         <Nav.Link as={Link} to="/">
                             Inicio
                         </Nav.Link>
-                        {!appState.loggedIn && (
+                        {!appState.loggedIn & !appState.landingPage.settings.mostrar_sitioEnMantenimiento && (
                             <>
                                 <Nav.Link as={Link} to="AboutUs">
                                     ¿Quienes somos?
@@ -187,17 +187,21 @@ function Header(props) {
                     )}
 
                     {/* Carrito de compras */}
-                    <Nav>
-                        <Nav.Link as={Link} to="Carrito">
-                            {quantity === 0 && <MdOutlineLocalGroceryStore size={30} />}
-                            {quantity > 0 && (
-                                <>
-                                    <MdLocalGroceryStore size={30} />
-                                    <span>{quantity}</span>
-                                </>
-                            )}
-                        </Nav.Link>
-                    </Nav>
+                    {!appState.landingPage.settings.mostrar_sitioEnMantenimiento && (
+                        <>
+                            <Nav>
+                                <Nav.Link as={Link} to="Carrito">
+                                    {quantity === 0 && <MdOutlineLocalGroceryStore size={30} />}
+                                    {quantity > 0 && (
+                                        <>
+                                            <MdLocalGroceryStore size={30} />
+                                            <span>{quantity}</span>
+                                        </>
+                                    )}
+                                </Nav.Link>
+                            </Nav>
+                        </>
+                    )}
 
                     {/* Menú Usuario */}
                     <Nav>

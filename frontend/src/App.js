@@ -31,6 +31,7 @@ import Perfil from "./components/Admin/Perfil/Perfil"
 //import { PiEraserFill } from "react-icons/pi"
 import PedidoCanvas from "./components/Inventario/Canvas/PedidoCanvas"
 import Cotizar from "./components/Ventas/Cotizar/Cotizar"
+import LandingPagePreview from "./components/LandingPagePreview"
 
 function App() {
     //const [cart, setCart] = useContext(CartContext)
@@ -213,6 +214,7 @@ function App() {
                                     <Route path="/Carrito" element={<Carrito />} />
                                     <Route path="/Admin/Perfil" element={<Perfil />} />
                                     <Route path="/Ventas/Cotizar" element={<Cotizar />} />
+                                    <Route path="/LandingPagePreview" element={<LandingPagePreview />} />
                                 </Routes>
                             </main>
 

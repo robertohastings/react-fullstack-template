@@ -117,11 +117,10 @@ DROP TABLE IF EXISTS `direccion_tipo_identidad`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `direccion_tipo_identidad` (
-  `id_empresa` bigint(20) NOT NULL,
   `id_direccion_tipo_identidad` smallint(6) NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(200) COLLATE latin1_spanish_ci NOT NULL,
-  PRIMARY KEY (`id_empresa`,`id_direccion_tipo_identidad`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  PRIMARY KEY (`id_direccion_tipo_identidad`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +129,7 @@ CREATE TABLE `direccion_tipo_identidad` (
 
 LOCK TABLES `direccion_tipo_identidad` WRITE;
 /*!40000 ALTER TABLE `direccion_tipo_identidad` DISABLE KEYS */;
-INSERT INTO `direccion_tipo_identidad` VALUES (1,1,'Usuario'),(1,2,'Proveedor');
+INSERT INTO `direccion_tipo_identidad` VALUES (1,'Usuario'),(2,'Proveedor');
 /*!40000 ALTER TABLE `direccion_tipo_identidad` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -170,7 +169,7 @@ CREATE TABLE `direcciones` (
 
 LOCK TABLES `direcciones` WRITE;
 /*!40000 ALTER TABLE `direcciones` DISABLE KEYS */;
-INSERT INTO `direcciones` VALUES (1,1,1,1,_binary '\0','Privada del Estanque 135, Fracc. Palmas Diamante, San Nicolás de los Garza., Nuevo León, México, 66478','Privada del Estanque','135','Fracc. Palmas Diamante','San Nicolás de los Garza.','Nuevo León','México','66478',NULL,NULL,'2024-08-09 18:11:30','2024-08-14 12:45:01'),(2,1,1,1,_binary '\0','Italia 122, Fracc. Santa Fé, Monterrey., Nuevo León, México, 64540','Italia','122','Fracc. Santa Fé','Monterrey.','Nuevo León','México','64540',NULL,NULL,'2024-08-13 18:12:48','2024-08-14 12:45:36'),(3,1,1,1,_binary '','ITALIA2 122, FRACCIONAMIENTO SANTA FE, MONTERREY., NUEVO LEÓN, México, 64540','ITALIA2','122','FRACCIONAMIENTO SANTA FE','MONTERREY.','NUEVO LEÓN','México','64540',NULL,NULL,'2024-08-13 18:18:45','2024-08-14 12:45:52');
+INSERT INTO `direcciones` VALUES (1,1,1,1,_binary '\0','Privada del Estanque 135, Fracc. Palmas Diamante, San Nicolás de los Garza., Nuevo León, México, 66478','Privada del Estanque','135','Fracc. Palmas Diamante','San Nicolás de los Garza.','Nuevo León','México','66478',NULL,NULL,'2024-08-09 18:11:30','2024-08-14 12:45:01'),(2,1,1,1,_binary '\0','Italia 122, Fracc. Santa Fé, Monterrey., Nuevo León, México, 64540','Italia','122','Fracc. Santa Fé','Monterrey.','Nuevo León','México','64540',NULL,NULL,'2024-08-13 18:12:48','2024-08-14 12:45:36'),(3,1,1,1,_binary '','ITALIA2 122, FRACCIONAMIENTO SANTA FE, MONTERREY., NUEVO LEÓN, México, 64540','ITALIA2','122','FRACCIONAMIENTO SANTA FE','MONTERREY.','NUEVO LEÓN','México','64540',NULL,NULL,'2024-08-13 18:18:45','2024-08-14 12:45:52'),(1,2,1,1,_binary '','Lorem ipsum dolor sit amet','Lorem ipsum dolor sit amet','Lorem ipsum dolor si','Lorem ipsum dolor sit amet','Lorem ipsum dolor sit amet','Lorem ipsum dolor sit amet','Lorem ipsum dolor sit amet','Lorem',NULL,NULL,'2024-11-09 10:49:15','0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `direcciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -196,7 +195,7 @@ CREATE TABLE `empresas` (
 
 LOCK TABLES `empresas` WRITE;
 /*!40000 ALTER TABLE `empresas` DISABLE KEYS */;
-INSERT INTO `empresas` VALUES (1,'Congelados NIR','https://res.cloudinary.com/ddhxa9igj/image/upload/v1702230600/nir/LogoNIR_fd22wq.png',''),(2,'Sorteos','https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png','');
+INSERT INTO `empresas` VALUES (1,'Congelados NIR','https://res.cloudinary.com/ddhxa9igj/image/upload/v1702230600/nir/LogoNIR_fd22wq.png',''),(2,'hostregio','','localhost');
 /*!40000 ALTER TABLE `empresas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -223,7 +222,7 @@ CREATE TABLE `formas_de_pago` (
 
 LOCK TABLES `formas_de_pago` WRITE;
 /*!40000 ALTER TABLE `formas_de_pago` DISABLE KEYS */;
-INSERT INTO `formas_de_pago` VALUES (1,1,'Efectivo - contra entrega','',1),(1,2,'Tarjeta Débito/Crédito - contra entrega','',1),(1,3,'Depósito','Cuenta:1243',1),(1,4,'Transferencia','Clabe Interbancaria: 123456',1),(1,5,'Pago en línea','',1),(1,6,'Línea de crédito','$6000',1);
+INSERT INTO `formas_de_pago` VALUES (1,1,'Efectivo - contra entrega','',1),(1,2,'Tarjeta Débito/Crédito - contra entrega','',1),(1,3,'Depósito','Cuenta:1243',1),(1,4,'Transferencia','Clabe Interbancaria: 123456',1),(1,5,'Pago en línea','',1),(1,6,'Línea de crédito','$6000',1),(2,1,'Efectivo - contra entrega','',1),(2,2,'Tarjeta Débito/Crédito - contra entrega','',0),(2,3,'Depósito','',1),(2,4,'Transferencia','',1),(2,5,'Pago en línea','',0),(2,6,'Línea de crédito','',0);
 /*!40000 ALTER TABLE `formas_de_pago` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -247,7 +246,7 @@ CREATE TABLE `hosts` (
 
 LOCK TABLES `hosts` WRITE;
 /*!40000 ALTER TABLE `hosts` DISABLE KEYS */;
-INSERT INTO `hosts` VALUES ('localhost',1);
+INSERT INTO `hosts` VALUES ('localhost',2);
 /*!40000 ALTER TABLE `hosts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -279,7 +278,7 @@ CREATE TABLE `landingpage` (
 
 LOCK TABLES `landingpage` WRITE;
 /*!40000 ALTER TABLE `landingpage` DISABLE KEYS */;
-INSERT INTO `landingpage` VALUES (1,1,'Testing 2','<p>Services</p><ol><li>One</li><br></ol>','<p>Productos</p><ol><li>Pescado</li><li>Pollo</li><br></ol>',1,1,0,0,0);
+INSERT INTO `landingpage` VALUES (1,1,'Testing 2','<p>Services</p><ol><li>One</li><br></ol>','<p>Productos</p><ol><li>Pescado</li><li>Pollo</li><br></ol>',1,1,0,0,0),(2,1,'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',1,1,1,1,1);
 /*!40000 ALTER TABLE `landingpage` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -559,9 +558,7 @@ CREATE TABLE `usuarios` (
   `fecha_ultimo_acceso` datetime DEFAULT NULL,
   `id_provider` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
-  PRIMARY KEY (`id_empresa`,`id_usuario`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `celular` (`celular`),
+  PRIMARY KEY (`id_empresa`,`id_usuario`,`email`),
   UNIQUE KEY `idx_login` (`id_empresa`,`email`,`password`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -572,7 +569,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,1,'rob.hst@gmail.com','Roberto','Vazquez Hastings','8110170557',NULL,'$2b$08$DuJlVb7GckLTD6XXICNxBu9.BT1.7VBL/kl0zXvbn074L9J5ylDX6','2023-12-10 00:00:00','2023-12-10 00:00:00','2024-03-30 23:41:28',NULL,'1970-06-25');
+INSERT INTO `usuarios` VALUES (1,1,'rob.hst@gmail.com','Roberto','Vazquez Hastings','8110170557',NULL,'$2b$08$DuJlVb7GckLTD6XXICNxBu9.BT1.7VBL/kl0zXvbn074L9J5ylDX6','2023-12-10 00:00:00','2023-12-10 00:00:00','2024-03-30 23:41:28',NULL,'1970-06-25'),(1,2,'rob.hst@gmail.com','Roberto','Vazquez Hastings','8110170557',NULL,'$2b$08$DuJlVb7GckLTD6XXICNxBu9.BT1.7VBL/kl0zXvbn074L9J5ylDX6','2024-11-09 10:49:15','2024-11-09 10:49:15',NULL,NULL,'1970-06-25');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1450,6 +1447,93 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `postHost` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `postHost`(
+	IN prm_nombre VARCHAR(300),
+    IN prm_logo VARCHAR(255),
+	IN prm_host VARCHAR(100)
+)
+BEGIN
+    DECLARE idEmpresa BIGINT;
+    DECLARE lorem VARCHAR(800);
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        -- Opcional: Puedes agregar aquí un mensaje de error personalizado        
+    END;        
+	
+	/*ALTA EN EMPRESAS*/
+
+    SET lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+        
+    START TRANSACTION;
+    
+    INSERT INTO empresas (nombre, logo, host) VALUES (prm_nombre, prm_logo, prm_host);
+    SET idEmpresa = last_insert_id();
+
+	/*ALTA DE HOST*/
+	IF NOT EXISTS(
+		SELECT 1 
+        FROM hosts H
+        WHERE H.host = prm_host
+    ) 
+    THEN 
+		INSERT INTO hosts (host, id_empresa) VALUES (prm_host, idEmpresa);
+	ELSE 
+		UPDATE hosts SET id_empresa = idEmpresa WHERE host = prm_host;
+	END IF;
+    
+    /*ALTA DE LANDING PAGE*/    
+    INSERT INTO landingpage (id_empresa, quienes_somos, servicios, productos, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos, mostrar_sitioEnMantenimiento)
+		VALUES (idEmpresa, lorem, lorem, lorem, 1, 1, 1, 1, 1);
+    
+    /*ALTA DE USUARIO MASTER*/
+    INSERT INTO usuarios (id_empresa, email, nombre, apellidos, celular, imagen, password, fecha_nacimiento, fecha_creacion, fecha_actualizacion)
+    SELECT idEmpresa, U.email, U.nombre, U.apellidos, U.celular, U.imagen, U.password, U.fecha_nacimiento, current_timestamp(), current_timestamp()
+    FROM usuarios U
+    WHERE U.id_usuario = 1 AND U.id_empresa = 1;
+    
+    /*ALTA DE DIRECCION*/
+    INSERT INTO direcciones (id_empresa, id_direccion_tipo_identidad, identidad, direccion_por_defecto, direccion, calle, numero, colonia, ciudad, estado, pais, codigo_postal, fecha_creacion)
+		VALUES (idEmpresa, 1, 1, 1, 'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 
+			'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 'Lorem', current_timestamp());
+        
+    /*ALTA DE FORMAS DE PAGO*/
+    /*/Efectivo*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 1 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 1; 
+    /*/Tarjeta contra entrega*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 0 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 2;     
+    /*/Deposito*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 1 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 3;   
+    /*/Transferencia*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 1 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 4; 
+    /*/Pago en Linea*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 0 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 5;         
+    /*/Linea de Crédito*/
+    INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
+    SELECT idEmpresa, F.descripcion, '', 0 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 6;  
+    
+    COMMIT;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `postPedido` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -2145,4 +2229,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-01 18:12:19
+-- Dump completed on 2024-11-09 11:48:06

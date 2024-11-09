@@ -239,9 +239,20 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `postHost`(
 	IN prm_host VARCHAR(100)
 )
 BEGIN
-
-	/*ALTA EN EMPRESAS*/
     DECLARE idEmpresa BIGINT;
+    DECLARE lorem VARCHAR(800);
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        -- Opcional: Puedes agregar aquí un mensaje de error personalizado        
+    END;        
+	
+	/*ALTA EN EMPRESAS*/
+
+    SET lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+        
+    START TRANSACTION;
+    
     INSERT INTO empresas (nombre, logo, host) VALUES (prm_nombre, prm_logo, prm_host);
     SET idEmpresa = last_insert_id();
 
@@ -257,11 +268,9 @@ BEGIN
 		UPDATE hosts SET id_empresa = idEmpresa WHERE host = prm_host;
 	END IF;
     
-    /*ALTA DE LANDING PAGE*/
-    INSERT INTO landingpage VALUES (id_empresa, quienes_somos, servicios, productos, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos, mostrar_sitioEnMantenimiento);
-    SELECT idEmpresa, L.quienes_somos, L.servicios, L.productos, 1, 1, 1, 1, 0
-    FROM landingpage L 
-    WHERE L.id_empresa = 1 AND L.id_landingpage = 1;
+    /*ALTA DE LANDING PAGE*/    
+    INSERT INTO landingpage (id_empresa, quienes_somos, servicios, productos, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos, mostrar_sitioEnMantenimiento)
+		VALUES (idEmpresa, lorem, lorem, lorem, 1, 1, 1, 1, 1);
     
     /*ALTA DE USUARIO MASTER*/
     INSERT INTO usuarios (id_empresa, email, nombre, apellidos, celular, imagen, password, fecha_nacimiento, fecha_creacion, fecha_actualizacion)
@@ -270,13 +279,10 @@ BEGIN
     WHERE U.id_usuario = 1 AND U.id_empresa = 1;
     
     /*ALTA DE DIRECCION*/
-    INSERT INTO direcciones (id_empresa, id_direccion_tipo_identidad, identidad, direccion_por_defecto, fecha_creacion)
-		VALUES (idEmpresa, 1, 1, 1, current_timestamp());
-    
-    /*ALTA DE direccion_tipo_identidad*/
-    INSERT INTO direccion_tipo_identidad (id_empresa, descripcion) VALUES (idEmpresa, 'Usuario');
-    INSERT INTO direccion_tipo_identidad (id_empresa, descripcion) VALUES (idEmpresa, 'Proveedor');
-    
+    INSERT INTO direcciones (id_empresa, id_direccion_tipo_identidad, identidad, direccion_por_defecto, direccion, calle, numero, colonia, ciudad, estado, pais, codigo_postal, fecha_creacion)
+		VALUES (idEmpresa, 1, 1, 1, 'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 
+			'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 'Lorem', current_timestamp());
+        
     /*ALTA DE FORMAS DE PAGO*/
     /*/Efectivo*/
     INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
@@ -295,5 +301,15 @@ BEGIN
     SELECT idEmpresa, F.descripcion, '', 0 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 5;         
     /*/Linea de Crédito*/
     INSERT INTO formas_de_pago (id_empresa, descripcion, informacion_adicional, activo)
-    SELECT idEmpresa, F.descripcion, '', 0 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 6;      
+    SELECT idEmpresa, F.descripcion, '', 0 FROM formas_de_pago F WHERE F.id_empresa = 1 AND F.id_forma_de_pago = 6;  
+    
+    COMMIT;
 END
+
+
+en la tabla de usuarios:
+    agregar el email como parte de la llave y quitar que sea único.
+    quiatar celular que sea único.
+
+de la tabla direccion_tipo_identidad eliminar la columna id_empresa    
+
