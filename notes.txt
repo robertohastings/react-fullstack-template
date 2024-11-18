@@ -334,5 +334,7 @@ de la tabla direccion_tipo_identidad eliminar la columna id_empresa
 -- eliminar id_empresa de roles
 -- agregar el usuario_rol
 
+Este es el proxy que tenía en package.json 
+    "proxy": "http://localhost:3000",
 
 
