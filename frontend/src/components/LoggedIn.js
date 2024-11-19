@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Modal, Form, Button, Row, Col, Container, Spinner } from "react-bootstrap"
 import DispatchContext from "../DispatchContext"
@@ -6,19 +6,25 @@ import StateContext from "../StateContext"
 import { PiGoogleLogo } from "react-icons/pi"
 import { LuUserCircle2 } from "react-icons/lu"
 import axios from "axios"
-import { getDecryptedItem } from "../tools/Utils"
+//import { getDecryptedItem } from "../tools/Utils"
+import { encryptData } from "../tools/Utils"
 
 function LoggedIn(props) {
     const api_url = process.env.REACT_APP_API_URL
-    //const id_empresa = process.env.REACT_APP_APP_EMPRESA_ID
+    const appDispatch = useContext(DispatchContext)
+    const appState = useContext(StateContext)
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [errorMessage, seterrorMessage] = useState("")
     const [isFetching, setIsFetching] = useState(false)
 
-    const appDispatch = useContext(DispatchContext)
-    const appState = useContext(StateContext)
+    useEffect(() => {
+        setEmail('')
+        setPassword('')
+        seterrorMessage('')
+    }, [])
+
 
     const handledClose = () => {
         appDispatch({ type: "showLoggedIn", value: false })
@@ -29,11 +35,14 @@ function LoggedIn(props) {
     }
 
     const handled_Password = e => {
+        console.log('Password:', e.target.value)
+        console.log('Password encrypted:', encryptData(e.target.value))
         setPassword(e.target.value)
     }
     const handled_In = async () => {
         console.log(`IdEmpresa desde el state: ${appState.idEmpresa}`)
-        const id_empresa = getDecryptedItem("hostregioTenant")
+        //const id_empresa = getDecryptedItem("hostregioTenant")
+        const id_empresa = appState.idEmpresa
         console.log(`Empresa: ${id_empresa}`)
         try {
             setIsFetching(true)
@@ -42,7 +51,7 @@ function LoggedIn(props) {
                     params: {
                         id_empresa,
                         email: email,
-                        password: password
+                        password: encryptData(password)
                     }
                 })
                 .then(response => {

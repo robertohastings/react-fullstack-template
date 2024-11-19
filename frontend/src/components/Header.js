@@ -43,7 +43,7 @@ function Header(props) {
     //TODO: cambiar sessionTitle por el nombre del usuario cuando se autentique
     //y cambiar el icono por la imagen del usurio redondeada como
     //const [sessionTitle, setsessionTitle] = useState(appState.user.username)
-    //console.log(appState.loggedIn)
+    //console.log('Landing Page:', appState.landingPage)
     //console.log("carrito items:", appState.carrito)
     //const sessionTitle = appState.user.username
     // const navDropdownTitle = (

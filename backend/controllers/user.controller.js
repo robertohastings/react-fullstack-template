@@ -1,16 +1,24 @@
 import { pool } from "../db.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { config } from "dotenv"
+import { decryptData } from "../helpers/crypto.js"
 const JWT_SECRET = "secreto_del_jwt"
+
+config()
 
 export const getUsuarioLogin = async (req, res) => {
     try {
-        const rows = await pool.query(`CALL getUsuarioLogin(?, ?, ?);`, [req.query.id_empresa, req.query.email, req.query.password])
+
+        console.log('Encrypted password: ', req.query.password)
+        console.log('Descrypted password: ', decryptData(req.query.password))
+
+        const rows = await pool.query(`CALL getUsuarioLogin(?, ?, ?);`, [req.query.id_empresa, req.query.email, decryptData(req.query.password)])
 
         let data = rows[0][0][0]
         console.log("data:", data)
 
-        const password = req.query.password
+        const password = decryptData(req.query.password)
 
         //let passwordHash = await bcrypt.hash(password, 8);
         //console.log('passwordHash:', passwordHash);
@@ -74,8 +82,11 @@ export const getUsuarioLogin = async (req, res) => {
         }
     } catch (error) {
         //console.log('Error: ', error)
+        // res.status(500).json({
+        //     message: `${error}`
+        // })
         res.status(500).json({
-            message: `${error}`
+            error: error
         })
     }
 }

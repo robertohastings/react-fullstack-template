@@ -10,7 +10,10 @@ export const encryptData = (data) => {
 
 // Función para desencriptar datos
 export const decryptData = (encryptedData) => {
+    //console.log(`encryptedData: ${encryptedData}`)
+    //console.log(`secret key: ${SECRET_KEY}`)
   const bytes = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY);
+  //console.log(`Bytes: ${bytes}`)
   return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 };
 
@@ -23,6 +26,9 @@ export const setEncryptedItem = (key, data) => {
 // Función para recuperar y desencriptar desde localStorage
 export const getDecryptedItem = (key) => {
   const encryptedData = localStorage.getItem(key);
+  //console.log('antes del decryptdata')
+  //const id_empresa = decryptData(encryptedData)
+  //console.log('decryptData', id_empresa)
   if (!encryptedData) return null;
   return decryptData(encryptedData);
 };

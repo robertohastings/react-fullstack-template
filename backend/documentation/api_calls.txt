@@ -2,3 +2,8 @@ Llamadas de endPoint
 
 1. Al entrar a la página:
     getLandingPage -> controllers/landingController.js
+
+2. Para autentificarse:
+    usersLogin
+    TODO: autentificarse con google
+

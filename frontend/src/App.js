@@ -1,11 +1,11 @@
 // frontend/src/App.js
-import React, { act, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import axios from "axios"
 import { useImmerReducer } from "use-immer"
 import StateContext from "./StateContext"
 import DispatchContext from "./DispatchContext"
-import ShoppingCartProvider, { CartContext } from "./context/ShoppingCartContext"
+import ShoppingCartProvider from "./context/ShoppingCartContext"
 import { setEncryptedItem, getDecryptedItem } from "./tools/Utils"
 
 //My Components
@@ -156,7 +156,7 @@ function App() {
                     setEncryptedItem("hostregioTenant", response.data.landingPage.idEmpresa)
                     setEncryptedItem("hostregioLandingPage", response.data.landingPage)
 
-                    dispatch({ type: "tenant", data: response.data.landingPage.idEmpresa })
+                    //dispatch({ type: "tenant", data: response.data.landingPage.idEmpresa })
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)

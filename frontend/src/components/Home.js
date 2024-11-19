@@ -30,7 +30,7 @@ function Home() {
                 <>
                     <Row className="m-3">
                         <Col className="d-flex justify-content-center align-items-center">
-                            <Image src="https://goldit.com.my/wp-content/uploads/2020/01/website-maintenance.png" roundedCircle />
+                            <Image src="/img/website-maintenance.jpg" fluid />
                         </Col>
                     </Row>
                     <Row>

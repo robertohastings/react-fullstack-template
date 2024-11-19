@@ -1,0 +1,4 @@
+
+. Instalación de crypto-js
+. en el sp: getUsuarioLogin, quitar el campo id_empresa de roles
+. en el sp: getLandingPage, revisar los alias que esten en mayúsculas
