@@ -1,4 +1,5 @@
 
-. Instalación de crypto-js
-. en el sp: getUsuarioLogin, quitar el campo id_empresa de roles
-. en el sp: getLandingPage, revisar los alias que esten en mayúsculas
+. Instalación de crypto-js en local 2 (ok)
+. Instalación de crypto.js en server
+. en el sp: getUsuarioLogin, quitar el campo id_empresa de roles (ok)
+. en el sp: getLandingPage, revisar los alias que esten en mayúsculas (ok)
