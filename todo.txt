@@ -1,0 +1,5 @@
+. arreglar el margen del footer
+. CRM
+    - En Landing Page
+        - Agregar galería de imágenes
+        
