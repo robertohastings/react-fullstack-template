@@ -165,3 +165,22 @@ export const uploadImage = (req, res) => {
 //     })
 // }
 //)}
+
+export const getGaleria = async (req, res) => {
+    try {
+        console.log('Galeria')
+        const { id_empresa } = req.query
+        const rows = await pool.query(`CALL getGaleria( ? );`, [ id_empresa ])
+        //console.log(rows[0][0][0]);
+        const data = {
+            success: true,
+            galeria: rows[0][0]
+        }
+        res.status(200).json(data)
+    } catch (error) {
+        console.log("Error fectching the data ", error)
+        res.status(500).json({
+            error: error
+        })        
+    }
+}

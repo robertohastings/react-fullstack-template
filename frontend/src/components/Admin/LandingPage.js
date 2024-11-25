@@ -8,6 +8,7 @@ import StateContext from "../../StateContext"
 import DispatchContext from "../../DispatchContext"
 import Axios from "axios"
 import FormasDePago from "./FormasDePago"
+import Galeria from "./Galeria"
 
 function LandingPage() {
     const appState = useContext(StateContext)
@@ -162,6 +163,7 @@ function LandingPage() {
     return (
         <Page title="Landig Page">
             <Tabs defaultActiveKey="settings" id="justify-tab-example" className="mb-3" justify>
+                
                 <Tab eventKey="settings" title="Landing Page">
                     <h4 className="pt-4">Activar / Desactivar páginas</h4>
                     <hr />
@@ -215,6 +217,7 @@ function LandingPage() {
                         </Form>
                     </div>
                 </Tab>
+                {/* Quienes somos */}
                 <Tab eventKey="profile" title="¿Quienes somos?">
                     <h4 className="pt-2 pb-3">¿Quienes somos?</h4>
 
@@ -227,6 +230,9 @@ function LandingPage() {
                             {!isSaving && <span>Guardar</span>}
                         </Button>
                     </Form>
+
+                    <h4 className="pt-5">Carrousel</h4>
+                    <Galeria fuente={'quienes_somos'}/>
                 </Tab>
 
                 <Tab eventKey="products" title="Productos">

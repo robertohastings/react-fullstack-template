@@ -1,5 +1,26 @@
 . arreglar el margen del footer
 . CRM
     - En Landing Page
-        - Agregar galería de imágenes
-        
+        - Front
+            - Agregar galería de imágenes (ok)
+            - El botón de eliminar pasarlo al Modal
+            - Codificar el botón "Agregar" para agregar nuevas fotos
+            - Agregar botón Guardar
+            - Agregar sección de "Preview - Quienes somos" después de la 
+                galeria para mostrar
+                como se vería el contenido y el carrousel en landinPage
+            - Agregar botón de "Preview Landing Page"
+                -Abrir en una nueva pestaña la página de Preview
+        - Backend
+            - Crear la estructura en cloudinary para empresa
+            - Crear ruta y controlador para: postGeleria
+                - Parámetros: id_empresa, fuente, imagen, orden
+            - Crrear ruta y controlador para: putGeleria
+                - Parametros: id_empresa, fuente, imagen, orden
+        - SQL
+            - getGaleria (ok)
+            - Crear tabla: landingPage_galeria
+                - Campos:
+                    - id_empresa, fuente, imagen, orden
+            - Crear sp: postGaleria
+            - Crear sp: putGeleria

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react"
 import { Container, Row, Col, Button, Modal, Image, Form } from "react-bootstrap"
 import axios from "axios"
-import StateContext from "../StateContext"
+import StateContext from "../../StateContext"
 
 function Galeria({ fuente }) {
     const api_url = process.env.REACT_APP_API_URL
@@ -24,20 +24,21 @@ function Galeria({ fuente }) {
             const id_empresa = appState.idEmpresa
 
             await axios
-                .get(`${api_url}/getGaleria`, {
+                .get(`${api_url}/galeria/getGaleria`, {
                     params: {
-                        id_empresa,
+                        id_empresa/*,
                         host: "",
-                        fuente
+                        fuente*/
                     }
                 })
                 .then(response => {
-                    console.log("Galeria:", response.data)
+                    //console.log("Galeria:", response.data)
                     if (response.data.success === false) {
                         //seterrorMessage(response.data.data.message)
                     } else {
-                        setFotos(response.data)
-                    }
+                        setFotos(response.data.galeria)
+                        console.log(`Galeria: ${response.data.galeria}`)
+                    }   
                 })
                 .catch(error => {
                     console.error("There was an error fetching data!", error)
@@ -63,28 +64,28 @@ function Galeria({ fuente }) {
     }
 
     return (
-        <Container className="mt-4">
+        <div className="mt-3">
             {/* Botones */}
             <div className="d-flex justify-content-between mb-3">
                 <Button variant="primary" onClick={() => alert("Agregar")}>
                     Agregar
                 </Button>
 
-                <Button variant="danger" onClick={() => alert("Eliminar")} disabled={selectedFotos.length === 0}>
+                {/* <Button variant="danger" onClick={() => alert("Eliminar")} disabled={selectedFotos.length === 0}>
                     Eliminar
-                </Button>
+                </Button> */}
             </div>
 
             {/* Galería */}
             <Row className="g-3">
-                {fotos.map((foto, index) => (
-                    <Col key={index} xs={12} sm={6} md={4} lg={2}>
-                        <div className="border p-2 position-relative">
-                            <Form.Check type="checkbox" className="position-absolute top-0 end-0" style={{ zIndex: 1 }} checked={selectedFotos.includes(foto)} onChange={() => toggleSelectFoto(foto)} />
-                            <Image src={foto.url} alt={`Imagen ${index}`} thumbnail style={{ cursor: "pointer" }} onClick={() => handleVerImagen(foto.url)} />
-                            <Button variant="link" className="d-block text-center" onClick={() => handleVerImagen(foto.url)}>
+                {fotos.map(foto => (
+                    <Col key={foto.id_producto} xs={12} sm={6} md={4} lg={2}>
+                        <div className="border border-success rounded p-2 position-relative">
+                            <Form.Check type="checkbox" className="position-absolute top-0 end-0 p-1" style={{ zIndex: 1 }} checked={selectedFotos.includes(foto)} onChange={() => toggleSelectFoto(foto)} />
+                            <Image className="border-0 p-2" src={foto.image} alt={`Imagen ${foto.id_producto}`} thumbnail style={{ cursor: "pointer", width:'120px', height:'120px'  }} onClick={() => handleVerImagen(foto.image)} />
+                            {/* <Button variant="link" className="d-block text-center" onClick={() => handleVerImagen(foto.image)}>
                                 Ver imagen
-                            </Button>
+                            </Button> */}
                         </div>
                     </Col>
                 ))}
@@ -96,13 +97,16 @@ function Galeria({ fuente }) {
                     <Modal.Title>Imagen seleccionada</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="text-center">{currentImage && <Image src={currentImage} alt="Imagen seleccionada" fluid />}</Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer className="d-flex justify-content-between">                   
+                    <Button variant="danger" onClick={() => alert("Eliminar")} disabled={selectedFotos.length === 0}>
+                        Eliminar
+                    </Button>
                     <Button variant="secondary" onClick={() => setModalShow(false)}>
                         Cerrar
-                    </Button>
+                    </Button>                                           
                 </Modal.Footer>
             </Modal>
-        </Container>
+        </div>
     )
 }
 
