@@ -338,3 +338,17 @@ Este es el proxy que tenía en package.json
     "proxy": "http://localhost:3000",
 
 
+Agregar nuevo sp:
+
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getGaleria`(
+	IN prm_id_empresa INT
+)
+BEGIN
+
+	SELECT P.id_producto, P.image1 AS image
+	FROM productos P
+	WHERE P.id_empresa = 1;
+
+END
+
+
