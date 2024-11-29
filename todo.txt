@@ -3,7 +3,7 @@
     - En Landing Page
         - Front
             - Agregar galería de imágenes (ok)
-            - El botón de eliminar pasarlo al Modal
+            - El botón de eliminar pasarlo al Modal (ok)
             - Codificar el botón "Agregar" para agregar nuevas fotos
             - Agregar botón Guardar
             - Agregar sección de "Preview - Quienes somos" después de la 
@@ -12,7 +12,7 @@
             - Agregar botón de "Preview Landing Page"
                 -Abrir en una nueva pestaña la página de Preview
         - Backend
-            - Crear la estructura en cloudinary para empresa
+            - Crear la estructura en cloudinary para empresa (ok)
             - Crear ruta y controlador para: postGeleria
                 - Parámetros: id_empresa, fuente, imagen, orden
             - Crrear ruta y controlador para: putGeleria
@@ -21,6 +21,6 @@
             - getGaleria (ok)
             - Crear tabla: landingPage_galeria
                 - Campos:
-                    - id_empresa, fuente, imagen, orden
+                    - identidad, id_empresa, fuente, imagen, orden
             - Crear sp: postGaleria
             - Crear sp: putGeleria

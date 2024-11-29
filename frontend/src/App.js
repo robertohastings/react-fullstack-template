@@ -40,6 +40,7 @@ function App() {
 
     const initialState = {
         idEmpresa: getDecryptedItem("hostregioTenant"),
+        hostname: getDecryptedItem("hostregioHostname"),
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
         showLoggedIn: false,
         flashMessages: [],
@@ -66,6 +67,9 @@ function App() {
         switch (action.type) {
             case "tenant":
                 setEncryptedItem("hostregioTenant", action.data)
+                break
+            case "hostname":
+                setEncryptedItem("hostregioHostname", action.data)
                 break
             case "login":
                 draft.loggedIn = true
@@ -122,6 +126,7 @@ function App() {
         //    setCart(carritoLS)
 
         const hostname = window.location.hostname
+        dispatch({ type: "hostname", data: hostname })
         console.log(`hostname: ${hostname}`)
 
         try {

@@ -3,7 +3,7 @@ import { Row, Col } from "react-bootstrap"
 import Cropper from "cropperjs"
 import "cropperjs/dist/cropper.css"
 
-const ImageEditor = ({ onImageEdited }) => {
+const ImageEditor = ({ onImageEdited, ImageWidth = 256, ImageHeight = 197 }) => {
     const [file, setFile] = useState(null)
     const [cropper, setCropper] = useState(null)
     const imageRef = useRef(null)
@@ -44,8 +44,8 @@ const ImageEditor = ({ onImageEdited }) => {
     const handleSave = () => {
         if (cropper) {
             const canvas = cropper.getCroppedCanvas({
-                width: 256, // Cambia el tamaño según tus necesidades 256 * 197
-                height: 197,
+                width: ImageWidth, // Cambia el tamaño según tus necesidades 256 * 197
+                height: ImageHeight,
                 imageSmoothingQuality: "high"
             })
 
