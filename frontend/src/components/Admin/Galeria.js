@@ -10,6 +10,7 @@ function Galeria({ fuente }) {
     const appState = useContext(StateContext)
     const id_empresa = appState.idEmpresa
     const hostname = appState.hostname
+    const idLandingPage = appState.idLandingPage
 
     const [fotos, setFotos] = useState([])
     const [selectedFotos, setSelectedFotos] = useState([])
@@ -87,9 +88,10 @@ function Galeria({ fuente }) {
 
         const formData = new FormData()
         formData.append("image", blob)
-        formData.append("fuente", 'quienes_somos')
+        formData.append("fuente", 'qs')
         formData.append("id_empresa", id_empresa)
         formData.append("hostname", hostname)
+        formData.append("idLandingPage", idLandingPage)
 
         try {
 
