@@ -3,7 +3,7 @@ import { VerifyToken, ReceivedMessage } from "../controllers/whatsappController.
 
 const router = Router()
 
-router.get("/verifyToken", VerifyToken)
-router.post("/receivedMessage", ReceivedMessage)
+router.get("/", VerifyToken)
+router.post("/", ReceivedMessage)
 
 export default router

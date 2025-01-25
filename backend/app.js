@@ -42,7 +42,7 @@ app.use("/api/", inventarioRoutes)
 app.use("/api/", uploadRoutes)
 app.use("/api/", comprasRoutes)
 app.use("/api/", catalogosRoutes)
-app.use("/whatsapp/", whatsappRoutes)
+app.use("/whatsapp", whatsappRoutes)
 
 app.get("/api", (req, res) => {
     res.send("Hola mundo from backend! 5")
