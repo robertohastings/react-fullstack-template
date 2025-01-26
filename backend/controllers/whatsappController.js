@@ -33,6 +33,7 @@ export const VerifyToken = (req, res) => {
 //TODO: CONOCER EL PHONE_NUMBER_ID DE LA APP PARA CREAR UN ARCHIVO JSON POR CADA UNO
 export const ReceivedMessage = (req, res) => {
     try {
+        console.log(`body: ${JSON.stringify(req.body)}`)
         var entry = (req.body["entry"])[0]
         var changes = (entry["changes"])[0]
         var value = changes["value"]
