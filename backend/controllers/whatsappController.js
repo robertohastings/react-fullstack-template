@@ -40,12 +40,12 @@ export const ReceivedMessage = (req, res) => {
         
         var messageObject = JSON.stringify(value["messages"])
 
-        //var display_phoneNumber = JSON.stringify(value.metadata.display_phoneNumber)
-        const displayPhoneNumber = req.body.entry[0].changes[0].value.metadata.display_phoneNumber;
+        var displayPhoneNumber = value.metadata.display_phoneNumber
+        //const displayPhoneNumber = req.body.entry[0].changes[0].value.metadata.display_phoneNumber;
         //console.log('Display phone number:', displayPhoneNumber);
         //console.log('valueJSON: ', valueJSON)
         //const displayPhoneNumber = value.metadata.displayPhoneNumber
-
+        console.log('try 1')
         console.log('display_phoneNumber: ', displayPhoneNumber)
 
 
