@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from "url"
 import { convertirFecha } from "../helpers/fecha.js"
 
-export function appendToJsonLog(dataReceived, phone_number_Id) {
+export function appendToJsonLog(dataReceived, displayPhoneNumber) {
 
     var newJsonData = crearNuevoJson(dataReceived)
 
@@ -13,7 +13,7 @@ export function appendToJsonLog(dataReceived, phone_number_Id) {
 
     //const logFilePath = 'log.json';
     // Ruta al archivo de log
-    const logFilePath = path.join(__dirname, "../", 'logs', `${phone_number_Id}_whatsapp.js`); 
+    const logFilePath = path.join(__dirname, "../", 'logs', `${displayPhoneNumber}_whatsapp.js`); 
 
     // Leer el archivo existente (si existe)
     fs.readFile(logFilePath, 'utf8', (err, data) => {
