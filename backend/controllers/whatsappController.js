@@ -40,14 +40,14 @@ export const ReceivedMessage = (req, res) => {
         
         var messageObject = JSON.stringify(value["messages"])
 
-        //var valueJSON = JSON.stringify(value)
-        //console.log(valueJSON)
-        const displayPhoneNumber = value.metadata.displayPhoneNumber
+        var display_phoneNumber = JSON.stringify(value.metadata.display_phoneNumber)
+        //console.log('valueJSON: ', valueJSON)
+        //const displayPhoneNumber = value.metadata.displayPhoneNumber
 
-        //console.log(phone_number_Id)
+        console.log(display_phoneNumber)
 
 
-        appendToJsonLog(messageObject, displayPhoneNumber)
+        appendToJsonLog(messageObject, display_phoneNumber)
 
 
         //myConsole.log(messageObject)
