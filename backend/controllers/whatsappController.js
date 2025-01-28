@@ -34,15 +34,16 @@ export const VerifyToken = (req, res) => {
 //TODO: CONOCER EL PHONE_NUMBER_ID DE LA APP PARA CREAR UN ARCHIVO JSON POR CADA UNO
 export const ReceivedMessage = (req, res) => {
     try {
-        console.log(`Body: ${JSON.stringify(req.body)}`)
+        //console.log(`Body: ${JSON.stringify(req.body)}`)
         var entry = (req.body["entry"])[0]
         var changes = (entry["changes"])[0]
         var value = changes["value"]
-        
-        var messageObject = JSON.stringify(value["messages"])
+        var messageObject = value["message"]
+
+        var messageObjectLog = JSON.stringify(value["messages"])
         var displayPhoneNumber = value.metadata.display_phone_number
         
-
+        console.log('try 2')
         if (typeof messageObject != 'undefined') {
             var messages =messageObject[0]
             var number = messages["from"]
@@ -56,7 +57,7 @@ export const ReceivedMessage = (req, res) => {
         //console.log('display_phoneNumber: ', displayPhoneNumber)
 
 
-        appendToJsonLog(messageObject, displayPhoneNumber)
+        appendToJsonLog(messageObjectLog, displayPhoneNumber)
 
 
         //myConsole.log(messageObject)
