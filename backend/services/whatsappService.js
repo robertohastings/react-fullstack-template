@@ -1,7 +1,8 @@
 import https from 'https'
 
 export function SendMessageWhatsApp(textResponse, number) {
-
+    console.log('textResponse: ', textResponse)
+    console.log('number ', number)
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
         "to": number,

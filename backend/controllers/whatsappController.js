@@ -57,8 +57,8 @@ export const ReceivedMessage = (req, res) => {
         //console.log('try 2')
         //console.log('display_phoneNumber: ', displayPhoneNumber)
 
-
-        appendToJsonLog(messageObjectLog, displayPhoneNumber)
+        //lo detuve provisionalmente
+        //appendToJsonLog(messageObjectLog, displayPhoneNumber)
 
 
         //myConsole.log(messageObject)
