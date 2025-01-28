@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from "url"
 import { appendToJsonLog } from "../helpers/jsonLog.js"
+import { SendMessageWhatsApp } from "../services/whatsappService.js"
 
 
 const __filename = fileURLToPath(import.meta.url)
@@ -39,21 +40,27 @@ export const ReceivedMessage = (req, res) => {
         var value = changes["value"]
         
         var messageObject = JSON.stringify(value["messages"])
-
         var displayPhoneNumber = value.metadata.display_phone_number
-        //const displayPhoneNumber = req.body.entry[0].changes[0].value.metadata.display_phoneNumber;
-        //console.log('Display phone number:', displayPhoneNumber);
-        //console.log('valueJSON: ', valueJSON)
-        //const displayPhoneNumber = value.metadata.displayPhoneNumber
-        console.log('try 2')
-        console.log('display_phoneNumber: ', displayPhoneNumber)
+        
+
+        if (typeof messageObject != 'undefined') {
+            var messages =messageObject[0]
+            var number = messages["from"]
+            var text = GetTextUser(messages)
+            
+            console.log(text)
+            SendMessageWhatsApp("El usuario dijo: " + text, number)
+        }
+
+        //console.log('try 2')
+        //console.log('display_phoneNumber: ', displayPhoneNumber)
 
 
         appendToJsonLog(messageObject, displayPhoneNumber)
 
 
         //myConsole.log(messageObject)
-        var message = messageObject
+/*         var message = messageObject
         const logFilePath = path.join(__dirname, "../", 'logs', 'whatsapp.log'); // Ruta al archivo de log
         const timestamp = new Date().toISOString();
       
@@ -61,7 +68,7 @@ export const ReceivedMessage = (req, res) => {
           if (err) {
             console.error('Error al escribir en el archivo de log:', err);
           }
-        });        
+        });   */      
 
         res.send("EVENT_RECEIVED")
     } catch (error) {
@@ -69,4 +76,27 @@ export const ReceivedMessage = (req, res) => {
         res.send("EVENT_RECEIVED")
     }
     //res.send("Hola Received")
+}
+
+function GetTextUser(messages) {
+    var text = "";
+    var typeMessage = messages["type"]
+
+    if (typeMessage == 'text') {
+        text = (messages["text"])["body"]
+    } else if (typeMessage == 'interactive') {
+        var interactiveObject = messages["interactive"]
+        var typeInteractive = interactiveObject["type"]        
+
+        if (typeInteractive == "button_reply") {
+            text = (interactiveObject["button_replay"])["title"]
+        } else if (typeInteractive == "list_reply" ) {
+            text = (interactiveObject["list_reply"])["title"]
+        } else {
+            console.log("Sin mensaje")
+        }
+    } else  {
+        console.log("Sin mensaje")
+    }
+    return text
 }
