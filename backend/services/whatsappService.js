@@ -19,7 +19,7 @@ export function SendMessageWhatsApp(textResponse, number) {
         body: data,
         headers: {
             "Content-Type": "application/json",
-            Autorization: "Bearer EAAGuUPmkVdoBO3fFIwE76HHtL8PQutLMiZBS7ouSEXNEOjLygQLXcOiqA8hkFZB8BLTW9KpUYPg1zByH5AMS7fxsiAJwSHZB8SHaJ8FsMj7S0IA7OwQqatvpPK3nKEcIzOJDBSZCZC4ytYZBUZAZAlcxZCqFtvZASO8spCJ1tDjlWXG3ThsgU9exEDZBDCUhe3zaCxl2wZDZD"
+            Authorization: "Bearer EAAGuUPmkVdoBO3fFIwE76HHtL8PQutLMiZBS7ouSEXNEOjLygQLXcOiqA8hkFZB8BLTW9KpUYPg1zByH5AMS7fxsiAJwSHZB8SHaJ8FsMj7S0IA7OwQqatvpPK3nKEcIzOJDBSZCZC4ytYZBUZAZAlcxZCqFtvZASO8spCJ1tDjlWXG3ThsgU9exEDZBDCUhe3zaCxl2wZDZD"
         }
     }
 
