@@ -5,7 +5,7 @@ export function SendMessageWhatsApp(textResponse, number) {
     console.log('number ', number)
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
-        "to": number,
+        "to": normalizePhoneNumber(number),
         "type": "text",
         "text": {
             "body": textResponse
@@ -36,4 +36,9 @@ export function SendMessageWhatsApp(textResponse, number) {
     req.write(data)
     req.end()
 
+}
+
+function normalizePhoneNumber(phoneNumber) {
+    // Elimina el "1" adicional después del código de país 52 (si existe)
+    return phoneNumber.replace(/^521/, '52');
 }
