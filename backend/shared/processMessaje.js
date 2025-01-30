@@ -1,4 +1,4 @@
-import { MessageText, MessageList } from '../shared/whatsappModels.js'
+import { MessageText, MessageList, MessageButton } from '../shared/whatsappModels.js'
 import { SendMessageWhatsApp } from '../services/whatsappService.js'
 
 export function Process(textUser, number) {
@@ -21,6 +21,14 @@ export function Process(textUser, number) {
     } else if(textUser.includes('adios') || textUser.includes('bye') || textUser.includes('hasta luego')) {
         //Agradecimiento
         var model = MessageText('Fue un placer asistirte, cuidate', number)
+        models.push(model)
+    } else if(textUser.includes('comprar')) {
+        //Comprar
+        var model = MessageButton(number)
+        models.push(model)
+    } else if(textUser.includes('vender')) {
+        //Vender
+        var model = MessageText('Registrate en el siguiente formulario: https://docs.google.com/forms/d/e/1FAIpQLSfu-B5Jfy1UzvEBmN-_O8dQloFdhW37kQbWeWuIi5Zh7fKCbw/viewform?usp=sf_link', number)
         models.push(model)
     } else {
         var model = MessageText('No entiendo', number)

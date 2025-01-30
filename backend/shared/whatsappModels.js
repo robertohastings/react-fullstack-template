@@ -4,6 +4,7 @@ export function MessageText(textResponse, number) {
         "to": number,
         "type": "text",
         "text": {
+            "preview_url": true,
             "body": textResponse
         } 
     })
@@ -60,6 +61,39 @@ export function MessageList(number) {
                             }
                         ]
                     }                    
+                ]
+            }
+        }
+    })
+    return data
+}
+
+export function MessageButton(number) {
+    const data = JSON.stringify({
+        "messaging_product": "whatsapp",    
+        "to": number,
+        "type": "interactive",
+        "interactive": {
+            "type": "button",
+            "body": {
+                "text": "Selecciona uno de los productos"
+            },
+            "action": {
+                "buttons": [
+                    {
+                        "type": "reply",
+                        "reply": {
+                            "id": "option-laptop",
+                            "title": "Laptop"
+                        }
+                    },
+                    {
+                        "type": "reply",
+                        "reply": {
+                            "id": "option-computadora",
+                            "title": "Computadora"
+                        }
+                    }
                 ]
             }
         }
