@@ -44,7 +44,7 @@ export const ReceivedMessage = (req, res) => {
         var messageObjectLog = JSON.stringify(value["messages"])
         var displayPhoneNumber = value.metadata.display_phone_number
         
-        console.log('try 1')
+        console.log('try 2')
         
         if (typeof messageObject != 'undefined') {
             console.log('messageObject:', messageObject)

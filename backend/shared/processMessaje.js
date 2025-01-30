@@ -1,4 +1,4 @@
-import { MessageText } from '../shared/whatsappModels.js'
+import { MessageText, MessageList } from '../shared/whatsappModels.js'
 import { SendMessageWhatsApp } from '../services/whatsappService.js'
 
 export function Process(textUser, number) {
@@ -8,8 +8,12 @@ export function Process(textUser, number) {
 
     if (textUser.includes('hola')) {
         //Saludar
-        var model = MessageText('Hola, me da gusto saludarte', number)
+        var model = MessageText('Hola, me da gusto saludarte. Ensseguida te muestro nuestro menú de opciones disponibles', number)
         models.push(model)
+
+        //Lista
+        var modelList = MessageList(number)
+        models.push(modelList)
     } else if(textUser.includes('gracias')) {
         //Agradecimiento
         var model = MessageText('Gracias a ti por escribirme', number)
