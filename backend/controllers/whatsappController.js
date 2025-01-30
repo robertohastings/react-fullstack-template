@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from "url"
 import { appendToJsonLog } from "../helpers/jsonLog.js"
 import { SendMessageWhatsApp } from "../services/whatsappService.js"
-
+import { SampleButton, SampleList, SampleLocation, SampleText } from "../shared/sampleModels.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -43,15 +43,46 @@ export const ReceivedMessage = (req, res) => {
         var messageObjectLog = JSON.stringify(value["messages"])
         var displayPhoneNumber = value.metadata.display_phone_number
         
-        console.log('try 5')
-        console.log('messageObject:', messageObject)
+        console.log('try 1')
+        
         if (typeof messageObject != 'undefined') {
+            console.log('messageObject:', messageObject)
+
             var messages =messageObject[0]
-            var number = messages["from"]
+            var number = normalizePhoneNumber(messages["from"])
+            
             var text = GetTextUser(messages)
+
+            if (text == "text") {
+                var data = SampleText("hola usuario", number)
+                SendMessageWhatsApp(data)
+            } else if (text == "image") {
+                var data = SampleImage(number)
+                SendMessageWhatsApp(data)             
+            } else if (text == "video") {
+                var data = SampleVideo(number)
+                SendMessageWhatsApp(data)             
+            } else if (text == "audio") {
+                var data = SampleAudio(number)
+                SendMessageWhatsApp(data)             
+            } else if (text == "document") {
+                var data = SampleDocument(number)
+                SendMessageWhatsApp(data)             
+            } else if (text == "button") {
+                var data = SampleButton(number)
+                SendMessageWhatsApp(data)             
+            } else if (text == "list") {
+                var data = SampleList(number)
+                SendMessageWhatsApp(data)             
+            } else if (text == "location") {
+                var data = SampleLocation(number)
+                SendMessageWhatsApp(data)             
+            } else {
+                var data = SampleText("No entiendo", number)
+                SendMessageWhatsApp(data)                
+            }
             
             console.log(text)
-            SendMessageWhatsApp("El usuario dijo: " + text, number)
         }
 
         //console.log('try 2')
@@ -101,4 +132,9 @@ function GetTextUser(messages) {
         console.log("Sin mensaje")
     }
     return text
+}
+
+function normalizePhoneNumber(phoneNumber) {
+    // Elimina el "1" adicional después del código de país 52 (si existe)
+    return phoneNumber.replace(/^521/, '52');
 }

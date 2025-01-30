@@ -1,16 +1,8 @@
 import https from 'https'
 
-export function SendMessageWhatsApp(textResponse, number) {
-    console.log('textResponse: ', textResponse)
-    console.log('number ', number)
-    const data = JSON.stringify({
-        "messaging_product": "whatsapp",    
-        "to": normalizePhoneNumber(number),
-        "type": "text",
-        "text": {
-            "body": textResponse
-        } 
-    })
+export function SendMessageWhatsApp(data) {
+    //console.log('textResponse: ', textResponse)
+    //console.log('number ', number)
 
     const options = {
         host: "graph.facebook.com",
@@ -38,7 +30,4 @@ export function SendMessageWhatsApp(textResponse, number) {
 
 }
 
-function normalizePhoneNumber(phoneNumber) {
-    // Elimina el "1" adicional después del código de país 52 (si existe)
-    return phoneNumber.replace(/^521/, '52');
-}
+
