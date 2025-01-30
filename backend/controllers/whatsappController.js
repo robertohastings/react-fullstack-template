@@ -6,8 +6,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from "url"
 import { appendToJsonLog } from "../helpers/jsonLog.js"
-import { SendMessageWhatsApp } from "../services/whatsappService.js"
-import { SampleButton, SampleImage, SampleVideo, SampleAudio, SampleDocument, SampleList, SampleLocation, SampleText } from "../shared/sampleModels.js"
+//import { SendMessageWhatsApp } from "../services/whatsappService.js"
+//import { SampleButton, SampleImage, SampleVideo, SampleAudio, SampleDocument, SampleList, SampleLocation, SampleText } from "../shared/sampleModels.js"
+import { Process } from '../shared/processMessaje.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -43,7 +44,7 @@ export const ReceivedMessage = (req, res) => {
         var messageObjectLog = JSON.stringify(value["messages"])
         var displayPhoneNumber = value.metadata.display_phone_number
         
-        console.log('try 3')
+        console.log('try 1')
         
         if (typeof messageObject != 'undefined') {
             console.log('messageObject:', messageObject)
@@ -53,10 +54,11 @@ export const ReceivedMessage = (req, res) => {
             
             var text = GetTextUser(messages)
 
-            if (text == "text") {
-                var data = SampleText("hola usuario", number)
-                SendMessageWhatsApp(data)
-            } else if (text == "image") {
+            if (text != "") {
+                Process(text, number)
+                // var data = SampleText("hola usuario", number)
+                // SendMessageWhatsApp(data)
+            } /*else if (text == "image") {
                 var data = SampleImage(number)
                 SendMessageWhatsApp(data)             
             } else if (text == "video") {
@@ -80,7 +82,7 @@ export const ReceivedMessage = (req, res) => {
             } else {
                 var data = SampleText("No entiendo", number)
                 SendMessageWhatsApp(data)                
-            }
+            }*/
             
             console.log(text)
         }
