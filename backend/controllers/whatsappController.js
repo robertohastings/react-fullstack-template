@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from "url"
 import { appendToJsonLog } from "../helpers/jsonLog.js"
 import { SendMessageWhatsApp } from "../services/whatsappService.js"
-import { SampleButton, SampleList, SampleLocation, SampleText } from "../shared/sampleModels.js"
+import { SampleButton, SampleImage, SampleVideo, SampleAudio, SampleDocument, SampleList, SampleLocation, SampleText } from "../shared/sampleModels.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -43,7 +43,7 @@ export const ReceivedMessage = (req, res) => {
         var messageObjectLog = JSON.stringify(value["messages"])
         var displayPhoneNumber = value.metadata.display_phone_number
         
-        console.log('try 2')
+        console.log('try 3')
         
         if (typeof messageObject != 'undefined') {
             console.log('messageObject:', messageObject)
