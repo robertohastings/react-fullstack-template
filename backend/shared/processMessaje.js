@@ -32,11 +32,12 @@ export function Process(textUser, number) {
         models.push(model)
     }  else if(textUser.includes('agencia')) {
         //Vender
-        var model = MessageText('*Centro de contacto:*\n818.252.2653',number)
-        models.push(model)
+        //var model = MessageLocation(number)        
+        models.push(MessageText('Esta es nuesta ubicación', number))
+        models.push(MessageLocation(number))
     }  else if(textUser.includes('contacto')) {
         //Vender
-        var model = MessageLocation(number)
+        var model = MessageText('*Centro de contacto:*\n818.252.2653',number)
         models.push(model)
     } else {
         var model = MessageText('No entiendo', number)
