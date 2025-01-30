@@ -100,3 +100,18 @@ export function MessageButton(number) {
     })
     return data
 }
+
+export function MessageLocation(number) {
+    const data = JSON.stringify({
+        "messaging_product": "whatsapp",    
+        "to": number,
+        "type": "location",
+        "location": {
+            "latitude": "25.743852774131685",
+            "longitude": "-100.2266610432757",
+            "name": "Casa",
+            "address": "Del Estanque 135, Palmas Diamante, Cerradas de Casa Blanca, 66478 San Nicolás de los Garza, N.L."
+        }
+    })
+    return data
+}

@@ -58,6 +58,9 @@ export const ReceivedMessage = (req, res) => {
                 Process(text, number)
                 // var data = SampleText("hola usuario", number)
                 // SendMessageWhatsApp(data)
+            } else {
+                var data = SampleText("No entiendo", number)
+                SendMessageWhatsApp(data)                
             } /*else if (text == "image") {
                 var data = SampleImage(number)
                 SendMessageWhatsApp(data)             
