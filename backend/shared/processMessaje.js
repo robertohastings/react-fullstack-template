@@ -30,7 +30,7 @@ export function Process(textUser, number) {
         //Vender
         var model = MessageText('Registrate en el siguiente formulario: https://docs.google.com/forms/d/e/1FAIpQLSfu-B5Jfy1UzvEBmN-_O8dQloFdhW37kQbWeWuIi5Zh7fKCbw/viewform?usp=sf_link', number)
         models.push(model)
-    }  else if(textUser.includes('agencia')) {
+    }  else if(textUser.includes('agencia') || textUser.includes('ubicacion') || textUser.includes('ubicación')) {
         //Vender
         //var model = MessageLocation(number)        
         models.push(MessageText('Esta es nuesta ubicación', number))
