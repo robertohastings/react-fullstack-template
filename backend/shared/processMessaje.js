@@ -1,8 +1,17 @@
 import { MessageText, MessageList, MessageButton, MessageLocation } from '../shared/whatsappModels.js'
 import { SendMessageWhatsApp } from '../services/whatsappService.js'
+import { getwhatsappFrases } from '../controllers/whatsappController.js'
+import { pool } from '../db.js';
 
-export function Process(textUser, number) {
-    textUser = textUser.toLowerCase()
+export async function Process(textUser, number) {
+    const mensajeNormalizado = normalizarMensaje(textUser);
+
+    //textUser = textUser.toLowerCase()
+    textUser = mensajeNormalizado
+    console.log(`text user mensaje normalizado: ${textUser}`)
+
+    const resultado = await buscarRespuesta(mensajeNormalizado);
+    console.log(`respueta encontrada en db: ${resultado}`)
 
     var models = []
 
@@ -46,5 +55,38 @@ export function Process(textUser, number) {
 
     models.forEach(model => {
         SendMessageWhatsApp(model)
+    });
+}
+
+function normalizarMensaje(mensaje) {
+    // Convertir a minúsculas
+    let mensajeNormalizado = mensaje.toLowerCase();
+  
+    // Eliminar signos de puntuación y caracteres especiales
+    mensajeNormalizado = mensajeNormalizado.replace(/[^\w\s]/g, '');
+  
+    // Eliminar espacios en blanco лишние
+    mensajeNormalizado = mensajeNormalizado.trim().replace(/\s+/g, ' ');
+  
+    return mensajeNormalizado;
+}
+
+async function buscarRespuesta(mensaje) {
+    return new Promise((resolve, reject) => {
+      const query = 'CALL getwhatsappFrases(?)'; // Llama al procedimiento almacenado
+      pool.query(query, [mensaje], (err, results) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+  
+        // getwhatsappFrases devuelve un array de resultados. Si encuentra una coincidencia,
+        // results[0][0] contendrá el objeto con la respuesta y la función.
+        if (results[0].length > 0) {
+          resolve(results[0][0]);
+        } else {
+          resolve(null);
+        }
+      });
     });
 }

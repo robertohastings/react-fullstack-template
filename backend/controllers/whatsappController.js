@@ -1,6 +1,5 @@
 //const fs = require('fs')
 //const myConsole = new console.Console(fs.createWriteStrem("./logs.txt"))
-
 import { response } from "express"
 import fs from 'fs';
 import path from 'path';
@@ -12,6 +11,8 @@ import { Process } from '../shared/processMessaje.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+
+import { pool } from "../db.js"
 
 export const VerifyToken = (req, res) => {
     
@@ -33,7 +34,7 @@ export const VerifyToken = (req, res) => {
 }
 //ctl k + M
 //TODO: CONOCER EL PHONE_NUMBER_ID DE LA APP PARA CREAR UN ARCHIVO JSON POR CADA UNO
-export const ReceivedMessage = (req, res) => {
+export const ReceivedMessage = async (req, res) => {
     try {
         console.log(`Body: ${JSON.stringify(req.body)}`)
         var entry = (req.body["entry"])[0]
@@ -44,7 +45,7 @@ export const ReceivedMessage = (req, res) => {
         var messageObjectLog = JSON.stringify(value["messages"])
         var displayPhoneNumber = value.metadata.display_phone_number
         
-        console.log('try 2')
+        console.log('try 3')
         
         if (typeof messageObject != 'undefined') {
             console.log('messageObject:', messageObject)
@@ -55,7 +56,7 @@ export const ReceivedMessage = (req, res) => {
             var text = GetTextUser(messages)
 
             if (text != "") {
-                Process(text, number)
+                await Process(text, number)
                 // var data = SampleText("hola usuario", number)
                 // SendMessageWhatsApp(data)
             } else {
@@ -142,4 +143,24 @@ function GetTextUser(messages) {
 function normalizePhoneNumber(phoneNumber) {
     // Elimina el "1" adicional después del código de país 52 (si existe)
     return phoneNumber.replace(/^521/, '52');
+}
+
+//Obtener frases de DB
+export const getwhatsappFrases = async (req, res) => {
+    console.log("getwhatsappFrases:", req.query)
+    try {
+        const { frase } = req.query
+        //console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getwhatsappFrases(?);`, [frase])
+
+        res.status(200).json({
+            success: true,
+            frase: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: "An error ocurred"
+        })
+    }
 }
