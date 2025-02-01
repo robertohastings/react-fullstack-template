@@ -73,24 +73,29 @@ function normalizarMensaje(mensaje) {
 
 async function buscarRespuesta(mensaje) {
     return new Promise((resolve, reject) => {
-        console.log('buscar respuesta 1')
-      const query = 'CALL getwhatsappFrases(?)'; // Llama al procedimiento almacenado
-      pool.query(query, [mensaje], (err, results) => {
-        if (err) {
-            console.log('buscar respuesta 2')
-          reject(err);
-          return;
+        try {
+            console.log('buscar respuesta 1')
+            const query = 'CALL getwhatsappFrases(?)'; // Llama al procedimiento almacenado
+            pool.query(query, [mensaje], (err, results) => {
+              if (err) {
+                  console.log('buscar respuesta 2')
+                reject(err);
+                return;
+              }
+              console.log('buscar respuesta 3')
+              // getwhatsappFrases devuelve un array de resultados. Si encuentra una coincidencia,
+              // results[0][0] contendrá el objeto con la respuesta y la función.
+              if (results[0].length > 0) {
+                  console.log('buscar respuesta 4')
+                resolve(results[0][0]);
+              } else {
+                  console.log('buscar respuesta 5')
+                resolve(null);
+              }
+            });            
+        } catch (error) {
+            console.log(error)
         }
-        console.log('buscar respuesta 3')
-        // getwhatsappFrases devuelve un array de resultados. Si encuentra una coincidencia,
-        // results[0][0] contendrá el objeto con la respuesta y la función.
-        if (results[0].length > 0) {
-            console.log('buscar respuesta 4')
-          resolve(results[0][0]);
-        } else {
-            console.log('buscar respuesta 5')
-          resolve(null);
-        }
-      });
+
     });
 }
