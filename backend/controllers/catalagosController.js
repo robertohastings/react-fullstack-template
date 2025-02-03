@@ -206,3 +206,25 @@ export const getwhatsappFrases = async (frase) => { // Ahora recibe solo 'frase'
         };
     }
 };
+
+// Obtener frases de DB (MODIFICADA)
+export const postWhatsappFrasesNoReconocidas = async (frase, numero) => { // Ahora recibe solo 'frase'
+    try {
+        const [result] = await pool.query(`CALL postFrasesWhatsappNoReconocidas(?, ?);`, [frase, numero]);
+        
+        if (result.affectedRows == 0) {
+            return {
+                message: "No se pudo agregar la Frase"
+            }
+        } else {
+            return {
+                message: "Frase actualizada"
+            }
+        }        
+    } catch (error) {
+        console.error("Error en getwhatsappFrases:", error); // Loguea el error para depuración
+        return { // Retorna un objeto de error            
+            error: `An error occurred: ${error}`
+        };
+    }
+};

@@ -36,24 +36,16 @@ export const VerifyToken = (req, res) => {
 //TODO: CONOCER EL PHONE_NUMBER_ID DE LA APP PARA CREAR UN ARCHIVO JSON POR CADA UNO
 export const ReceivedMessage = async (req, res) => {
     try {
-        //console.log(`Body: ${JSON.stringify(req.body)}`)
+
         var entry = (req.body["entry"])[0]
         var changes = (entry["changes"])[0]
         var value = changes["value"]
         var messageObject = value["messages"]
-
-        //var messageObjectLog = JSON.stringify(value["messages"])
-        //var displayPhoneNumber = value.metadata.display_phone_number
-        
-        //console.log('try 3')
         
         if (typeof messageObject != 'undefined') {
-            //console.log('messageObject:', messageObject)
 
             var messages =messageObject[0]
             var number = normalizePhoneNumber(messages["from"])
-            //console.log('messages: ', messages)
-            //console.log('number: ', number)
             
             var text = GetTextUser(messages)
             console.log('ReceivedMessage:', text)
@@ -61,8 +53,6 @@ export const ReceivedMessage = async (req, res) => {
             if (text != "") {
                 await Process(text, number)
 
-                // var data = SampleText("hola usuario", number)
-                // SendMessageWhatsApp(data)
             } else {
                 var data = SampleText("No entiendo.", number)
                 SendMessageWhatsApp(data)                
@@ -93,25 +83,7 @@ export const ReceivedMessage = async (req, res) => {
             }*/
             
             //console.log(text)
-        }
-
-        //console.log('try 2')
-        //console.log('display_phoneNumber: ', displayPhoneNumber)
-
-        //lo detuve provisionalmente
-        //appendToJsonLog(messageObjectLog, displayPhoneNumber)
-
-
-        //myConsole.log(messageObject)
-/*         var message = messageObject
-        const logFilePath = path.join(__dirname, "../", 'logs', 'whatsapp.log'); // Ruta al archivo de log
-        const timestamp = new Date().toISOString();
-      
-        fs.appendFile(logFilePath, `${timestamp} - ${message}\n`, (err) => {
-          if (err) {
-            console.error('Error al escribir en el archivo de log:', err);
-          }
-        });   */      
+        }   
 
         res.send("EVENT_RECEIVED")
     } catch (error) {

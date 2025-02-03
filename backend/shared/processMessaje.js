@@ -1,8 +1,6 @@
 import { MessageText, MessageList, MessageButton, MessageLocation } from '../shared/whatsappModels.js'
 import { SendMessageWhatsApp } from '../services/whatsappService.js'
-import { usarDatos  } from '../controllers/catalagosController.js'
-import { text } from 'express';
-//import { pool } from '../db.js';
+import { usarDatos, postWhatsappFrasesNoReconocidas  } from '../controllers/catalagosController.js'
 
 export async function Process(textUser, number) {
     const mensajeNormalizado = normalizarMensaje(textUser);
@@ -14,34 +12,33 @@ export async function Process(textUser, number) {
     //TODO: Implmentar la memoria chache
     //const resultado = await usarDatos(textUser)
 
-    
-    
+    const frases_no_reconocidas = await postWhatsappFrasesNoReconocidas(resultado, number)
+    console.log('post frases_no_reconocidas:', frases_no_reconocidas)
+
     const funciones = {
         MessageText: MessageText
     }
 
     usarDatos(textUser).then(resultado => {
-        //console.log("Resultado final usarDatos:", resultado.frase); // Imprime el resultado final
         const { respuesta, funcion } = resultado.frase[0]
-        //const respuesta = resultado.respuesta
-        //const funcion = resultado.funcion
         console.log('usarDatos respuesta:', respuesta, ' usarDatos funcion:', funcion)
 
         var models = []
-        //var respuestaData = {}
 
         // Verifica que la función exista antes de llamarla
         if (typeof funciones[funcion] === 'function') { // <-- Importante verificación
             const mensaje = funciones[funcion](respuesta, number) // Llama a la función dinámicamente
             console.log("Mensaje de la función:", mensaje); // Aquí tienes el resultado de MessageText
-            // ... (envía el mensaje por WhatsApp)
-            //respuestaData = mensaje
             models.push(mensaje)
         } else {
             //console.error("La función", funcion, "no existe.");
             var model = MessageText('No entiendo..', number)
             models.push(model)
-        }   
+        }
+        
+        //TODO: Agregar función para agregar las respuestas
+        //según lo que obtengamos de la variable respuesta
+        //si es === 'No entiendo...'
 
         console.log('models:', models)
         models.forEach(model => {
@@ -54,9 +51,6 @@ export async function Process(textUser, number) {
         var model = MessageText('No entiendo', number)
         models.push(model)
     });    
-
-    //const resultado = await buscarRespuesta(mensajeNormalizado);
-    //console.log(`respueta encontrada en db: ${resultado}`)
 
   /*
 
@@ -131,32 +125,3 @@ function normalizarMensaje(mensaje) {
   
     return mensajeNormalizado;
 }
-
-// async function buscarRespuesta(mensaje) {
-//     return new Promise((resolve, reject) => {
-//         console.log('antes del pool ', mensaje);
-//         const query = 'CALL getwhatsappFrases(?)';
-  
-//         pool.getConnection((err, connection) => { // Obtener una conexión del pool
-//             if (err) {
-//               console.error('Error al obtener conexión del pool:', err);
-//               return reject(err);
-//             }
-      
-//             connection.query(query, [mensaje], (err, results) => {
-//               connection.release(); // Liberar la conexión de vuelta al pool
-      
-//               if (err) {
-//                 console.error('Error en la consulta:', err);
-//                 return reject(err);
-//               }
-      
-//               if (results && results[0] && results[0].length > 0) {
-//                 resolve(results[0][0]);
-//               } else {
-//                 resolve(null);
-//               }
-//             });
-//         });
-//     });
-// }
