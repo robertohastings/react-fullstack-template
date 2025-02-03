@@ -12,14 +12,13 @@ export async function Process(textUser, number) {
     //TODO: Implmentar la memoria chache
     //const resultado = await usarDatos(textUser)
 
-    const frases_no_reconocidas = await postWhatsappFrasesNoReconocidas(resultado, number)
-    console.log('post frases_no_reconocidas:', frases_no_reconocidas)
+
 
     const funciones = {
         MessageText: MessageText
     }
 
-    usarDatos(textUser).then(resultado => {
+    usarDatos(textUser).then(async resultado => {
         const { respuesta, funcion } = resultado.frase[0]
         console.log('usarDatos respuesta:', respuesta, ' usarDatos funcion:', funcion)
 
@@ -40,10 +39,14 @@ export async function Process(textUser, number) {
         //según lo que obtengamos de la variable respuesta
         //si es === 'No entiendo...'
 
+
         console.log('models:', models)
         models.forEach(model => {
             SendMessageWhatsApp(model)
         });
+
+        const frases_no_reconocidas = await postWhatsappFrasesNoReconocidas(textUser, number)
+        console.log('post frases_no_reconocidas:', frases_no_reconocidas)
 
     })
     .catch(error => {
