@@ -14,7 +14,8 @@ export async function Process(textUser, number) {
     //TODO: Implmentar la memoria chache
     //const resultado = await usarDatos(textUser)
 
-    var models = []
+    
+    
     const funciones = {
         MessageText: MessageText
     }
@@ -26,18 +27,27 @@ export async function Process(textUser, number) {
         //const funcion = resultado.funcion
         console.log('usarDatos respuesta:', respuesta, ' usarDatos funcion:', funcion)
 
+        var models = []
+        //var respuestaData = {}
+
         // Verifica que la función exista antes de llamarla
         if (typeof funciones[funcion] === 'function') { // <-- Importante verificación
             const mensaje = funciones[funcion](respuesta, number) // Llama a la función dinámicamente
             console.log("Mensaje de la función:", mensaje); // Aquí tienes el resultado de MessageText
             // ... (envía el mensaje por WhatsApp)
-            
+            //respuestaData = mensaje
             models.push(mensaje)
         } else {
             //console.error("La función", funcion, "no existe.");
             var model = MessageText('No entiendo..', number)
             models.push(model)
         }   
+
+        console.log('models:', models)
+        models.forEach(model => {
+            SendMessageWhatsApp(model)
+        });
+
     })
     .catch(error => {
         console.error("Error en la llamada:", error);
@@ -88,10 +98,10 @@ export async function Process(textUser, number) {
         models.push(model)
     }
 */
-    console.log('models:', models)
-    models.forEach(model => {
-        SendMessageWhatsApp(model)
-    });
+    // console.log('Respuesta data:', respuestaData)
+    // models.forEach(model => {
+    //     SendMessageWhatsApp(model)
+    // });
 }
 
 function normalizarMensaje(mensaje) {
