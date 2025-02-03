@@ -109,7 +109,22 @@ function normalizarMensaje(mensaje) {
     let mensajeNormalizado = mensaje.toLowerCase();
   
     // Eliminar signos de puntuación y caracteres especiales
-    mensajeNormalizado = mensajeNormalizado.replace(/[^\w\s]/g, '');
+    mensajeNormalizado = mensajeNormalizado.replace(/([áéíóú])/g, function(match) {
+        switch (match) {
+          case 'á':
+            return 'a';
+          case 'é':
+            return 'e';
+          case 'í':
+            return 'i';
+          case 'ó':
+            return 'o';
+          case 'ú':
+            return 'u';
+          default:
+            return match;
+        }
+      });
   
     // Eliminar espacios en blanco лишние
     mensajeNormalizado = mensajeNormalizado.trim().replace(/\s+/g, ' ');
