@@ -1,16 +1,18 @@
 import { MessageText, MessageList, MessageButton, MessageLocation } from '../shared/whatsappModels.js'
 import { SendMessageWhatsApp } from '../services/whatsappService.js'
 import { usarDatos  } from '../controllers/catalagosController.js'
+import { text } from 'express';
 //import { pool } from '../db.js';
 
 export async function Process(textUser, number) {
     const mensajeNormalizado = normalizarMensaje(textUser);
 
     textUser = mensajeNormalizado
+    console.log('texto normalizado:', textUser)
 
     //Busco el texto del usuario en la tabla whatsapp_frases
     //TODO: Implmentar la memoria chache
-    const resultado = await usarDatos(textUser)
+    //const resultado = await usarDatos(textUser)
 
     var models = []
     const funciones = {
@@ -22,18 +24,18 @@ export async function Process(textUser, number) {
         const { respuesta, funcion } = resultado.frase[0]
         //const respuesta = resultado.respuesta
         //const funcion = resultado.funcion
-        console.log('respuesta:', respuesta, ' funcion:', funcion)
+        console.log('usarDatos respuesta:', respuesta, ' usarDatos funcion:', funcion)
 
         // Verifica que la función exista antes de llamarla
         if (typeof funciones[funcion] === 'function') { // <-- Importante verificación
             const mensaje = funciones[funcion](respuesta, number) // Llama a la función dinámicamente
-            //console.log("Mensaje:", mensaje); // Aquí tienes el resultado de MessageText
+            console.log("Mensaje de la función:", mensaje); // Aquí tienes el resultado de MessageText
             // ... (envía el mensaje por WhatsApp)
             
             models.push(mensaje)
         } else {
             //console.error("La función", funcion, "no existe.");
-            var model = MessageText('No entiendo', number)
+            var model = MessageText('No entiendo..', number)
             models.push(model)
         }   
     })
@@ -46,7 +48,7 @@ export async function Process(textUser, number) {
     //const resultado = await buscarRespuesta(mensajeNormalizado);
     //console.log(`respueta encontrada en db: ${resultado}`)
 
-  
+  /*
 
     if (textUser.includes('hola')) {
         //Saludar
@@ -85,7 +87,7 @@ export async function Process(textUser, number) {
         var model = MessageText('No entiendo', number)
         models.push(model)
     }
-
+*/
     models.forEach(model => {
         SendMessageWhatsApp(model)
     });

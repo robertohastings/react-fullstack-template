@@ -42,8 +42,8 @@ export const ReceivedMessage = async (req, res) => {
         var value = changes["value"]
         var messageObject = value["messages"]
 
-        var messageObjectLog = JSON.stringify(value["messages"])
-        var displayPhoneNumber = value.metadata.display_phone_number
+        //var messageObjectLog = JSON.stringify(value["messages"])
+        //var displayPhoneNumber = value.metadata.display_phone_number
         
         //console.log('try 3')
         
@@ -56,14 +56,15 @@ export const ReceivedMessage = async (req, res) => {
             //console.log('number: ', number)
             
             var text = GetTextUser(messages)
+            console.log('ReceivedMessage:', text)
 
             if (text != "") {
                 await Process(text, number)
-                
+
                 // var data = SampleText("hola usuario", number)
                 // SendMessageWhatsApp(data)
             } else {
-                var data = SampleText("No entiendo", number)
+                var data = SampleText("No entiendo.", number)
                 SendMessageWhatsApp(data)                
             } /*else if (text == "image") {
                 var data = SampleImage(number)

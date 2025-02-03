@@ -1,5 +1,5 @@
 export function MessageText(textResponse, number) {
-    console.log('textResponse: ', textResponse)
+    console.log('MessageText textResponse: ', textResponse)
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
         "to": number,
