@@ -23,31 +23,34 @@ export async function Process(textUser, number) {
         console.log('usarDatos respuesta:', respuesta, ' usarDatos funcion:', funcion)
 
         var models = []
-
+        var frase_no_reconocida = ''
         // Verifica que la función exista antes de llamarla
         if (typeof funciones[funcion] === 'function') { // <-- Importante verificación
             const mensaje = funciones[funcion](respuesta, number) // Llama a la función dinámicamente
             console.log("Mensaje de la función:", mensaje); // Aquí tienes el resultado de MessageText
+            
+            if (respuesta === 'No entiendo...'){
+                frase_no_reconocida = textUser
+            }
+            
             models.push(mensaje)
         } else {
             //console.error("La función", funcion, "no existe.");
             var model = MessageText('No entiendo..', number)
             models.push(model)
         }
-        
-        //TODO: Agregar función para agregar las respuestas
-        //según lo que obtengamos de la variable respuesta
-        //si es === 'No entiendo...'
-
-
+    
         console.log('models:', models)
         models.forEach(model => {
             SendMessageWhatsApp(model)
         });
 
-        const frases_no_reconocidas = await postWhatsappFrasesNoReconocidas(textUser, number)
-        console.log('post frases_no_reconocidas:', frases_no_reconocidas)
-
+        if (frase_no_reconocida !== ''){
+            const frases_no_reconocidas = await postWhatsappFrasesNoReconocidas(textUser, number)
+            console.log('post frases_no_reconocidas:', frases_no_reconocidas)
+        } else {
+            console.log('frase reconocida')
+        }
     })
     .catch(error => {
         console.error("Error en la llamada:", error);
