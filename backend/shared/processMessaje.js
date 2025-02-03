@@ -88,6 +88,7 @@ export async function Process(textUser, number) {
         models.push(model)
     }
 */
+    console.log('models:', models)
     models.forEach(model => {
         SendMessageWhatsApp(model)
     });
