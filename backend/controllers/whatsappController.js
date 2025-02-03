@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from "url"
 import { appendToJsonLog } from "../helpers/jsonLog.js"
-//import { SendMessageWhatsApp } from "../services/whatsappService.js"
+import { SendMessageWhatsApp } from "../services/whatsappService.js"
 //import { SampleButton, SampleImage, SampleVideo, SampleAudio, SampleDocument, SampleList, SampleLocation, SampleText } from "../shared/sampleModels.js"
 import { Process } from '../shared/processMessaje.js'
 
@@ -36,7 +36,7 @@ export const VerifyToken = (req, res) => {
 //TODO: CONOCER EL PHONE_NUMBER_ID DE LA APP PARA CREAR UN ARCHIVO JSON POR CADA UNO
 export const ReceivedMessage = async (req, res) => {
     try {
-        console.log(`Body: ${JSON.stringify(req.body)}`)
+        //console.log(`Body: ${JSON.stringify(req.body)}`)
         var entry = (req.body["entry"])[0]
         var changes = (entry["changes"])[0]
         var value = changes["value"]
@@ -45,18 +45,21 @@ export const ReceivedMessage = async (req, res) => {
         var messageObjectLog = JSON.stringify(value["messages"])
         var displayPhoneNumber = value.metadata.display_phone_number
         
-        console.log('try 3')
+        //console.log('try 3')
         
         if (typeof messageObject != 'undefined') {
-            console.log('messageObject:', messageObject)
+            //console.log('messageObject:', messageObject)
 
             var messages =messageObject[0]
             var number = normalizePhoneNumber(messages["from"])
+            //console.log('messages: ', messages)
+            //console.log('number: ', number)
             
             var text = GetTextUser(messages)
 
             if (text != "") {
                 await Process(text, number)
+                
                 // var data = SampleText("hola usuario", number)
                 // SendMessageWhatsApp(data)
             } else {
@@ -88,7 +91,7 @@ export const ReceivedMessage = async (req, res) => {
                 SendMessageWhatsApp(data)                
             }*/
             
-            console.log(text)
+            //console.log(text)
         }
 
         //console.log('try 2')
@@ -117,9 +120,13 @@ export const ReceivedMessage = async (req, res) => {
     //res.send("Hola Received")
 }
 
+//Obtiene el mensaje
 function GetTextUser(messages) {
+    //console.log('messages: ', messages)
     var text = "";
     var typeMessage = messages["type"]
+
+    //console.log('typeMessage: ', typeMessage)
 
     if (typeMessage == 'text') {
         text = (messages["text"])["body"]
@@ -140,27 +147,8 @@ function GetTextUser(messages) {
     return text
 }
 
+// Elimina el "1" adicional después del código de país 52 (si existe)
 function normalizePhoneNumber(phoneNumber) {
-    // Elimina el "1" adicional después del código de país 52 (si existe)
     return phoneNumber.replace(/^521/, '52');
 }
 
-//Obtener frases de DB
-export const getwhatsappFrases = async (req, res) => {
-    console.log("getwhatsappFrases:", req.query)
-    try {
-        const { frase } = req.query
-        //console.log(limite, pagina)
-
-        const rows = await pool.query(`CALL getwhatsappFrases(?);`, [frase])
-
-        res.status(200).json({
-            success: true,
-            frase: rows[0][0]
-        })
-    } catch (error) {
-        res.status(500).json({
-            error: "An error ocurred"
-        })
-    }
-}

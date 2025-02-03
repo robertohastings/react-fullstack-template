@@ -1,3 +1,4 @@
+import { query } from "express"
 import { pool } from "../db.js"
 
 export const getClientes = async (req, res) => {
@@ -135,3 +136,73 @@ export async function apiObtenerProductos (req, res) {
     ]
     await res.send(data)
 }
+
+//Obtener frases de DB
+// export const getwhatsappFrases = async (req, res) => {
+//     //console.log("getwhatsappFrases:", req.query)
+//     try {
+//         const { frase } = req.query
+//         //console.log(limite, pagina)
+
+//         const rows = await pool.query(`CALL getwhatsappFrases(?);`, [frase])
+//         //console.log('rows: ', rows)
+//         res.status(200).json({
+//             success: true,
+//             frase: rows[0][0]
+//         })
+//     } catch (error) {
+//         res.status(500).json({
+//             error: `An error ocurred: ${error}`
+//         })
+//     }
+// }
+//Ejecuto la función para obtener los datos
+// export async function usarDatos(frase) {
+//     //console.log('frase: ', frase)
+//     const req = {
+//         query: {
+//         frase: frase 
+//         }
+//     }; // Objeto de petición vacío
+//     const res = {
+//         json: (data) => { console.log(data) },
+//         status: (code) => { 
+//             return { 
+//                 json: (data) => { console.log(data) } 
+//             }
+//         }
+//     };
+//     return await getwhatsappFrases(req, res)
+// }
+
+// Ejecutar la función para obtener los datos (MODIFICADA)
+export async function usarDatos(frase) {
+    try {
+        const resultado = await getwhatsappFrases(frase); // Llama a la función modificada
+        //console.log("Resultado en usarDatos:", resultado); // Imprime el resultado para verificar
+        return resultado // Retorna el resultado
+    } catch (error) {
+        console.error("Error en usarDatos:", error);
+        return { // Manejo de errores en usarDatos
+            success: false,
+            error: `An error occurred: ${error}`
+        };
+    }
+}
+
+// Obtener frases de DB (MODIFICADA)
+export const getwhatsappFrases = async (frase) => { // Ahora recibe solo 'frase'
+    try {
+        const rows = await pool.query(`CALL getwhatsappFrases(?);`, [frase]);
+        return { // Retorna directamente el objeto con la frase
+            success: true,
+            frase: rows[0][0]
+        };
+    } catch (error) {
+        console.error("Error en getwhatsappFrases:", error); // Loguea el error para depuración
+        return { // Retorna un objeto de error
+            success: false,
+            error: `An error occurred: ${error}`
+        };
+    }
+};

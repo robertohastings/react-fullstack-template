@@ -1,19 +1,52 @@
 import { MessageText, MessageList, MessageButton, MessageLocation } from '../shared/whatsappModels.js'
 import { SendMessageWhatsApp } from '../services/whatsappService.js'
-import { getwhatsappFrases } from '../controllers/whatsappController.js'
-import { pool } from '../db.js';
+import { usarDatos  } from '../controllers/catalagosController.js'
+//import { pool } from '../db.js';
 
 export async function Process(textUser, number) {
     const mensajeNormalizado = normalizarMensaje(textUser);
 
-    //textUser = textUser.toLowerCase()
     textUser = mensajeNormalizado
-    console.log(`text user mensaje normalizado: ${textUser}`)
 
-    const resultado = await buscarRespuesta(mensajeNormalizado);
-    console.log(`respueta encontrada en db: ${resultado}`)
+    //Busco el texto del usuario en la tabla whatsapp_frases
+    //TODO: Implmentar la memoria chache
+    const resultado = await usarDatos(textUser)
 
     var models = []
+    const funciones = {
+        MessageText: MessageText
+    }
+
+    usarDatos(textUser).then(resultado => {
+        //console.log("Resultado final usarDatos:", resultado.frase); // Imprime el resultado final
+        const { respuesta, funcion } = resultado.frase[0]
+        //const respuesta = resultado.respuesta
+        //const funcion = resultado.funcion
+        console.log('respuesta:', respuesta, ' funcion:', funcion)
+
+        // Verifica que la función exista antes de llamarla
+        if (typeof funciones[funcion] === 'function') { // <-- Importante verificación
+            const mensaje = funciones[funcion](respuesta, number) // Llama a la función dinámicamente
+            //console.log("Mensaje:", mensaje); // Aquí tienes el resultado de MessageText
+            // ... (envía el mensaje por WhatsApp)
+            
+            models.push(mensaje)
+        } else {
+            //console.error("La función", funcion, "no existe.");
+            var model = MessageText('No entiendo', number)
+            models.push(model)
+        }   
+    })
+    .catch(error => {
+        console.error("Error en la llamada:", error);
+        var model = MessageText('No entiendo', number)
+        models.push(model)
+    });    
+
+    //const resultado = await buscarRespuesta(mensajeNormalizado);
+    //console.log(`respueta encontrada en db: ${resultado}`)
+
+  
 
     if (textUser.includes('hola')) {
         //Saludar
@@ -71,31 +104,31 @@ function normalizarMensaje(mensaje) {
     return mensajeNormalizado;
 }
 
-async function buscarRespuesta(mensaje) {
-    return new Promise((resolve, reject) => {
-        try {
-            console.log('buscar respuesta 1')
-            const query = 'CALL getwhatsappFrases(?)'; // Llama al procedimiento almacenado
-            pool.query(query, [mensaje], (err, results) => {
-              if (err) {
-                  console.log('buscar respuesta 2')
-                reject(err);
-                return;
-              }
-              console.log('buscar respuesta 3')
-              // getwhatsappFrases devuelve un array de resultados. Si encuentra una coincidencia,
-              // results[0][0] contendrá el objeto con la respuesta y la función.
-              if (results[0].length > 0) {
-                  console.log('buscar respuesta 4')
-                resolve(results[0][0]);
-              } else {
-                  console.log('buscar respuesta 5')
-                resolve(null);
-              }
-            });            
-        } catch (error) {
-            console.log(error)
-        }
-
-    });
-}
+// async function buscarRespuesta(mensaje) {
+//     return new Promise((resolve, reject) => {
+//         console.log('antes del pool ', mensaje);
+//         const query = 'CALL getwhatsappFrases(?)';
+  
+//         pool.getConnection((err, connection) => { // Obtener una conexión del pool
+//             if (err) {
+//               console.error('Error al obtener conexión del pool:', err);
+//               return reject(err);
+//             }
+      
+//             connection.query(query, [mensaje], (err, results) => {
+//               connection.release(); // Liberar la conexión de vuelta al pool
+      
+//               if (err) {
+//                 console.error('Error en la consulta:', err);
+//                 return reject(err);
+//               }
+      
+//               if (results && results[0] && results[0].length > 0) {
+//                 resolve(results[0][0]);
+//               } else {
+//                 resolve(null);
+//               }
+//             });
+//         });
+//     });
+// }
