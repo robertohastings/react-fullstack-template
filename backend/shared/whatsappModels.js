@@ -20,7 +20,7 @@ export function MessageMenu(textResponse, number) {
         "interactive": {
             "type": "list",
             "body": {
-                "text": textResponse
+                "text": "Nuestro menú"
             },
             "header": {
                 "type": "text",
