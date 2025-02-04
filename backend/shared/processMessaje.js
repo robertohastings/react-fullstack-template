@@ -1,4 +1,4 @@
-import { MessageText, MessageList, MessageButton, MessageLocation } from '../shared/whatsappModels.js'
+import { MessageText, MessageMenu } from '../shared/whatsappModels.js'
 import { SendMessageWhatsApp } from '../services/whatsappService.js'
 import { usarDatos, postWhatsappFrasesNoReconocidas  } from '../controllers/catalagosController.js'
 
@@ -15,7 +15,8 @@ export async function Process(textUser, number) {
 
 
     const funciones = {
-        MessageText: MessageText
+        MessageText: MessageText,
+        MessageMenu: MessageMenu
     }
 
     usarDatos(textUser).then(async resultado => {
