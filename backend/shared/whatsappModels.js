@@ -72,7 +72,7 @@ export function MessageMenu(textResponse, number) {
                             },
                             {
                                 "id": "mnu-contactarRepresentante",
-                                "title": "Contactar a un representante",
+                                "title": "Atención personalizada",
                                 "description": "Contactar a un representante via whatsapp"
                             }
                         ]
