@@ -12,7 +12,7 @@ export function MessageText(textResponse, number) {
     return data
 }
 
-export function MessageMenu(number) {
+export function MessageMenu(textResponse, number) {
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
         "to": number,
@@ -20,7 +20,7 @@ export function MessageMenu(number) {
         "interactive": {
             "type": "list",
             "body": {
-                "text": "Selecciona una opción:"
+                "text": textResponse
             },
             "header": {
                 "type": "text",
