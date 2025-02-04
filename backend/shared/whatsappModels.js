@@ -12,6 +12,78 @@ export function MessageText(textResponse, number) {
     return data
 }
 
+export function MessageMenu(number) {
+    const data = JSON.stringify({
+        "messaging_product": "whatsapp",    
+        "to": number,
+        "type": "interactive",
+        "interactive": {
+            "type": "list",
+            "body": {
+                "text": "Selecciona una opción:"
+            },
+            "header": {
+                "type": "text",
+                "text": "Menú principal"
+            },
+            "footer": {
+                "text": "Elige una opción"
+            },
+            "action": {
+                "button": "Ver opciones",
+                "sections": [
+                    {
+                        "title": "Menú de opciones",
+                        "rows": [
+                            {
+                                "id": "mnu-pedido",
+                                "title": "Hacer Pedido",
+                                "description": "Hacer un pedido"
+                            },
+                            {
+                                "id": "mnu-estatusPedido",
+                                "title": "Ver estatus del pedido",
+                                "description": "Mostrar estado del pedido, cancelar un pedido"
+                            },                            
+                            {
+                                "id": "mnu-ubicacion",
+                                "title": "Ubicación",
+                                "description": "Mostrar ubicación"
+                            },
+                            {
+                                "id": "mnu-formasDePago",
+                                "title": "Formas de Pago",
+                                "description": "Mostrar las formas de pago"
+                            },
+                            {
+                                "id": "mnu-puntosDeEntrega",
+                                "title": "Puntos de Entrega",
+                                "description": "Mostrar puntos de entrega"
+                            },
+                            {
+                                "id": "mnu-horario",
+                                "title": "Horario",
+                                "description": "Mostrar horario"
+                            },
+                            {
+                                "id": "mnu-dejarMensaje",
+                                "title": "Dejar un mensaje",
+                                "description": "Mostrar forma de contacto"
+                            },
+                            {
+                                "id": "mnu-contactarRepresentante",
+                                "title": "Contactar a un representante",
+                                "description": "Contactar a un representante via whatsapp"
+                            }
+                        ]
+                    }                   
+                ]
+            }
+        }
+    })
+    return data
+}
+
 export function MessageList(number) {
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
