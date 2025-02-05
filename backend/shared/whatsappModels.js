@@ -37,43 +37,43 @@ export function MessageMenu(textResponse, number) {
                         "rows": [
                             {
                                 "id": "mnu-pedido",
-                                "title": "Hacer Pedido",
-                                "description": "Hacer un pedido"
+                                "title": "Ordenar o hacer Pedido",
+                                "description": "Realiza un pedido"
                             },
                             {
                                 "id": "mnu-estatusPedido",
-                                "title": "Ver estatus del pedido",
-                                "description": "Mostrar estado del pedido, cancelar un pedido"
+                                "title": "Etatus del pedido",
+                                "description": "Ve el estatus del pedido, cancelar el pedido"
                             },                            
                             {
                                 "id": "mnu-ubicacion",
                                 "title": "Ubicación",
-                                "description": "Mostrar ubicación"
+                                "description": "Ve como llegar por google maps"
                             },
                             {
                                 "id": "mnu-formasDePago",
                                 "title": "Formas de Pago",
-                                "description": "Mostrar las formas de pago"
+                                "description": "Ve las formas de pago disponibles"
                             },
                             {
                                 "id": "mnu-puntosDeEntrega",
                                 "title": "Puntos de Entrega",
-                                "description": "Mostrar puntos de entrega"
+                                "description": "Ve nuestros puntos de entrega"
                             },
                             {
                                 "id": "mnu-horario",
                                 "title": "Horario",
-                                "description": "Mostrar horario"
+                                "description": "Ve nuesto horario laboral"
                             },
                             {
                                 "id": "mnu-dejarMensaje",
                                 "title": "Dejar un mensaje",
-                                "description": "Mostrar forma de contacto"
+                                "description": "Llena nuestro forulario de contacto"
                             },
                             {
                                 "id": "mnu-contactarRepresentante",
                                 "title": "Atención personalizada",
-                                "description": "Contactar a un representante via whatsapp"
+                                "description": "Contacta a un representante via whatsapp"
                             }
                         ]
                     }                   
