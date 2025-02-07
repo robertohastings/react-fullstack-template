@@ -34,6 +34,7 @@ import Cotizar from "./components/Ventas/Cotizar/Cotizar"
 import LandingPagePreview from "./components/LandingPagePreview"
 
 function App() {
+    console.log("Aquí")
     //const [cart, setCart] = useContext(CartContext)
     //const [data, setData] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -117,6 +118,7 @@ function App() {
     const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
     useEffect(() => {
+        console.log("Aquí....")
         //localStorage.setItem("complexappCarrito", JSON.stringify([]))
         localStorage.setItem("complexappLanding", JSON.stringify([]))
         //const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
@@ -173,7 +175,7 @@ function App() {
         } finally {
             setIsLoading(false)
         }
-    }, [])
+    }, [dispatch])
 
     //UseEffect para grabar en el LS
     // useEffect(() => {

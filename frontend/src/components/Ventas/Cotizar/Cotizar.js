@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Card, Col, Container, Row, Button, Modal, Table, Image, ButtonGroup, Badge, ButtonToolbar } from "react-bootstrap"
+import { Card, Col, Container, Row, Button, Table, Image, ButtonGroup, Badge, ButtonToolbar } from "react-bootstrap"
 import Axios from "axios"
 //import SpinnerButton from "../../Spinner/SpinnerButton"
 import "./cotizar.css"
@@ -7,7 +7,7 @@ import { FaPlus, FaMinus, FaRegTrashAlt, FaShoppingCart, FaMotorcycle, FaSearch 
 import CustomModal from "../../../tools/CustomModal"
 
 function Cotizar() {
-    const [isLoading, setIsLoaging] = useState(false)
+    //const [isLoading, setIsLoaging] = useState(false)
     const [dataCategories, setDataCategories] = useState([])
     const [dataProducts, setDataProducts] = useState([])
     const [selectedCategory, setSelectedCategory] = useState(null)
@@ -37,7 +37,7 @@ function Cotizar() {
     }, [])
 
     const fetchCategorias = async () => {
-        setIsLoaging(true)
+        //setIsLoaging(true)
 
         try {
             const response = await Axios.get("/api/getCategorias", {
@@ -51,13 +51,13 @@ function Cotizar() {
         } catch (error) {
             console.error("There was an error fetching the categorias!", error)
         } finally {
-            setIsLoaging(false)
+            //setIsLoaging(false)
         }
     }
 
     const fetchCProductosByCategoria = async id_categoria => {
         console.log(`Categoria: ${id_categoria}`)
-        setIsLoaging(true)
+        //setIsLoaging(true)
         setSelectedCategory(id_categoria)
 
         try {
@@ -81,16 +81,16 @@ function Cotizar() {
         } catch (error) {
             console.log("error:", error)
         } finally {
-            setIsLoaging(false)
+            //setIsLoaging(false)
         }
     }
 
     // Función para manejar la selección de categoría
-    const handleCategorySelect = id_categoria => {
-        console.log(`Categoria Seleccionada: ${id_categoria}`)
-        setSelectedCategory(id_categoria)
-        fetchCProductosByCategoria(id_categoria)
-    }
+    // const handleCategorySelect = id_categoria => {
+    //     console.log(`Categoria Seleccionada: ${id_categoria}`)
+    //     setSelectedCategory(id_categoria)
+    //     fetchCProductosByCategoria(id_categoria)
+    // }
     const Agregar_handled = producto => {
         console.log(producto)
         const data = {

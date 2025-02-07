@@ -7,22 +7,22 @@ import Page from "./Page"
 //import Row from "react-bootstrap/Row"
 //import Col from "react-bootstrap/Col"
 //import Image from "react-bootstrap/Image"
-import DispatchContext from "../DispatchContext"
+//import DispatchContext from "../DispatchContext"
 import StateContext from "../StateContext"
 
 import { Link } from "react-router-dom"
 
 function Home() {
-    const appDispatch = useContext(DispatchContext)
+    //const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
     console.log("appstate:", appState)
 
-    const handledClick = () => {
-        //alert("click")
-        //appDispatch({ type: "flashMessage", value: "Prueba de flash message" })
-        // appDispatch({ type: "alertMessage", data: { message: "Alert", typeAlert: "warning" } })
-        appDispatch({ type: "alertMessage", value: "alert", typeAlert: "danger" })
-    }
+    // const handledClick = () => {
+    //     //alert("click")
+    //     //appDispatch({ type: "flashMessage", value: "Prueba de flash message" })
+    //     // appDispatch({ type: "alertMessage", data: { message: "Alert", typeAlert: "warning" } })
+    //     appDispatch({ type: "alertMessage", value: "alert", typeAlert: "danger" })
+    // }
 
     return (
         <Page title="Home">

@@ -1,5 +1,5 @@
 import React from "react"
-import styles from "./SpinnerDot.css"
+//import styles from "./SpinnerDot.css"
 
 function SpinnerDot() {
     return (
