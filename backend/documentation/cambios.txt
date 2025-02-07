@@ -5,3 +5,4 @@
 . en el sp: getLandingPage, revisar los alias que esten en mayúsculas (ok)
 
 . nuevo sp: getGaleria
+. cambio sp: getLandingPage

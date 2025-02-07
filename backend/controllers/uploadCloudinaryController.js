@@ -110,6 +110,76 @@ export const uploadImage = (req, res) => {
     //   res.status(200).json({ message: 'Image uploaded successfully', file: req.file.filename });
     // });
 }
+export const uploadImageLanding = (req, res) => {
+    //console.log("entre al controlador")
+    let sampleFile
+    let uploadPath
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send("No files were uploaded.")
+    }
+
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    
+    //TODO: CREAR UN ID UNICO PARA CONCATENARLO AL NOMBRE DE LA IMAGEN
+    // AGREGAR EL ID TAMBIEN EN LA VARIABLE public_id
+    sampleFile = req.files.image
+    let reqPath = path.join(__dirname, "../", "imagenes/landingPage", `${req.body.id_empresa}_cat_${req.body.fuente}.jpg`)
+    uploadPath = reqPath
+
+    // Use the mv() method to place the file somewhere on your server
+    sampleFile.mv(uploadPath, async function (err) {
+        if (err) {
+            console.log(err.message)
+            return res.status(500).send(err)
+        }
+
+        //res.send("File uploaded!")
+        //res.status(200).json({ message: "Image uploaded successfully", file: req.files.image })
+
+        try {
+            var image = reqPath
+            console.log("image to upload to cloudinary", image)
+
+            const response = await cloudinary.uploader
+                .upload(image, {    
+                    timeout: 150000,
+                    folder: req.body.hostname,
+                    public_id: `${req.body.id_empresa}_cat_${req.body.fuente}`,
+                    resource_type: "image",
+                    format: "jpg"
+                })
+                .then(async result => {
+                    console.log(result)
+
+                    //Actualizo la imagen en la db
+                    try {
+                        //TODO: CREAR SP postLandingPageImage
+                        const rows = await pool.query(`CALL putCategoriaImage(?, ?, ?);`, 
+                            [req.body.id_categoria, req.body.id_empresa, result.secure_url])                        
+                    } catch (error) {
+                        console.log('error al actualizar la imagen en la db', error)
+                    }
+
+                    res.status(200).json({
+                        message: "Imagen cargada en cloudinary",
+                        url: result.secure_url
+                    })
+
+
+                })
+                .catch(error => {
+                    console.log("Ocurrió el error al subir la imágen a cloudinary", error)
+                    return res.status(400).json({ message: "Ocurrió el error al subir la imágen a cloudinary" })
+                })
+        } catch (error) {
+            console.log("Ocurrió el error al subir la imágen;", error)
+            res.status(500).json({
+                message: `Ocurrió un eror en el servidor al subir imagen a cloudinary: ${error}`
+            })
+        }
+    })
+}
 
 // export const uploadImageToCloudinary = (req, res) => {
 //     console.log("entre uploadImageToCloudinary")

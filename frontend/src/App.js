@@ -41,6 +41,7 @@ function App() {
     const initialState = {
         idEmpresa: getDecryptedItem("hostregioTenant"),
         hostname: getDecryptedItem("hostregioHostname"),
+        idLandingPage: getDecryptedItem("hostregioLandingPageId"),
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
         showLoggedIn: false,
         flashMessages: [],
@@ -145,8 +146,6 @@ function App() {
             axios
                 .get("/api/getLandingPage", {
                     params: {
-                        id_empresa: 1,
-                        id_landingPage: 1,
                         hostname
                     }
                 })
@@ -160,6 +159,7 @@ function App() {
 
                     setEncryptedItem("hostregioTenant", response.data.landingPage.idEmpresa)
                     setEncryptedItem("hostregioLandingPage", response.data.landingPage)
+                    setEncryptedItem("hostregioLandingPageId", response.data.landingPage.idLandingPage)
 
                     //dispatch({ type: "tenant", data: response.data.landingPage.idEmpresa })
                 })

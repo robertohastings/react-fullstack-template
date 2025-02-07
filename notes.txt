@@ -351,4 +351,46 @@ BEGIN
 
 END
 
+cambios en sp:
+
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getLandingPage`(
+    IN prm_host VARCHAR(200)
+)
+BEGIN
+	SELECT  quienes_somos,
+			servicios,
+            productos,
+            mostrar_quienes_somos,
+            mostrar_productos,
+            mostrar_servicios,
+            mostrar_contactanos,
+            mostrar_sitioEnMantenimiento,
+            L.id_empresa,
+            L.id_landingPage
+    FROM hosts H 
+    INNER JOIN landingPage L ON L.id_empresa = H.id_empresa
+    WHERE H.host = prm_host ;
+	
+	SELECT 	id_categoria, nombre, 
+			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
+    FROM hosts H
+    INNER JOIN categorias C ON C.id_empresa = H.id_empresa
+    WHERE H.host = prm_host 
+    AND EXISTS(
+			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
+        );	
+    /*
+	SELECT 	id_categoria, nombre, 
+			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
+    FROM categorias C
+    INNER JOIN hosts H ON H.host = C.host
+    WHERE h.host = prm_host 
+    AND EXISTS(
+			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
+        );
+	*/
+END
+
+agregar subdirectorio: landingPage en backend dentro del directorio imagenes
+
 
