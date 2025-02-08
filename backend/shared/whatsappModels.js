@@ -106,6 +106,7 @@ export async function MessageLocation(textResponse, number) {
             "address": direccion
         }
     })
+    console.log('MessageLocation data->', data)
     return data
 }
 

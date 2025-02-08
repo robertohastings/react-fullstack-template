@@ -50,6 +50,7 @@ export async function Process(textUser, number) {
     })
     .catch(error => {
         console.error("Process -> usarDatos -> Error:", error);
+        var models = []
         var model = MessageText('No entiendo', number)
         models.push(model)
     });    
