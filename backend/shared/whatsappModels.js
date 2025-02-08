@@ -91,13 +91,17 @@ export async function MessageLocation(textResponse, number) {
     const empresa = await getWhatsapp_ubicacion(1)
     console.log('empresa: ', empresa)
 
+    const { latitud, longitud} = empresa[0]
+    console.log('latitud:', latitud)
+    console.log('longitud:', longitud)
+
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
         "to": number,
         "type": "location",
         "location": {
-            "latitude": `${empresa.latitud}`,
-            "longitude": `${empresa.longitud}`,
+            "latitude": latitud,
+            "longitude": longitud,
             "name": textResponse,
             "address": empresa.direccion
         }
