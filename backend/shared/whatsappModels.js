@@ -1,6 +1,6 @@
 import { getWhatsapp_ubicacion } from '../controllers/catalagosController.js'
 
-export function MessageText(textResponse, number) {
+export async function MessageText(textResponse, number) {
     console.log('MessageText textResponse: ', textResponse)
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
@@ -14,7 +14,7 @@ export function MessageText(textResponse, number) {
     return data
 }
 
-export function MessageMenu(textResponse, number) {
+export async function MessageMenu(textResponse, number) {
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
         "to": number,

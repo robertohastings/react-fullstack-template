@@ -33,7 +33,7 @@ export async function Process(textUser, number) {
 
         // Verifica que la función exista antes de llamarla
         if (typeof funciones[funcion] === 'function') { // <-- Importante verificación
-            const mensaje = funciones[funcion](respuesta, number) // Llama a la función dinámicamente
+            const mensaje = await funciones[funcion](respuesta, number) // Llama a la función dinámicamente
             console.log("Process -> usarDatos -> Mensaje de la función:", mensaje); // Aquí tienes el resultado de MessageText
             
             models.push(mensaje)
