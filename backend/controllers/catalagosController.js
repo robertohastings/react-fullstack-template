@@ -228,3 +228,19 @@ export const postWhatsappFrasesNoReconocidas = async (frase, numero) => { // Aho
         };
     }
 };
+
+export const getWhatsapp_ubicacion = async (id_empresa) => { // Ahora recibe solo 'frase'
+    try {
+        const rows = await pool.query(`CALL getWhatsapp_ubicacion(?);`, [id_empresa]);
+        return { // Retorna directamente el objeto con la frase
+            success: true,
+            empresa: rows[0][0]
+        };
+    } catch (error) {
+        console.error("Error en getwhatsgetWhatsapp_ubicacionappFrases:", error); // Loguea el error para depuración
+        return { // Retorna un objeto de error
+            success: false,
+            error: `An error occurred: ${error}`
+        };
+    }
+};

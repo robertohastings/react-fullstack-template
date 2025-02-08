@@ -1,3 +1,5 @@
+import { getWhatsapp_ubicacion } from '../controllers/catalagosController.js'
+
 export function MessageText(textResponse, number) {
     console.log('MessageText textResponse: ', textResponse)
     const data = JSON.stringify({
@@ -83,6 +85,26 @@ export function MessageMenu(textResponse, number) {
     })
     return data
 }
+
+export async function MessageLocation(number) {
+    //TODO: Buscar la relación empresa vs whats app identidad
+    const empresa = await getWhatsapp_ubicacion(1)
+    console.log('empresa: ', empresa)
+
+    const data = JSON.stringify({
+        "messaging_product": "whatsapp",    
+        "to": number,
+        "type": "location",
+        "location": {
+            "latitude": empresa.latitud,
+            "longitude": empresa.longitud,
+            "name": "Dirección",
+            "address": empresa.direccion
+        }
+    })
+    return data
+}
+
 
 export function MessageList(number) {
     const data = JSON.stringify({
@@ -174,17 +196,3 @@ export function MessageButton(number) {
     return data
 }
 
-export function MessageLocation(number) {
-    const data = JSON.stringify({
-        "messaging_product": "whatsapp",    
-        "to": number,
-        "type": "location",
-        "location": {
-            "latitude": "25.743852774131685",
-            "longitude": "-100.2266610432757",
-            "name": "Casa",
-            "address": "Del Estanque 135, Palmas Diamante, Cerradas de Casa Blanca, 66478 San Nicolás de los Garza, N.L."
-        }
-    })
-    return data
-}
