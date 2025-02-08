@@ -91,7 +91,7 @@ export async function MessageLocation(textResponse, number) {
     const dataEmpresa = await getWhatsapp_ubicacion(1)
     console.log('empresa: ', dataEmpresa)
 
-    const { latitud, longitud} = dataEmpresa.empresa[0]
+    const { latitud, longitud, direccion} = dataEmpresa.empresa[0]
     console.log('latitud:', latitud)
     console.log('longitud:', longitud)
 
@@ -103,7 +103,7 @@ export async function MessageLocation(textResponse, number) {
             "latitude": latitud,
             "longitude": longitud,
             "name": textResponse,
-            "address": empresa.direccion
+            "address": direccion
         }
     })
     return data
