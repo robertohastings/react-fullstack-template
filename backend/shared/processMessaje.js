@@ -1,4 +1,4 @@
-import { MessageText, MessageMenu } from '../shared/whatsappModels.js'
+import { MessageText, MessageMenu, MessageLocation } from '../shared/whatsappModels.js'
 import { SendMessageWhatsApp } from '../services/whatsappService.js'
 import { usarDatos, postWhatsappFrasesNoReconocidas  } from '../controllers/catalagosController.js'
 
@@ -6,7 +6,7 @@ export async function Process(textUser, number) {
     const mensajeNormalizado = normalizarMensaje(textUser);
 
     textUser = mensajeNormalizado
-    console.log('texto normalizado:', textUser)
+    console.log('Process -> texto normalizado:', textUser)
 
     //Busco el texto del usuario en la tabla whatsapp_frases
     //TODO: Implmentar la memoria chache
@@ -16,16 +16,17 @@ export async function Process(textUser, number) {
 
     const funciones = {
         MessageText: MessageText,
-        MessageMenu: MessageMenu
+        MessageMenu: MessageMenu,
+        MessageLocation: MessageLocation
     }
 
     usarDatos(textUser).then(async resultado => {
         const { respuesta, funcion } = resultado.frase[0]
-        console.log('usarDatos respuesta:', respuesta, ' usarDatos funcion:', funcion)
+        console.log('Process -> usarDatos ->:', respuesta, ' usarDatos funcion:', funcion)
 
         if (respuesta === 'No entiendo...'){
             const frases_no_reconocidas = await postWhatsappFrasesNoReconocidas(textUser, number)
-            console.log('post frases_no_reconocidas:', frases_no_reconocidas)            
+            console.log('Process -> usarDatos -> frases_no_reconocidas:', frases_no_reconocidas)            
         }
 
         var models = []
@@ -33,22 +34,22 @@ export async function Process(textUser, number) {
         // Verifica que la función exista antes de llamarla
         if (typeof funciones[funcion] === 'function') { // <-- Importante verificación
             const mensaje = funciones[funcion](respuesta, number) // Llama a la función dinámicamente
-            console.log("Mensaje de la función:", mensaje); // Aquí tienes el resultado de MessageText
+            console.log("Process -> usarDatos -> Mensaje de la función:", mensaje); // Aquí tienes el resultado de MessageText
             
             models.push(mensaje)
         } else {
             //console.error("La función", funcion, "no existe.");
-            var model = MessageText('No entiendo..', number)
+            var model = MessageText('Process -> usarDatos -> No entiendo..', number)
             models.push(model)
         }
     
-        console.log('models:', models)
+        //console.log('models:', models)
         models.forEach(model => {
             SendMessageWhatsApp(model)
         });
     })
     .catch(error => {
-        console.error("Error en la llamada:", error);
+        console.error("Process -> usarDatos -> Error:", error);
         var model = MessageText('No entiendo', number)
         models.push(model)
     });    

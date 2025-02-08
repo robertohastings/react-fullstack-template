@@ -48,7 +48,7 @@ export const ReceivedMessage = async (req, res) => {
             var number = normalizePhoneNumber(messages["from"])
             
             var text = GetTextUser(messages)
-            console.log('ReceivedMessage:', text)
+            console.log('ReceivedMessage ->', text)
 
             if (text != "") {
                 await Process(text, number)
