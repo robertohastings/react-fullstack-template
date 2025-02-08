@@ -86,7 +86,7 @@ export async function MessageMenu(textResponse, number) {
     return data
 }
 
-export async function MessageLocation(number) {
+export async function MessageLocation(textResponse, number) {
     //TODO: Buscar la relación empresa vs whats app identidad
     const empresa = await getWhatsapp_ubicacion(1)
     console.log('empresa: ', empresa)
@@ -98,7 +98,7 @@ export async function MessageLocation(number) {
         "location": {
             "latitude": empresa.latitud,
             "longitude": empresa.longitud,
-            "name": "Dirección",
+            "name": textResponse,
             "address": empresa.direccion
         }
     })
