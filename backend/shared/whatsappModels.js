@@ -96,8 +96,8 @@ export async function MessageLocation(textResponse, number) {
         "to": number,
         "type": "location",
         "location": {
-            "latitude": empresa.latitud,
-            "longitude": empresa.longitud,
+            "latitude": `${empresa.latitud}`,
+            "longitude": `${empresa.longitud}`,
             "name": textResponse,
             "address": empresa.direccion
         }
