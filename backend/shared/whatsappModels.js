@@ -110,6 +110,26 @@ export async function MessageLocation(textResponse, number) {
     return data
 }
 
+export async function MessageLinkFormaDePago(textResponse, number) {
+    //TODO: Buscar la relación empresa vs whats app identidad
+    const dataFormasDePago = await getWhatsapp_formasDePago(1)
+    const formasDePago = dataFormasDePago[0]
+
+    formasDePago.map(formaDePago, index) {
+        formasDePago += formaDePago
+    }
+
+    const data = JSON.stringify({
+        "messaging_product": "whatsapp",    
+        "to": number,
+        "type": "text",
+        "text": {
+            "preview_url": true,
+            "body": textResponse
+        } 
+    })
+    return data
+}
 
 export function MessageList(number) {
     const data = JSON.stringify({
