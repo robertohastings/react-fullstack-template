@@ -7,3 +7,15 @@ DB_PASSWORD='appusercrmadmin'
 CLOUDINARY_CLOUD_NAME='ddhxa9igj'
 CLOUDINARY_API_KEY='778763934991892'
 CLOUDINARY_API_SECRET='bPPu6qPoKNgRwLZmRYWjLqzXBgo'
+
+
+nuevas tablas:
+    agenda
+    agenda_estatus
+    jornada_laboral
+
+nuevo sps:
+    deleteAgenda
+    postAgenda
+    getAgendaBuscarCita
+    getAgendaDisponibilidad
