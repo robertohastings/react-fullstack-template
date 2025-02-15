@@ -115,9 +115,11 @@ export async function MessageLinkFormaDePago(textResponse, number) {
     const dataFormasDePago = await getWhatsapp_formasDePago(1)
     const formasDePago = dataFormasDePago[0]
 
-    formasDePago.map(formaDePago, index) {
-        formasDePago += formaDePago
-    }
+    console.log('MessageLinkFormaDePago -> formasDePago', formasDePago)
+
+    // formasDePago.map(formaDePago, index) => {
+    //     formasDePago += formaDePago
+    // }
 
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
