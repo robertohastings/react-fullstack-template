@@ -1,4 +1,4 @@
-import { getWhatsapp_ubicacion } from '../controllers/catalagosController.js'
+import { getWhatsapp_ubicacion, getWhatsapp_formasDePago } from '../controllers/catalagosController.js'
 
 export async function MessageText(textResponse, number) {
     console.log('MessageText textResponse: ', textResponse)
@@ -113,9 +113,11 @@ export async function MessageLocation(textResponse, number) {
 export async function MessageLinkFormaDePago(textResponse, number) {
     //TODO: Buscar la relación empresa vs whats app identidad
     const dataFormasDePago = await getWhatsapp_formasDePago(1)
+    console.log('MessageLinkFormaDePago -> dataFormasDePago', dataFormasDePago)
+
     const formasDePago = dataFormasDePago[0]
 
-    console.log('MessageLinkFormaDePago -> formasDePago', formasDePago)
+    //console.log('MessageLinkFormaDePago -> formasDePago', formasDePago)
 
     // formasDePago.map(formaDePago, index) => {
     //     formasDePago += formaDePago
