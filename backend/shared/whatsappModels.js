@@ -116,7 +116,7 @@ export async function MessageLinkFormaDePago(textResponse, number) {
     console.log('MessageLinkFormaDePago -> dataFormasDePago', dataFormasDePago.formasDePago)
 
     const formasDePago = dataFormasDePago.formasDePago
-    const formasDePagoConViñetas = formasDePago.map(forma => `* ${forma}`).join('\n')
+    const formasDePagoConViñetas = formasDePago.map(forma => `${forma}`).join('\n')
 
     //const formasDePago = dataFormasDePago[0]
 
