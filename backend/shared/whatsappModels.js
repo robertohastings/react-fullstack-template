@@ -115,7 +115,10 @@ export async function MessageLinkFormaDePago(textResponse, number) {
     const dataFormasDePago = await getWhatsapp_formasDePago(1)
     console.log('MessageLinkFormaDePago -> dataFormasDePago', dataFormasDePago.formasDePago)
 
-    const formasDePago = dataFormasDePago[0]
+    const formasDePago = dataFormasDePago.formasDePago
+    const formasDePagoConViñetas = formasDePago.map(forma => `* ${forma}`).join('\n')
+
+    //const formasDePago = dataFormasDePago[0]
 
     //console.log('MessageLinkFormaDePago -> formasDePago', formasDePago)
 
@@ -129,7 +132,7 @@ export async function MessageLinkFormaDePago(textResponse, number) {
         "type": "text",
         "text": {
             "preview_url": true,
-            "body": textResponse
+            "body": `${textResponse} ${formasDePagoConViñetas}`
         } 
     })
     return data
