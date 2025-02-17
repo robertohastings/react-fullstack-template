@@ -1,4 +1,4 @@
-import { MessageText, MessageMenu, MessageLocation } from '../shared/whatsappModels.js'
+import { MessageText, MessageMenu, MessageLocation, MessageLinkFormaDePago } from '../shared/whatsappModels.js'
 import { SendMessageWhatsApp } from '../services/whatsappService.js'
 import { usarDatos, postWhatsappFrasesNoReconocidas  } from '../controllers/catalagosController.js'
 
@@ -17,7 +17,8 @@ export async function Process(textUser, number) {
     const funciones = {
         MessageText: MessageText,
         MessageMenu: MessageMenu,
-        MessageLocation: MessageLocation
+        MessageLocation: MessageLocation,
+        MessageLinkFormaDePago: MessageLinkFormaDePago
     }
 
     usarDatos(textUser).then(async resultado => {
@@ -49,10 +50,10 @@ export async function Process(textUser, number) {
         });
     })
     .catch(error => {
-        console.error("Process -> usarDatos -> Error:", error);
-        var models = []
-        var model = MessageText('No entiendo', number)
-        models.push(model)
+        console.error("Process -> usarDatos -> Error: Revisa la función si esta definida", error);
+        // var models = []
+        // var model = MessageText('No entiendo', number)
+        // models.push(model)
     });    
 
   /*
