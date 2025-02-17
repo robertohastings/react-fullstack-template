@@ -234,7 +234,7 @@ export const getWhatsapp_ubicacion = async (id_empresa) => { // Ahora recibe sol
         const rows = await pool.query(`CALL getWhatsapp_ubicacion(?);`, [id_empresa]);
         return { // Retorna directamente el objeto con la frase
             success: true,
-            empresa: rows[0][0]
+            empresa: JSON.rows[0][0]
         };
     } catch (error) {
         console.error("Error en getWhatsapp_ubicacion:", error); // Loguea el error para depuración
