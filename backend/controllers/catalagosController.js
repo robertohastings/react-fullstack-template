@@ -248,9 +248,10 @@ export const getWhatsapp_ubicacion = async (id_empresa) => { // Ahora recibe sol
 export const getWhatsapp_formasDePago = async (id_empresa) => { // Ahora recibe solo 'frase'
     try {
         const rows = await pool.query(`CALL getWhatsappFormasDePago(?);`, [id_empresa]);
+        const formaDePago = rows[0][0].map(item => item.FormasDePago)
         return { // Retorna directamente el objeto con la frase
             success: true,
-            formasDePago: rows[0][0]
+            formasDePago: formaDePago
         };
     } catch (error) {
         console.error("Error en getWhatsappFormasDePago:", error); // Loguea el error para depuración
