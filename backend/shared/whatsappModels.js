@@ -113,7 +113,7 @@ export async function MessageLocation(textResponse, number) {
 export async function MessageLinkFormaDePago(textResponse, number) {
     //TODO: Buscar la relación empresa vs whats app identidad
     const dataFormasDePago = await getWhatsapp_formasDePago(1)
-    console.log('MessageLinkFormaDePago -> dataFormasDePago', dataFormasDePago.formasDePago[0])
+    console.log('MessageLinkFormaDePago -> dataFormasDePago', dataFormasDePago.formasDePago)
 
     const formasDePago = dataFormasDePago[0]
 
