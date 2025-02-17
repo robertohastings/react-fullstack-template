@@ -126,13 +126,15 @@ export async function MessageLinkFormaDePago(textResponse, number) {
     //     formasDePago += formaDePago
     // }
 
+    const encabezado = "Estas son nuestras formas de pago:"
+
     const data = JSON.stringify({
         "messaging_product": "whatsapp",    
         "to": number,
         "type": "text",
         "text": {
             "preview_url": true,
-            "body": formasDePagoConViñetas
+            "body": `${encabezado}\n${formasDePagoConViñetas}`
         } 
     })
     return data
