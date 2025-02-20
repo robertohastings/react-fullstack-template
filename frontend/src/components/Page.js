@@ -7,9 +7,12 @@ function Page(props) {
         document.title = `${props.title} | ComplexApp`
         window.scrollTo(0, 0)
     }, [props.title])
+
+    const containerClass = props.fluid ? "container-fluid" : "container mt-5 pt-2"
+
     return (
         <>
-            <div className="container mt-5 pt-2">{props.children}</div>
+            <div className={containerClass}>{props.children}</div>
         </>
     )
 }

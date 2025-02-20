@@ -27,7 +27,7 @@ function Home() {
     // }
 
     return (
-        <Page title="Home">
+        <Page title="Home" fluid={true}>
             {appState.landingPage.settings.mostrar_sitioEnMantenimiento === 1 && (
                 <>
                     <Row className="m-3">
@@ -73,30 +73,19 @@ function Home() {
                 //     </Col>
                 // </Row>
 
-                <Container fluid className="landing-page">
+                <Container fluid>
                     {/* Carousel */}
-                    <Carousel className="carousel-section">
-                        <Carousel.Item>
-                            <img className="d-block w-100" src="image1.jpg" alt="Slide 1" />
-                            <Carousel.Caption>
-                                <h3>Hosting Rápido y Seguro</h3>
-                                <p>Tu sitio web siempre en línea y protegido.</p>
-                            </Carousel.Caption>
-                        </Carousel.Item>
-                        <Carousel.Item>
-                            <img className="d-block w-100" src="image2.jpg" alt="Slide 2" />
-                            <Carousel.Caption>
-                                <h3>Registra tu Dominio</h3>
-                                <p>Obtén el nombre perfecto para tu marca.</p>
-                            </Carousel.Caption>
-                        </Carousel.Item>
-                        <Carousel.Item>
-                            <img className="d-block w-100" src="image3.jpg" alt="Slide 3" />
-                            <Carousel.Caption>
-                                <h3>Desarrollo de Aplicaciones</h3>
-                                <p>Soluciones personalizadas para tu negocio.</p>
-                            </Carousel.Caption>
-                        </Carousel.Item>
+                    <Carousel className="carousel-section pt-5">
+                        {appState.landingPage.categorias.map((categoria, index) => (
+                            <Carousel.Item>
+                                {/* <img className="d-block w-100" src="image1.jpg" alt="Slide 1" /> */}
+                                <CardImagenConFallback src={categoria.imagen} alt={categoria.nombre} width="100%" />
+                                <Carousel.Caption>
+                                    <h3>{categoria.nombre}</h3>
+                                    <p>{categoria.nombre}</p>
+                                </Carousel.Caption>
+                            </Carousel.Item>
+                        ))}
                     </Carousel>
 
                     {/* Quiénes Somos */}
@@ -144,8 +133,8 @@ function Home() {
                     {appState.landingPage.settings.mostrar_productos === 1 && (
                         <>
                             <section className="products-section">
-                                <h2 className="pb-3">Nuestros Productos</h2>
-                                <Row>
+                                <h2 className="pb-5">Nuestros Productos</h2>
+                                <Row className="justify-content-center">
                                     {/* {["Dominio", "Hospedaje", "SSL", "Correo Corporativo", "Web", "Móvil"].map((product, index) => (
                                         <Col md={3} key={index} className="mb-4">
                                             <Card>
@@ -159,7 +148,7 @@ function Home() {
                                     ))} */}
 
                                     {appState.landingPage.categorias.map((categoria, index) => (
-                                        <Col md={3} key={index} className="mb-4 d-flex align-items-stretch">
+                                        <Col xs={12} sm={6} md={3} lg={2} key={index} className="mb-4 d-flex align-items-stretch">
                                             <Card className="flex-grow-1">
                                                 {/* <Card.Img
                                                     variant="top"
@@ -169,19 +158,21 @@ function Home() {
                                                     }}
                                                 /> */}
 
-                                                <CardImagenConFallback src={categoria.imagen} alt={categoria.nombre} />
+                                                <CardImagenConFallback src={categoria.imagen} alt={categoria.nombre} width="100%" />
 
                                                 <Card.Body className="d-flex flex-column">
-                                                    <Card.Title>{categoria.nombre}</Card.Title>
+                                                    <Card.Title className="mt-3">{categoria.nombre}</Card.Title>
                                                     {/* <Card.Text>{categoria.nombre}.</Card.Text> */}
                                                 </Card.Body>
                                             </Card>
                                         </Col>
                                     ))}
                                 </Row>
-                                <Button variant="primary" className="view-more-button">
-                                    Ver más
-                                </Button>
+                                {appState.landingPage.settings.mostrar_productos_verMas === 1 && (
+                                    <Button variant="primary" className="view-more-button">
+                                        Ver más
+                                    </Button>
+                                )}
                             </section>
                         </>
                     )}
@@ -217,29 +208,10 @@ function Home() {
                     )}
 
                     {/* Footer */}
-                    <div className="container-fluid">
-                        <footer className="footer">
-                            <Row>
-                                <Col md={6}>
-                                    <p>Síguenos en:</p>
-                                </Col>
-                                <Col md={6} className="social-media">
-                                    <Link href="#" className="social-icon">
-                                        Facebook
-                                    </Link>
-                                    <Link href="#" className="social-icon">
-                                        Instagram
-                                    </Link>
-                                    <Link href="#" className="social-icon">
-                                        Twitter
-                                    </Link>
-                                    <Link href="#" className="social-icon">
-                                        YouTube
-                                    </Link>
-                                </Col>
-                            </Row>
-                        </footer>
-                    </div>
+
+                    {/* <footer className="footer">
+
+                    </footer> */}
                 </Container>
             )}
         </Page>

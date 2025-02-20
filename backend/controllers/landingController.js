@@ -37,6 +37,7 @@ export const getLandingPage = async (req, res) => {
                 settings: {
                     mostrar_quienes_somos: rows[0][0][0].mostrar_quienes_somos,
                     mostrar_productos: rows[0][0][0].mostrar_productos,
+                    mostrar_productos_verMas: rows[0][0][0].mostrar_productos_verMas,
                     mostrar_servicios: rows[0][0][0].mostrar_servicios,
                     mostrar_contactanos: rows[0][0][0].mostrar_contactanos,
                     mostrar_sitioEnMantenimiento: rows[0][0][0].mostrar_sitioEnMantenimiento

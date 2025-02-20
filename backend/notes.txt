@@ -19,3 +19,14 @@ nuevo sps:
     postAgenda
     getAgendaBuscarCita
     getAgendaDisponibilidad
+
+nuevos cambios en tablas:
+    agregue el campo mostrar_productos_verMas 
+
+nuevos cambios en sps:
+    cambie el sp getLandingPage: agregué el campo: mostrar_productos_verMas
+
+Pendientes:
+    Agregar en la pagina de landingPage 
+        - el botón para mostar ver mas Productos
+        - links para redes sociales y mostrarlas en la página si estas traen contenido
