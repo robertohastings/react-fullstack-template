@@ -18,9 +18,10 @@ export const getProductosByCategoria = async (req, res) => {
 
 export const getLandingPage = async (req, res) => {
     try {
-        console.log('here')
+        console.log("here")
         //const { id_empresa, id_landingPage, hostname } = req.query
         const { hostname } = req.query
+        console.log("getLandingPage -> hostname", hostname)
         //const rows = await pool.query(`CALL getLandingPage( ?, ?, ?);`, [id_empresa, id_landingPage, hostname])
         const rows = await pool.query(`CALL getLandingPage( ? );`, [hostname])
         //console.log(rows[0][0][0]);
@@ -42,13 +43,13 @@ export const getLandingPage = async (req, res) => {
                 }
             }
         }
+        console.log("getLandingPage -> data", data.landingPage)
         res.json(data)
     } catch (error) {
         console.log("Error fectching the data ", error)
         res.status(500).json({
             error: error
         })
-        
     }
 }
 

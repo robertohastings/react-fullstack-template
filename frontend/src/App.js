@@ -34,15 +34,30 @@ import Cotizar from "./components/Ventas/Cotizar/Cotizar"
 import LandingPagePreview from "./components/LandingPagePreview"
 
 function App() {
-    console.log("Aquí")
+    //.log("Aquí")
     //const [cart, setCart] = useContext(CartContext)
     //const [data, setData] = useState({})
     const [isLoading, setIsLoading] = useState(true)
 
-    const initialState = {
+    const [enMtto, setEnMtto] = useState({
+        landingPage: {
+            settings: {
+                mostrar_sitioEnMantenimiento: 1
+            }
+        }
+    })
+
+    /*
         idEmpresa: getDecryptedItem("hostregioTenant"),
         hostname: getDecryptedItem("hostregioHostname"),
         idLandingPage: getDecryptedItem("hostregioLandingPageId"),
+        landingPage: getDecryptedItem("hostregioLandingPage"),
+    */
+
+    const initialState = {
+        idEmpresa: 1,
+        hostname: "localhost",
+        idLandingPage: 1,
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
         showLoggedIn: false,
         flashMessages: [],
@@ -60,7 +75,7 @@ function App() {
         isChatOpen: false,
         unreadReadChatCount: 0,
         //landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
-        landingPage: getDecryptedItem("hostregioLandingPage"),
+        landingPage: getDecryptedItem("hostregioLandingPage") ?? enMtto,
         notifications: false
         //carrito: JSON.parse(localStorage.getItem("carrito")) ?? []
     }
