@@ -25,8 +25,9 @@ nuevos cambios en tablas:
 
 nuevos cambios en sps:
     cambie el sp getLandingPage: agregué el campo: mostrar_productos_verMas
+    cambie el sp putLandingPage: agregue el cambo: mostrar_productos_verMas
 
 Pendientes:
     Agregar en la pagina de landingPage 
-        - el botón para mostar ver mas Productos
+        - el botón para mostar ver mas Productos (Listo)
         - links para redes sociales y mostrarlas en la página si estas traen contenido

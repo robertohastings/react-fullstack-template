@@ -30,6 +30,7 @@ function LandingPage() {
     const [quienesSomosChecked, setQuienesSomosChecked] = useState(appState.landingPage.settings.mostrar_quienes_somos === 1 ? true : false)
     const [contactanosChecked, setContactanosChecked] = useState(appState.landingPage.settings.mostrar_contactanos === 1 ? true : false)
     const [productosChecked, setproductosChecked] = useState(appState.landingPage.settings.mostrar_productos === 1 ? true : false)
+    const [productosVerMasChecked, setproductosVerMasChecked] = useState(appState.landingPage.settings.mostrar_productos_verMas === 1 ? true : false)
     const [serviciosChecked, setServiciosChecked] = useState(appState.landingPage.settings.mostrar_servicios === 1 ? true : false)
     const [sitioEnMttoChecked, setSitioEnMttoChecked] = useState(appState.landingPage.settings.mostrar_sitioEnMantenimiento === 1 ? true : false)
     //const [ settingsChecked, setSettingsChecked ] = useState(false)
@@ -127,6 +128,7 @@ function LandingPage() {
             id_landingPage: 1,
             mostrar_quienes_somos: quienesSomosChecked === true ? 1 : 0,
             mostrar_productos: productosChecked === true ? 1 : 0,
+            mostrar_productos_verMas: productosVerMasChecked === true ? 1 : 0,
             mostrar_servicios: serviciosChecked === true ? 1 : 0,
             mostrar_contactanos: contactanosChecked === true ? 1 : 0,
             mostrar_sitioEnMantenimiento: sitioEnMttoChecked === true ? 1 : 0
@@ -137,6 +139,7 @@ function LandingPage() {
             data: {
                 mostrar_quienes_somos: quienesSomosChecked === true ? 1 : 0,
                 mostrar_productos: productosChecked === true ? 1 : 0,
+                mostrar_productos_verMas: productosVerMasChecked === true ? 1 : 0,
                 mostrar_servicios: serviciosChecked === true ? 1 : 0,
                 mostrar_contactanos: contactanosChecked === true ? 1 : 0,
                 mostrar_sitioEnMantenimiento: sitioEnMttoChecked === true ? 1 : 0
@@ -163,7 +166,6 @@ function LandingPage() {
     return (
         <Page title="Landig Page">
             <Tabs defaultActiveKey="settings" id="justify-tab-example" className="mb-3" justify>
-                
                 <Tab eventKey="settings" title="Landing Page">
                     <h4 className="pt-4">Activar / Desactivar páginas</h4>
                     <hr />
@@ -192,6 +194,14 @@ function LandingPage() {
                                 id="products"
                                 className="pt-2"
                                 onChange={e => setproductosChecked(e.target.checked)}
+                            />
+                            <Form.Check // prettier-ignore
+                                type="switch"
+                                label="Productos ver más"
+                                defaultChecked={productosVerMasChecked}
+                                id="products_vermas"
+                                className="pt-2"
+                                onChange={e => setproductosVerMasChecked(e.target.checked)}
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
@@ -232,7 +242,7 @@ function LandingPage() {
                     </Form>
 
                     <h4 className="pt-5">Carrousel</h4>
-                    <Galeria fuente={'quienes_somos'}/>
+                    <Galeria fuente={"quienes_somos"} />
                 </Tab>
 
                 <Tab eventKey="products" title="Productos">

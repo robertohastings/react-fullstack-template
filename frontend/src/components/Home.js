@@ -1,5 +1,6 @@
 import "./home.css"
 import React, { useContext } from "react"
+import HTMLReactParser from "html-react-parser/lib/index"
 import { Carousel, Container, Row, Col, Card, Button, Form, Image } from "react-bootstrap"
 import Page from "./Page"
 //import Card from "react-bootstrap/Card"
@@ -31,7 +32,7 @@ function Home() {
             {appState.landingPage.settings.mostrar_sitioEnMantenimiento === 1 && (
                 <>
                     <Row className="m-3">
-                        <Col className="d-flex justify-content-center align-items-center">
+                        <Col className="d-flex justify-content-center align-items-center pt-5">
                             <Image src="/img/website-maintenance.jpg" fluid />
                         </Col>
                     </Row>
@@ -91,7 +92,7 @@ function Home() {
                     {/* Quiénes Somos */}
                     <section className="about-section">
                         <h2>¿Quiénes Somos?</h2>
-                        <p>{appState.landingPage.quienesSomos}</p>
+                        <p>{appState.landingPage.quienesSomos ? HTMLReactParser(appState.landingPage.quienesSomos) : ""}</p>
                     </section>
 
                     {/* Servicios */}
@@ -133,7 +134,8 @@ function Home() {
                     {appState.landingPage.settings.mostrar_productos === 1 && (
                         <>
                             <section className="products-section">
-                                <h2 className="pb-5">Nuestros Productos</h2>
+                                <h2 className="pb-3">Nuestros Productos</h2>
+                                <p className="pb-4">{appState.landingPage.productos ? HTMLReactParser(appState.landingPage.productos) : ""}</p>
                                 <Row className="justify-content-center">
                                     {/* {["Dominio", "Hospedaje", "SSL", "Correo Corporativo", "Web", "Móvil"].map((product, index) => (
                                         <Col md={3} key={index} className="mb-4">
