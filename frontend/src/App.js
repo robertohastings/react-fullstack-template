@@ -32,6 +32,7 @@ import Perfil from "./components/Admin/Perfil/Perfil"
 import PedidoCanvas from "./components/Inventario/Canvas/PedidoCanvas"
 import Cotizar from "./components/Ventas/Cotizar/Cotizar"
 import LandingPagePreview from "./components/LandingPagePreview"
+import Agenda from "./components/Cartera/Agenda/Agenda"
 
 function App() {
     //.log("Aquí")
@@ -104,7 +105,7 @@ function App() {
                 break
             case "landingPage":
                 console.log("action data landingPage:", action.data)
-                //draft.landingPage = action.data
+                draft.landingPage = action.data
                 localStorage.setItem("complexappLanding", JSON.stringify(action.data))
                 break
             case "landingPageSettings":
@@ -179,6 +180,7 @@ function App() {
                     setEncryptedItem("hostregioLandingPageId", response.data.landingPage.idLandingPage)
 
                     //dispatch({ type: "tenant", data: response.data.landingPage.idEmpresa })
+                    dispatch({ type: "landingPage", data: response.data.landingPage })
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)
@@ -237,6 +239,7 @@ function App() {
                                     <Route path="/Admin/Perfil" element={<Perfil />} />
                                     <Route path="/Ventas/Cotizar" element={<Cotizar />} />
                                     <Route path="/LandingPagePreview" element={<LandingPagePreview />} />
+                                    <Route path="/Cartera/Agenda" element={<Agenda />} />
                                 </Routes>
                             </main>
 

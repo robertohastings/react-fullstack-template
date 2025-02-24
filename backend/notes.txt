@@ -31,3 +31,6 @@ Pendientes:
     Agregar en la pagina de landingPage 
         - el botón para mostar ver mas Productos (Listo)
         - links para redes sociales y mostrarlas en la página si estas traen contenido
+
+23/02:
+    agregue el componente en frontend: npm install react-calendar

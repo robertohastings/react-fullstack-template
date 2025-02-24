@@ -105,6 +105,7 @@ function Header(props) {
                                         Cotizar
                                     </NavDropdown.Item>
                                     <NavDropdown.Item>Colocar Remisión</NavDropdown.Item>
+                                    <NavDropdown.Item>Colocar Remisión2</NavDropdown.Item>
                                 </NavDropdown>
                             </Nav>
                             {/* Compras */}
@@ -121,6 +122,7 @@ function Header(props) {
                             <Nav>
                                 <NavDropdown title="Cartera" id="nav-cartera" drop="start">
                                     <NavDropdown.Item>ABC Clientes</NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to={"Cartera/Agenda"}>Agenda</NavDropdown.Item>
                                     <NavDropdown.Item>Estado de Cuenta</NavDropdown.Item>
                                     <NavDropdown.Item>Antigüedad de Saldos</NavDropdown.Item>
                                     <NavDropdown.Item>Notas de Crédito</NavDropdown.Item>
