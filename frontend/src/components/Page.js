@@ -8,7 +8,7 @@ function Page(props) {
         window.scrollTo(0, 0)
     }, [props.title])
 
-    const containerClass = props.fluid ? "container-fluid" : "container mt-5 pt-2"
+    const containerClass = props.fluid ? "container-fluid mt-5" : "container mt-5 pt-2"
 
     return (
         <>

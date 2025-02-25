@@ -3,23 +3,24 @@ import Page from "../../Page"
 import { Row, Col } from "react-bootstrap"
 import Calendar from "react-calendar"
 import "react-calendar/dist/Calendar.css"
-import axios from "axios"
-import { response } from "express"
+import Axios from "axios"
 
 function Agenda() {
     const [date, setDate] = useState(new Date())
-    const [agenda, setAgenda] = useState({})
+    const [agenda, setAgenda] = useState([])
 
     const onChange = date => {
         setDate(date)
+        ObtenerAgenda()
     }
 
-    const ObtenerAgenda = () => {
-        axios
+    const ObtenerAgenda = async () => {
+        
+        await Axios
             .get("/api/getAgendaPorDia", {
                 params: {
                     id_empresa: 1,
-                    fecha: date
+                    fecha: date.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' })
                 }
             })
             .then(response => {
@@ -37,10 +38,10 @@ function Agenda() {
     }, [])
 
     return (
-        <Page title="Agenda">
+        <Page title="Agenda" fluid={true}>
             <h3>Agenda</h3>
             <Row className="pt-5 d-flex justify-content-center">
-                <Col md={3}>
+                <Col md={4}>
                     <Calendar
                         value={date}
                         onChange={onChange}
@@ -48,7 +49,26 @@ function Agenda() {
                     />
                     <p className="pt-3 text-center">Fecha seleccionada: {date.toLocaleDateString()}</p>
                 </Col>
-                <Col md={9}></Col>
+                <Col md={8}>
+                    <Row className="fw-bold"> {/* Usa fw-bold para resaltar los encabezados */}
+                        <Col>Horario</Col>
+                        <Col>Nombre</Col>
+                        <Col>Celular</Col>
+                        <Col>Estatus</Col>
+                    </Row>                
+                    {agenda.length > 0 ? (
+                        agenda.map((cita, index) => ( 
+                            <Row key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
+                                <Col className="col-4">{cita.intervalo}</Col>
+                                <Col className="col-4">{cita.Nombre}</Col>
+                                <Col className="col-2">{cita.Celular}</Col>
+                                <Col className="col-2">{cita.Estatus}</Col>
+                            </Row>                                                
+                        ))
+                    ) : (
+                        <p>No hay citas para esta fecha.</p>
+                    )}
+                </Col>
             </Row>
         </Page>
     )
