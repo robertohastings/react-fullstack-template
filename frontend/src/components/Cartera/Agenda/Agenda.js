@@ -50,19 +50,19 @@ function Agenda() {
                     <p className="pt-3 text-center">Fecha seleccionada: {date.toLocaleDateString()}</p>
                 </Col>
                 <Col md={8}>
-                    <Row className="fw-bold"> {/* Usa fw-bold para resaltar los encabezados */}
-                        <Col>Horario</Col>
-                        <Col>Nombre</Col>
-                        <Col>Celular</Col>
-                        <Col>Estatus</Col>
+                    <Row className="fw-bold text-center"> {/* Usa fw-bold para resaltar los encabezados */}
+                        <Col className="col-3">Horario</Col>
+                        <Col className="col-5">Nombre</Col>
+                        <Col className="col-2">Celular</Col>
+                        <Col className="col-2">Estatus</Col>
                     </Row>                
                     {agenda.length > 0 ? (
                         agenda.map((cita, index) => ( 
-                            <Row key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                                <Col className="col-4">{cita.intervalo}</Col>
-                                <Col className="col-4">{cita.Nombre}</Col>
+                            <Row className="text-center" key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
+                                <Col className="col-3" style={{cursor: 'pointer'}}>{cita.intervalo}</Col>
+                                <Col className="col-5">{cita.Nombre}</Col>
                                 <Col className="col-2">{cita.Celular}</Col>
-                                <Col className="col-2">{cita.Estatus}</Col>
+                                <Col className="col-2" style={{cursor: 'pointer'}}>{cita.Estatus}</Col>
                             </Row>                                                
                         ))
                     ) : (
