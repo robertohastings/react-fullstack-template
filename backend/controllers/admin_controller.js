@@ -367,3 +367,22 @@ export const putPedidoEstatus = async (req, res) => {
         })
     }
 }
+/*Agenda*/
+export const getAgendaPorDia = async (req, res) => {
+    try {
+        console.log("getAgendaPorDia ->", req.query)
+        const { id_empresa, fecha } = req.query
+
+        const rows = await pool.query(`CALL getAgendaPorDia(?, ?);`, [id_empresa, fecha])
+
+        res.status(200).json({
+            success: true,
+            agenda: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error}`
+        })
+    }
+}
