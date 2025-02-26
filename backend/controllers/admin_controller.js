@@ -386,3 +386,23 @@ export const getAgendaPorDia = async (req, res) => {
         })
     }
 }
+
+export const getClientePorTelefonoOCelular = async (req, res) => {
+    try {
+        console.log("getClientePorTelefonoOCelular ->", req.query)
+        const { id_empresa, telefono } = req.query
+
+        const rows = await pool.query(`CALL getClientePorTelefonoOCelular(?, ?);`, [id_empresa, telefono])
+        console.log("rows ->", rows[0][0][0])
+
+        res.status(200).json({
+            success: true,
+            cliente: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error}`
+        })
+    }
+}
