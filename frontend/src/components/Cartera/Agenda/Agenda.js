@@ -15,6 +15,7 @@ function Agenda() {
     const [showModal, setShowModal] = useState(false)
     const telefonoRef = useRef(null)
     const [isFetching, setIsFetching] = useState(false)
+    const [isNewRecord, setIsNewRecord] = useState(false)
 
     const onChange = date => {
         setDate(date)
@@ -43,8 +44,14 @@ function Agenda() {
     }, [])
 
     const handledRowClick = cita => {
-        //console.log("cita =>", cita)
+        setCelulaABuscar('')
+        console.log("celular a buscar =>", celularABuscar)
+        console.log("nombds a buscar =>", cita.Nombre === ' ' ? 'No hay nombre' : cita.Nombre)
+        if (cita.Nombre === ' ') {
+            setIsNewRecord(true)
+        }
         setCita(cita)
+        //setCita({})
         setShowPanel(true)
         setTimeout(() => {
             telefonoRef.current.focus()
@@ -68,7 +75,7 @@ function Agenda() {
             //setNombre(data.cliente.nombre_cliente)
             setCita(prevCita => ({ ...prevCita, Nombre: data }))
             setCita(prevCita => ({ ...prevCita, Celular: celular }))
-            setCita(prevCita => ({ ...prevCita, Estatus: cita.Estatus === "Disponible" ? "Reservada" : cita.Estatus }))
+            //setCita(prevCita => ({ ...prevCita, Estatus: cita.Estatus === "Disponible" ? "Reservada" : cita.Estatus }))
 
             console.log("Cliente encontrado ->", data)
         } catch (error) {
@@ -80,21 +87,27 @@ function Agenda() {
     const handled_Guardar = e => {
         e.preventDefault()
         setShowPanel(false)
+        setIsNewRecord(false)
 
+        setCita(prevCita => ({ ...prevCita, Estatus: 'Reservada' }))
         // Añadir la cita actual al estado de agenda
         setAgenda(prevAgenda => {
             // Verificar si la cita ya existe en la agenda
             const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
             if (citaExistente) {
+                console.log('existente')
                 // Actualizar la cita existente
+                //setCita(prevCita => ({ ...prevCita, Estatus: 'Reservada' }))
+                
                 return prevAgenda.map(item => (item.intervalo === cita.intervalo ? cita : item))
             } else {
+                console.log('nueva')
                 // Añadir una nueva cita
+                
                 return [...prevAgenda, cita]
             }
-        })
-
-        alert("Cambios guardado")
+        })        
+        //alert("Cambios guardado")
     }
 
     return (
@@ -155,7 +168,23 @@ function Agenda() {
                             <Form.Group as={Row} className="mb-3" id="formTelefono">
                                 <Col md={9}>
                                     <Form.Label>Teléfono:</Form.Label>
-                                    <Form.Control ref={telefonoRef} type="text" id="telefono" name="telefono" placeholder="escriba el número de contacto del cliente" defaultValue={cita.Celular} onChange={e => setCelulaABuscar(e.target.value)} autoComplete="off" />
+                                    <Form.Control 
+                                        ref={telefonoRef} 
+                                        type="text"
+                                        pattern="\d*" 
+                                        inputMode="numeric"
+                                        id="telefono" 
+                                        name="telefono" 
+                                        placeholder="escriba el número de contacto del cliente" 
+                                        defaultValue={cita.Celular} 
+                                        onChange={e => setCelulaABuscar(e.target.value)} 
+                                        autoComplete="off"                                         
+                                        onKeyDown={(e) => {
+                                            if (!/[0-9]/.test(e.key)) {
+                                                e.preventDefault();
+                                            }
+                                        }}
+                                        />
                                 </Col>
                                 <Col md={3} className="d-flex align-items-end mb-1">
                                     <Button variant="primary" size="sm" onClick={() => handledBuscarCliente(celularABuscar)} title="Presione aquí para buscar el cliente por número de teléfono" disabled={isFetching}>
@@ -166,17 +195,54 @@ function Agenda() {
                             {/* Nombre */}
                             <Form.Group className="mb-3" id="formNombre">
                                 <Form.Label>Nombre:</Form.Label>
-                                <Form.Control type="text" id="nombre" name="nombre" placeholder="escriba el nombre del cliente" defaultValue={cita.Nombre} autoComplete="off" />
+                                <Form.Control 
+                                    type="text" 
+                                    id="nombre" 
+                                    name="nombre" 
+                                    placeholder="escriba el nombre del cliente" 
+                                    value={cita.Nombre} 
+                                    autoComplete="off" 
+                                    onChange={(e) => setCita(prevCita => ({ ...prevCita, Nombre: e.target.value }))}                                    
+                                    />
                                 {/* <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text> */}
                             </Form.Group>
                             {/* Botones */}
                             <Form.Group className="my-4 d-flex justify-content-between">
-                                <Button type="submit" variant="success" size="sm" title="Presione aquí para guardar los cambios" disabled={celularABuscar === ""}>
+                                <Button 
+                                    type="submit" 
+                                    variant="success" 
+                                    size="sm" 
+                                    title="Presione aquí para guardar los cambios" 
+                                    disabled={celularABuscar === "" || cita.Nombre === ' '}>
                                     Guardar
                                 </Button>
-                                <Button variant="danger" size="sm" title="Presione aquí para cancelar la cita">
-                                    Cancelar cita
+                                <Button variant="secondary" size="sm" title="Presione aquí para regresar"
+                                    onClick={handledPanelClose}
+                                >
+                                    Regresar
                                 </Button>
+                                {!isNewRecord && (
+                                    <>
+                                        <Button variant="warning" size="sm" title="Presione aquí para reprogramar la cita">
+                                            Reprogramar cita
+                                        </Button>
+
+                                        <Button variant="info" size="sm" title="Presione aquí para enviar un recordatorio">
+                                            Recordatorio
+                                        </Button>
+                                    
+                                        <Button variant="primary" size="sm" title="Presione aquí para confirmar la cita"
+                                            onClick={() => alert("Cita confirmada")}
+                                        >
+                                            Confirmar cita
+                                        </Button>
+                                        <Button variant="danger" size="sm" title="Presione aquí para cancelar la cita"
+                                            onClick={() => alert("Cita cancelada")}
+                                        >
+                                            Cancelar cita
+                                        </Button>                                   
+                                    </>
+                                )}
                             </Form.Group>
                         </Form>
                     </Offcanvas.Body>

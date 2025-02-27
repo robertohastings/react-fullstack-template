@@ -375,6 +375,8 @@ export const getAgendaPorDia = async (req, res) => {
 
         const rows = await pool.query(`CALL getAgendaPorDia(?, ?);`, [id_empresa, fecha])
 
+        console.log('rows ->', rows[0][0])
+
         res.status(200).json({
             success: true,
             agenda: rows[0][0]
