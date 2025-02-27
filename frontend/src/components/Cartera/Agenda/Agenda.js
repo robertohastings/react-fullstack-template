@@ -14,6 +14,7 @@ function Agenda() {
     const [showPanel, setShowPanel] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const telefonoRef = useRef(null)
+    const [isFetching, setIsFetching] = useState(false)
 
     const onChange = date => {
         setDate(date)
@@ -55,6 +56,7 @@ function Agenda() {
     }
     const handledBuscarCliente = async celular => {
         // alert(`Celular a buscar: ${celular}`)
+        setIsFetching(true)
         try {
             const response = await Axios.get("/api/getClientePorTelefonoOCelular", {
                 params: {
@@ -65,16 +67,33 @@ function Agenda() {
             const data = response.data.cliente[0].nombre_cliente
             //setNombre(data.cliente.nombre_cliente)
             setCita(prevCita => ({ ...prevCita, Nombre: data }))
+            setCita(prevCita => ({ ...prevCita, Celular: celular }))
+            setCita(prevCita => ({ ...prevCita, Estatus: cita.Estatus === "Disponible" ? "Reservada" : cita.Estatus }))
 
             console.log("Cliente encontrado ->", data)
         } catch (error) {
             console.log("There was an error handledBuscarCliente->", error)
         }
+        setIsFetching(false)
     }
 
     const handled_Guardar = e => {
         e.preventDefault()
         setShowPanel(false)
+
+        // Añadir la cita actual al estado de agenda
+        setAgenda(prevAgenda => {
+            // Verificar si la cita ya existe en la agenda
+            const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
+            if (citaExistente) {
+                // Actualizar la cita existente
+                return prevAgenda.map(item => (item.intervalo === cita.intervalo ? cita : item))
+            } else {
+                // Añadir una nueva cita
+                return [...prevAgenda, cita]
+            }
+        })
+
         alert("Cambios guardado")
     }
 
@@ -87,6 +106,7 @@ function Agenda() {
                         value={date}
                         onChange={onChange}
                         minDate={new Date()} // Muestra solo los días disponibles desde hoy
+                        disabled={isFetching}
                     />
                     <p className="pt-3 text-center">Fecha seleccionada: {date.toLocaleDateString()}</p>
                 </Col>
@@ -131,25 +151,27 @@ function Agenda() {
                                 <Form.Control type="text" id="horario" name="horario" placeholder="confirme el horario de la cita" defaultValue={cita.intervalo} />
                                 {/* <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text> */}
                             </Form.Group>
+                            {/* telefono */}
                             <Form.Group as={Row} className="mb-3" id="formTelefono">
                                 <Col md={9}>
                                     <Form.Label>Teléfono:</Form.Label>
                                     <Form.Control ref={telefonoRef} type="text" id="telefono" name="telefono" placeholder="escriba el número de contacto del cliente" defaultValue={cita.Celular} onChange={e => setCelulaABuscar(e.target.value)} autoComplete="off" />
                                 </Col>
                                 <Col md={3} className="d-flex align-items-end mb-1">
-                                    <Button variant="primary" size="sm" onClick={() => handledBuscarCliente(celularABuscar)} title="Presione aquí para buscar el cliente por número de teléfono">
+                                    <Button variant="primary" size="sm" onClick={() => handledBuscarCliente(celularABuscar)} title="Presione aquí para buscar el cliente por número de teléfono" disabled={isFetching}>
                                         Buscar
                                     </Button>
                                 </Col>
                             </Form.Group>
+                            {/* Nombre */}
                             <Form.Group className="mb-3" id="formNombre">
                                 <Form.Label>Nombre:</Form.Label>
-                                <Form.Control type="text" id="nombre" name="nombre" placeholder="escriba el nombre del cliente" defaultValue={cita.Nombre} value={cita.Nombre} autoComplete="off" />
+                                <Form.Control type="text" id="nombre" name="nombre" placeholder="escriba el nombre del cliente" defaultValue={cita.Nombre} autoComplete="off" />
                                 {/* <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text> */}
                             </Form.Group>
                             {/* Botones */}
                             <Form.Group className="my-4 d-flex justify-content-between">
-                                <Button type="submit" variant="success" size="sm" title="Presione aquí para guardar los cambios">
+                                <Button type="submit" variant="success" size="sm" title="Presione aquí para guardar los cambios" disabled={celularABuscar === ""}>
                                     Guardar
                                 </Button>
                                 <Button variant="danger" size="sm" title="Presione aquí para cancelar la cita">
