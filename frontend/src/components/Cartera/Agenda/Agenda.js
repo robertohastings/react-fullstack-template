@@ -4,6 +4,7 @@ import { Row, Col, Modal, Button, Offcanvas, Form } from "react-bootstrap"
 import Calendar from "react-calendar"
 import "react-calendar/dist/Calendar.css"
 import Axios from "axios"
+import { BsSave, BsBackspace, BsCalendar4Event, BsCheck, BsSend, BsEraser, BsSearch } from "react-icons/bs"
 
 function Agenda() {
     const [date, setDate] = useState(new Date())
@@ -44,10 +45,11 @@ function Agenda() {
     }, [])
 
     const handledRowClick = cita => {
-        setCelulaABuscar('')
+        setCelulaABuscar("")
+        console.log("cita seleccionada: =>", cita)
         console.log("celular a buscar =>", celularABuscar)
-        console.log("nombds a buscar =>", cita.Nombre === ' ' ? 'No hay nombre' : cita.Nombre)
-        if (cita.Nombre === ' ') {
+        console.log("nombds a buscar =>", cita.Nombre === " " ? "No hay nombre" : cita.Nombre)
+        if (cita.Nombre === " ") {
             setIsNewRecord(true)
         }
         setCita(cita)
@@ -84,29 +86,79 @@ function Agenda() {
         setIsFetching(false)
     }
 
-    const handled_Guardar = e => {
-        e.preventDefault()
-        setShowPanel(false)
-        setIsNewRecord(false)
-
-        setCita(prevCita => ({ ...prevCita, Estatus: 'Reservada' }))
+    const handled_Cancelar = () => {
+        let nuevaCita = { ...cita }
+        nuevaCita = { ...nuevaCita, Estatus: "Disponible", Celular: "", Nombre: "" }
         // Añadir la cita actual al estado de agenda
         setAgenda(prevAgenda => {
             // Verificar si la cita ya existe en la agenda
             const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
             if (citaExistente) {
-                console.log('existente')
                 // Actualizar la cita existente
-                //setCita(prevCita => ({ ...prevCita, Estatus: 'Reservada' }))
-                
-                return prevAgenda.map(item => (item.intervalo === cita.intervalo ? cita : item))
+                return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
             } else {
-                console.log('nueva')
+                console.log("nueva")
                 // Añadir una nueva cita
-                
-                return [...prevAgenda, cita]
+                return [...prevAgenda, nuevaCita]
             }
-        })        
+        })
+
+        setShowPanel(false)
+        setIsNewRecord(false)
+    }
+
+    const handled_Confirmar = () => {
+        let nuevaCita = { ...cita }
+        nuevaCita = { ...nuevaCita, Estatus: "Confirmada" }
+        // Añadir la cita actual al estado de agenda
+        setAgenda(prevAgenda => {
+            // Verificar si la cita ya existe en la agenda
+            const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
+            if (citaExistente) {
+                // Actualizar la cita existente
+                return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
+            } else {
+                console.log("nueva")
+                // Añadir una nueva cita
+                return [...prevAgenda, nuevaCita]
+            }
+        })
+
+        setShowPanel(false)
+        setIsNewRecord(false)
+    }
+
+    const handled_Guardar = e => {
+        e.preventDefault()
+
+        // Cambiar el estatus a 'Reservado' si es un nuevo registro
+        let nuevaCita = { ...cita }
+        if (isNewRecord) {
+            nuevaCita = { ...nuevaCita, Estatus: "Reservado" }
+        } /*else {
+            nuevaCita = { ...nuevaCita, Estatus: "Reservada" }
+        }*/
+
+        // Añadir la cita actual al estado de agenda
+        setAgenda(prevAgenda => {
+            // Verificar si la cita ya existe en la agenda
+            const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
+            if (citaExistente) {
+                console.log("existente")
+                // Actualizar la cita existente
+                return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
+
+                //return prevAgenda.map(item => (item.intervalo === cita.intervalo ? cita : item))
+            } else {
+                console.log("nueva")
+                // Añadir una nueva cita
+                return [...prevAgenda, nuevaCita]
+                //return [...prevAgenda, cita]
+            }
+        })
+
+        setShowPanel(false)
+        setIsNewRecord(false)
         //alert("Cambios guardado")
     }
 
@@ -168,82 +220,91 @@ function Agenda() {
                             <Form.Group as={Row} className="mb-3" id="formTelefono">
                                 <Col md={9}>
                                     <Form.Label>Teléfono:</Form.Label>
-                                    <Form.Control 
-                                        ref={telefonoRef} 
+                                    <Form.Control
+                                        ref={telefonoRef}
                                         type="text"
-                                        pattern="\d*" 
+                                        pattern="\d*"
                                         inputMode="numeric"
-                                        id="telefono" 
-                                        name="telefono" 
-                                        placeholder="escriba el número de contacto del cliente" 
-                                        defaultValue={cita.Celular} 
-                                        onChange={e => setCelulaABuscar(e.target.value)} 
-                                        autoComplete="off"                                         
-                                        onKeyDown={(e) => {
+                                        id="telefono"
+                                        name="telefono"
+                                        placeholder="escriba el número de contacto del cliente"
+                                        defaultValue={cita.Celular}
+                                        onChange={e => setCelulaABuscar(e.target.value)}
+                                        autoComplete="off"
+                                        onKeyDown={e => {
                                             if (!/[0-9]/.test(e.key)) {
-                                                e.preventDefault();
+                                                e.preventDefault()
                                             }
                                         }}
-                                        />
+                                    />
                                 </Col>
                                 <Col md={3} className="d-flex align-items-end mb-1">
                                     <Button variant="primary" size="sm" onClick={() => handledBuscarCliente(celularABuscar)} title="Presione aquí para buscar el cliente por número de teléfono" disabled={isFetching}>
-                                        Buscar
+                                        <BsSearch /> Buscar
                                     </Button>
                                 </Col>
                             </Form.Group>
                             {/* Nombre */}
                             <Form.Group className="mb-3" id="formNombre">
                                 <Form.Label>Nombre:</Form.Label>
-                                <Form.Control 
-                                    type="text" 
-                                    id="nombre" 
-                                    name="nombre" 
-                                    placeholder="escriba el nombre del cliente" 
-                                    value={cita.Nombre} 
-                                    autoComplete="off" 
-                                    onChange={(e) => setCita(prevCita => ({ ...prevCita, Nombre: e.target.value }))}                                    
-                                    />
+                                <Form.Control type="text" id="nombre" name="nombre" placeholder="escriba el nombre del cliente" value={cita.Nombre} autoComplete="off" onChange={e => setCita(prevCita => ({ ...prevCita, Nombre: e.target.value }))} />
                                 {/* <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text> */}
                             </Form.Group>
                             {/* Botones */}
-                            <Form.Group className="my-4 d-flex justify-content-between">
-                                <Button 
-                                    type="submit" 
-                                    variant="success" 
-                                    size="sm" 
-                                    title="Presione aquí para guardar los cambios" 
-                                    disabled={celularABuscar === "" || cita.Nombre === ' '}>
+                            <Form.Group className="my-4">
+                                <Row className="d-flex justify-content-between">
+                                    <Col xs={6}>
+                                        <Button type="submit" variant="success" size="sm" className="w-100" title="Presione aquí para reprogramar la cita" disabled={celularABuscar === " " || cita.Nombre === " "}>
+                                            <BsSave /> Guardar
+                                        </Button>
+                                    </Col>
+                                    <Col xs={6}>
+                                        <Button variant="secondary" size="sm" className="w-100" title="Presione aquí para enviar un recordatorio" onClick={handledPanelClose}>
+                                            <BsBackspace /> Regresar
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </Form.Group>
+                            {!isNewRecord && (
+                                <>
+                                    <hr />
+                                    <Form.Group className="my-4">
+                                        <Row className="d-flex justify-content-between">
+                                            <Col xs={6}>
+                                                <Button variant="warning" size="sm" className="w-100" title="Presione aquí para reprogramar la cita">
+                                                    <BsCalendar4Event /> Reprogramar
+                                                </Button>
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Button variant="info" size="sm" className="w-100" title="Presione aquí para enviar un recordatorio">
+                                                    <BsSend /> Recordatorio
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                        <Row className="d-flex justify-content-between mt-2">
+                                            <Col xs={6}>
+                                                <Button variant="primary" size="sm" className="w-100" title="Presione aquí para confirmar la cita" onClick={handled_Confirmar}>
+                                                    <BsCheck /> Confirmar
+                                                </Button>
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Button variant="danger" size="sm" className="w-100" title="Presione aquí para cancelar la cita" onClick={handled_Cancelar}>
+                                                    <BsEraser /> Cancelar
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                    </Form.Group>
+                                </>
+                            )}
+
+                            {/* <Form.Group className="my-4 d-flex justify-content-between">
+                                <Button type="submit" variant="success" size="sm" title="Presione aquí para guardar los cambios" disabled={celularABuscar === "" || cita.Nombre === " "}>
                                     Guardar
                                 </Button>
-                                <Button variant="secondary" size="sm" title="Presione aquí para regresar"
-                                    onClick={handledPanelClose}
-                                >
+                                <Button variant="secondary" size="sm" title="Presione aquí para regresar" onClick={handledPanelClose}>
                                     Regresar
                                 </Button>
-                                {!isNewRecord && (
-                                    <>
-                                        <Button variant="warning" size="sm" title="Presione aquí para reprogramar la cita">
-                                            Reprogramar cita
-                                        </Button>
-
-                                        <Button variant="info" size="sm" title="Presione aquí para enviar un recordatorio">
-                                            Recordatorio
-                                        </Button>
-                                    
-                                        <Button variant="primary" size="sm" title="Presione aquí para confirmar la cita"
-                                            onClick={() => alert("Cita confirmada")}
-                                        >
-                                            Confirmar cita
-                                        </Button>
-                                        <Button variant="danger" size="sm" title="Presione aquí para cancelar la cita"
-                                            onClick={() => alert("Cita cancelada")}
-                                        >
-                                            Cancelar cita
-                                        </Button>                                   
-                                    </>
-                                )}
-                            </Form.Group>
+                            </Form.Group> */}
                         </Form>
                     </Offcanvas.Body>
                 </Offcanvas>
