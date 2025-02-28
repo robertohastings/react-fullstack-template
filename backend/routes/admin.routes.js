@@ -1,5 +1,8 @@
 import { Router } from "express"
-import { putLandingPage, putLandingPage_QuienesSomos, putLandingPage_Productos, putLandingPage_Servicios, putLandingPage_Settings, postPuntosDeEntrega, putUsuario, getUsuario, postDireccion, getDirecciones, getPuntosDeEntregaCarrito, getFormasDePago, putFormasDePago, postPedido, getPedidoDetalle, getPedidoCanvas, putPedidoEstatus, getAgendaPorDia, getClientePorTelefonoOCelular } from "../controllers/admin_controller.js"
+import {putLandingPage, putLandingPage_QuienesSomos, putLandingPage_Productos, putLandingPage_Servicios, 
+        putLandingPage_Settings, postPuntosDeEntrega, putUsuario, getUsuario, postDireccion, getDirecciones, 
+        getPuntosDeEntregaCarrito, getFormasDePago, putFormasDePago, postPedido, getPedidoDetalle, getPedidoCanvas, 
+        putPedidoEstatus, getAgendaPorDia, getClientePorTelefonoOCelular, postAgenda } from "../controllers/admin_controller.js"
 
 const router = Router()
 
@@ -22,5 +25,6 @@ router.get("/getPedidoCanvas", getPedidoCanvas)
 router.put("/putPedidoEstatus", putPedidoEstatus)
 router.get("/getAgendaPorDia", getAgendaPorDia)
 router.get("/getClientePorTelefonoOCelular", getClientePorTelefonoOCelular)
+router.post("/postAgenda", postAgenda)
 
 export default router

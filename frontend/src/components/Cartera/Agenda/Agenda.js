@@ -128,38 +128,68 @@ function Agenda() {
         setIsNewRecord(false)
     }
 
-    const handled_Guardar = e => {
+    const handled_Guardar = async e => {
         e.preventDefault()
+
+        console.log('cita a guardar =>', cita)
 
         // Cambiar el estatus a 'Reservado' si es un nuevo registro
         let nuevaCita = { ...cita }
         if (isNewRecord) {
             nuevaCita = { ...nuevaCita, Estatus: "Reservado" }
-        } /*else {
-            nuevaCita = { ...nuevaCita, Estatus: "Reservada" }
-        }*/
+        }
 
-        // Añadir la cita actual al estado de agenda
-        setAgenda(prevAgenda => {
-            // Verificar si la cita ya existe en la agenda
-            const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
-            if (citaExistente) {
-                console.log("existente")
-                // Actualizar la cita existente
-                return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
+        // Datos para el POST
+        const postData = {
+            id_empresa: 1,
+            fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }),
+            intervalo: cita.intervalo,
+            id_usuario: 1
+        }
 
-                //return prevAgenda.map(item => (item.intervalo === cita.intervalo ? cita : item))
-            } else {
-                console.log("nueva")
-                // Añadir una nueva cita
-                return [...prevAgenda, nuevaCita]
-                //return [...prevAgenda, cita]
+        try {
+            // Hacer el POST al endpoint
+            try {
+                await Axios.post("/api/postAgenda", postData)
+                    .then(response => {
+                        console.log("POST response ->", response.data)
+
+                        // Si el POST es satisfactorio, continuar con la actualización de la agenda
+                        // Añadir la cita actual al estado de agenda
+                        setAgenda(prevAgenda => {
+                            // Verificar si la cita ya existe en la agenda
+                            const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
+                            if (citaExistente) {
+                                console.log("existente")
+                                // Actualizar la cita existente
+                                return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
+                
+                                //return prevAgenda.map(item => (item.intervalo === cita.intervalo ? cita : item))
+                            } else {
+                                console.log("nueva")
+                                // Añadir una nueva cita
+                                return [...prevAgenda, nuevaCita]
+                                //return [...prevAgenda, cita]
+                            }
+                        })                        
+
+                    })
+                    .catch(error => {
+                        console.log("There was an error updating agenda: ", error)
+                    })
+            } catch (error) {
+                console.log("error:", error)
+            } finally {
+                console.log("finally")
             }
-        })
+
+        } catch (error) {
+            console.log("There was an error with the POST request ->", error)
+            // Manejar el error según sea necesario
+        }
 
         setShowPanel(false)
         setIsNewRecord(false)
-        //alert("Cambios guardado")
     }
 
     return (

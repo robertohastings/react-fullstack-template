@@ -408,3 +408,27 @@ export const getClientePorTelefonoOCelular = async (req, res) => {
         })
     }
 }
+export const postAgenda = async (req, res) => {
+    console.log("body postAgenda =>", req.body)
+    const { id_empresa, fecha, intervalo, id_usuario } = req.body
+
+    try {
+        const [result] = await pool.query("CALL postAgenda(?, ?, ?, ?)", [id_empresa, fecha, intervalo, id_usuario])
+
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                message: "No se realizó actualización"
+            })
+        } else {
+            return res.status(200).json({
+                message: "Agenda actualizada correctamente",
+                data: res.data
+            })
+        }
+    } catch (error) {
+        console.log("Ocurrió un error")
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
+}

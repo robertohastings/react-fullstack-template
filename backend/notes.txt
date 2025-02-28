@@ -35,3 +35,99 @@ Pendientes:
 23/02:
     agregue el componente en frontend: npm install react-calendar
 
+
+cambios en DB:
+
+ALTER TABLE `crm`.`agenda` 
+ADD COLUMN `clave_confirmacion` VARCHAR(6) NULL AFTER `id_jornada`;
+
+use crm;
+ALTER TABLE agenda ADD UNIQUE INDEX idx_empresa_clave (id_empresa, clave_confirmacion);
+
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `postAgenda`(
+	IN prm_id_empresa INT,
+	IN prm_fecha DATE,
+    IN intervalo VARCHAR(20),
+    IN prm_id_usuario INT   
+)
+BEGIN
+	DECLARE separador INT;
+	DECLARE _hora_inicio TIME;
+    DECLARE _hora_fin TIME;
+    DECLARE _dia_semana INT;
+    DECLARE _id_jornada INT;
+    DECLARE _id_agenda_estatus SMALLINT;
+    DECLARE _id_agenda INT;
+    DECLARE _clave_confirmacion VARCHAR(6);
+    
+    SET _dia_semana = WEEKDAY(prm_fecha);
+    SET _id_agenda_estatus = 2;
+    SET _clave_confirmacion = fn_genera_clave_confirmacion(prm_id_empresa);
+    
+	SELECT JL.id_jornada INTO _id_jornada
+	FROM jornada_laboral JL
+	WHERE JL.dia_semana = _dia_semana;  
+    
+    -- Buscar la posición del separador "-" para obtener la fecha y hora 
+	SET separador = LOCATE('-', intervalo);    
+    SET _hora_inicio = TIME(SUBSTRING(intervalo, 1, separador - 1));
+	SET _hora_fin = TIME(SUBSTRING(intervalo, separador + 2));
+    
+    -- SELECT _hora_inicio, _hora_fin;
+    
+    -- Busco si no hay cita reservada
+    IF NOT EXISTS(
+		SELECT 1
+		FROM agenda A
+		WHERE A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = _hora_inicio AND A.hora_fin = _hora_fin
+    ) THEN 
+		INSERT INTO agenda (id_empresa, fecha, hora_inicio, hora_fin, id_usuario, id_agenda_estatus, id_jornada, 
+							clave_confirmacion) 
+			VALUES (prm_id_empresa, CURDATE(), _hora_inicio, _hora_fin, prm_id_usuario, 2, _id_jornada,
+					fn_genera_clave_confirmacion(prm_id_empresa));
+		SET _id_agenda = LAST_INSERT_ID();
+	ELSE 
+		SET _id_agenda = 0;		
+	END IF;
+		
+	IF _id_agenda = 1 THEN  
+		SELECT 	1 AS Reservado,
+				'DIA Y HORA RESERVADA' AS estatus, 
+				CONCAT(prm_id_empresa, '-', YEAR(prm_fecha), MONTH(prm_fecha), '-', _id_agenda) AS folio_confirmacion;
+	ELSE
+		SELECT 	0 AS Reservado,
+				'DIA Y HORA NO DISPONIBLE' AS estatus, 
+				0 AS folio_confirmacion;
+    END IF;
+END
+
+CREATE DEFINER=`appusercrmadmin`@`%` FUNCTION `fn_genera_clave_confirmacion`(id_empresa INT) RETURNS varchar(6) CHARSET latin1 COLLATE latin1_spanish_ci
+    READS SQL DATA
+BEGIN
+  DECLARE caracteres VARCHAR(62) DEFAULT '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  DECLARE clave VARCHAR(6) DEFAULT '';
+  DECLARE intentos INT DEFAULT 0;
+  DECLARE clave_encontrada BOOLEAN DEFAULT FALSE;
+
+  WHILE intentos < 6 AND NOT clave_encontrada DO
+    SET clave = '';
+    SET @i = 0;
+    WHILE @i < 6 DO
+      SET clave = CONCAT(clave, SUBSTRING(caracteres, FLOOR(1 + RAND() * 62), 1));
+      SET @i = @i + 1;
+    END WHILE;
+
+    IF (SELECT COUNT(*) FROM agenda WHERE id_empresa = id_empresa AND clave_confirmacion = clave) = 0 THEN
+      SET clave_encontrada = TRUE;
+    ELSE
+      SET intentos = intentos + 1;
+    END IF;
+  END WHILE;
+
+  IF NOT clave_encontrada THEN
+    SET clave = '000000';
+  END IF;
+
+  RETURN UPPER(clave);
+END
+
