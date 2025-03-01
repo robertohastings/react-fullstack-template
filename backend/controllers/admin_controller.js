@@ -375,7 +375,7 @@ export const getAgendaPorDia = async (req, res) => {
 
         const rows = await pool.query(`CALL getAgendaPorDia(?, ?);`, [id_empresa, fecha])
 
-        console.log('rows ->', rows[0][0])
+        console.log("rows ->", rows[0][0])
 
         res.status(200).json({
             success: true,
@@ -410,23 +410,50 @@ export const getClientePorTelefonoOCelular = async (req, res) => {
 }
 export const postAgenda = async (req, res) => {
     console.log("body postAgenda =>", req.body)
-    const { id_empresa, fecha, intervalo, id_usuario } = req.body
+    //const { id_empresa, fecha, intervalo, id_usuario } = req.body
 
     try {
         const [result] = await pool.query("CALL postAgenda(?, ?, ?, ?)", [id_empresa, fecha, intervalo, id_usuario])
+        //console.log("result ->", result)
 
-        if (result.affectedRows == 0) {
+        const folioConfirmacion = result[0][0].folio_confirmacion
+        //console.log("folio_confirmacion ->", folioConfirmacion)
+
+        if (result[1].affectedRows == 0) {
             res.status(404).json({
                 message: "No se realizó actualización"
             })
         } else {
             return res.status(200).json({
                 message: "Agenda actualizada correctamente",
-                data: res.data
+                folio_confirmacion: folioConfirmacion
             })
         }
     } catch (error) {
-        console.log("Ocurrió un error")
+        //console.log("Ocurrió un error")
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
+}
+export const putAgenda = async (req, res) => {
+    console.log("body putAgenda =>", req.body)
+    //const { id_empresa, fecha, intervalo, id_usuario } = req.body
+
+    try {
+        const [result] = await pool.query("CALL putAgenda(?, ?, ?, ?, ?)", [id_empresa, id_agenda, intervalo, id_usuario, nombre])
+        //console.log("result ->", result)
+
+        if (result[1].affectedRows == 0) {
+            res.status(404).json({
+                message: "No se realizó actualización"
+            })
+        } else {
+            return res.status(200).json({
+                message: "Agenda actualizada correctamente"
+            })
+        }
+    } catch (error) {
         res.status(500).json({
             message: `Error: ${error}`
         })

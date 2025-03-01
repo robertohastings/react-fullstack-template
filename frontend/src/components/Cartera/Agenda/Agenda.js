@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useContext } from "react"
 import Page from "../../Page"
 import { Row, Col, Modal, Button, Offcanvas, Form } from "react-bootstrap"
 import Calendar from "react-calendar"
 import "react-calendar/dist/Calendar.css"
 import Axios from "axios"
 import { BsSave, BsBackspace, BsCalendar4Event, BsCheck, BsSend, BsEraser, BsSearch } from "react-icons/bs"
+import DispatchContext from "../../../DispatchContext"
 
 function Agenda() {
     const [date, setDate] = useState(new Date())
@@ -17,6 +18,7 @@ function Agenda() {
     const telefonoRef = useRef(null)
     const [isFetching, setIsFetching] = useState(false)
     const [isNewRecord, setIsNewRecord] = useState(false)
+    const appDispatch = useContext(DispatchContext)
 
     const onChange = date => {
         setDate(date)
@@ -131,65 +133,107 @@ function Agenda() {
     const handled_Guardar = async e => {
         e.preventDefault()
 
-        console.log('cita a guardar =>', cita)
+        console.log("cita a guardar =>", cita)
 
         // Cambiar el estatus a 'Reservado' si es un nuevo registro
-        let nuevaCita = { ...cita }
-        if (isNewRecord) {
-            nuevaCita = { ...nuevaCita, Estatus: "Reservado" }
-        }
+        // let nuevaCita = { ...cita }
+        // if (isNewRecord) {
+        //     nuevaCita = { ...nuevaCita, Estatus: "Reservada" }
+        // }
 
-        // Datos para el POST
-        const postData = {
-            id_empresa: 1,
-            fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }),
-            intervalo: cita.intervalo,
-            id_usuario: 1
-        }
-
-        try {
-            // Hacer el POST al endpoint
-            try {
-                await Axios.post("/api/postAgenda", postData)
-                    .then(response => {
-                        console.log("POST response ->", response.data)
-
-                        // Si el POST es satisfactorio, continuar con la actualización de la agenda
-                        // Añadir la cita actual al estado de agenda
-                        setAgenda(prevAgenda => {
-                            // Verificar si la cita ya existe en la agenda
-                            const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
-                            if (citaExistente) {
-                                console.log("existente")
-                                // Actualizar la cita existente
-                                return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
-                
-                                //return prevAgenda.map(item => (item.intervalo === cita.intervalo ? cita : item))
-                            } else {
-                                console.log("nueva")
-                                // Añadir una nueva cita
-                                return [...prevAgenda, nuevaCita]
-                                //return [...prevAgenda, cita]
-                            }
-                        })                        
-
-                    })
-                    .catch(error => {
-                        console.log("There was an error updating agenda: ", error)
-                    })
-            } catch (error) {
-                console.log("error:", error)
-            } finally {
-                console.log("finally")
+        if (cita.id_agenda === 0) {
+            // Datos para el POST
+            const postData = {
+                id_empresa: 1,
+                fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }),
+                intervalo: cita.intervalo,
+                id_usuario: 1
             }
 
-        } catch (error) {
-            console.log("There was an error with the POST request ->", error)
-            // Manejar el error según sea necesario
+            try {
+                // Hacer el POST al endpoint
+                try {
+                    await Axios.post("/api/postAgenda", postData)
+                        .then(response => {
+                            console.log("POST response ->", response)
+
+                            appDispatch({
+                                type: "alertMessage",
+                                value: `${response.data.message}. Folio confirmación: ${response.data.folio_confirmacion}`,
+                                typeAlert: "success"
+                            })
+
+                            // Si el POST es satisfactorio, continuar con la actualización de la agenda
+                            // Añadir la cita actual al estado de agenda
+                            // setAgenda(prevAgenda => {
+                            //     // Verificar si la cita ya existe en la agenda
+                            //     const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
+                            //     if (citaExistente) {
+                            //         console.log("existente")
+                            //         // Actualizar la cita existente
+                            //         return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
+
+                            //         //return prevAgenda.map(item => (item.intervalo === cita.intervalo ? cita : item))
+                            //     } else {
+                            //         console.log("nueva")
+                            //         // Añadir una nueva cita
+                            //         return [...prevAgenda, nuevaCita]
+                            //         //return [...prevAgenda, cita]
+                            //     }
+                            // })
+                        })
+                        .catch(error => {
+                            console.log("There was an error updating agenda: ", error)
+                        })
+                } catch (error) {
+                    console.log("error:", error)
+                } finally {
+                    //console.log("finally")
+                }
+            } catch (error) {
+                console.log("There was an error with the POST request ->", error)
+                // Manejar el error según sea necesario
+            }
+        } else {
+            // Datos para el PUT
+            const putData = {
+                id_empresa: 1,
+                id_agenda: cita.id_agenda,
+                intervalo: cita.intervalo,
+                id_usuario: cita.id_usuario,
+                nombre: cita.Nombre
+            }
+
+            try {
+                // Hacer el PUT al endpoint
+                try {
+                    await Axios.put("/api/putAgenda", putData)
+                        .then(response => {
+                            console.log("POST response ->", response)
+
+                            appDispatch({
+                                type: "alertMessage",
+                                value: `Cita actualizada...`,
+                                typeAlert: "success"
+                            })
+                        })
+                        .catch(error => {
+                            console.log("There was an error updating agenda: ", error)
+                        })
+                } catch (error) {
+                    console.log("error:", error)
+                } finally {
+                }
+            } catch (error) {
+                console.log("There was an error with the POST request ->", error)
+            }
+
+            console.log("guardando datos ->", putData)
         }
 
         setShowPanel(false)
         setIsNewRecord(false)
+        await ObtenerAgenda()
     }
 
     return (
@@ -210,9 +254,11 @@ function Agenda() {
                         {" "}
                         {/* Usa fw-bold para resaltar los encabezados */}
                         <Col className="col-3">Horario</Col>
-                        <Col className="col-5">Nombre</Col>
+                        <Col className="col-4">Nombre</Col>
                         <Col className="col-2">Celular</Col>
-                        <Col className="col-2">Estatus</Col>
+                        <Col className="col-1">Estatus</Col>
+                        <Col className="col-1">Clave</Col>
+                        <Col className="col-1">Id</Col>
                     </Row>
                     {agenda.length > 0 ? (
                         agenda.map((cita, index) => (
@@ -220,11 +266,13 @@ function Agenda() {
                                 <Col className="col-3" style={{ cursor: "pointer" }} onClick={() => handledRowClick(cita)}>
                                     {cita.intervalo}
                                 </Col>
-                                <Col className="col-5">{cita.Nombre}</Col>
+                                <Col className="col-4">{cita.Nombre}</Col>
                                 <Col className="col-2">{cita.Celular}</Col>
-                                <Col className="col-2" style={{ cursor: "pointer" }}>
+                                <Col className="col-1" style={{ cursor: "pointer" }}>
                                     {cita.Estatus}
                                 </Col>
+                                <Col className="col-1">{cita.clave_confirmacion}</Col>
+                                <Col className="col-1">{cita.id_agenda}</Col>
                             </Row>
                         ))
                     ) : (
