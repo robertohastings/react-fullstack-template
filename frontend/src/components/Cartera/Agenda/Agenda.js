@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useRef, useContext } from "react"
 import Page from "../../Page"
 import { Row, Col, Modal, Button, Offcanvas, Form } from "react-bootstrap"
-import Calendar from "react-calendar"
-import "react-calendar/dist/Calendar.css"
+//import Calendar from "react-calendar"
+//import "react-calendar/dist/Calendar.css"
+import DatePicker, { registerLocale } from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import { es } from "date-fns/locale"
 import Axios from "axios"
 import { BsSave, BsBackspace, BsCalendar4Event, BsCheck, BsSend, BsEraser, BsSearch } from "react-icons/bs"
 import DispatchContext from "../../../DispatchContext"
+
+// Registra la localización en español
+registerLocale("es", es)
 
 function Agenda() {
     const [date, setDate] = useState(new Date())
@@ -149,6 +155,7 @@ function Agenda() {
                 intervalo: cita.intervalo,
                 id_usuario: 1
             }
+            console.log('postData ->', postData)
 
             try {
                 // Hacer el POST al endpoint
@@ -239,17 +246,26 @@ function Agenda() {
     return (
         <Page title="Agenda" fluid={true}>
             <h3>Agenda</h3>
-            <Row className="pt-5 d-flex justify-content-center">
-                <Col md={4}>
-                    <Calendar
+            <Row className="pt-2 d-flex justify-content-center">
+                <Col md={12} className="text-center mb-5">
+                    {/* <Calendar
                         value={date}
                         onChange={onChange}
                         minDate={new Date()} // Muestra solo los días disponibles desde hoy
                         disabled={isFetching}
-                    />
-                    <p className="pt-3 text-center">Fecha seleccionada: {date.toLocaleDateString()}</p>
+                    /> */}
+                    <DatePicker
+                        selected={date}
+                        onChange={onChange}
+                        //minDate={new Date()}
+                        dateFormat="dd/MM/yyyy"
+                        className="form-control text-center"
+                        disabled={isFetching}
+                        locale="es"
+                    />                    
+                    {/* <p className="pt-3 text-center">Fecha seleccionada: {date.toLocaleDateString()}</p> */}
                 </Col>
-                <Col md={8}>
+                <Col md={12}>
                     <Row className="fw-bold text-center">
                         {" "}
                         {/* Usa fw-bold para resaltar los encabezados */}

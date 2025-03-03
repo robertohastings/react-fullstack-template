@@ -160,4 +160,7 @@ BEGIN
     -- TODO: CAMBIAR EL HORARIO DE LA CITA EN AGENDA
 END
 
+AGREGUE PAQUETE EN frontend
+    npm install react-datepicker date-fns
+    npm install date-fns
 
