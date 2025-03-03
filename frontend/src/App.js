@@ -41,10 +41,8 @@ function App() {
     const [isLoading, setIsLoading] = useState(true)
 
     const [enMtto, setEnMtto] = useState({
-        landingPage: {
-            settings: {
-                mostrar_sitioEnMantenimiento: 1
-            }
+        settings: {
+            mostrar_sitioEnMantenimiento: 1
         }
     })
 
