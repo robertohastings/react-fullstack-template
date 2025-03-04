@@ -164,3 +164,6 @@ AGREGUE PAQUETE EN frontend
     npm install react-datepicker date-fns
     npm install date-fns
 
+ALTER TABLE `crm`.`agenda` 
+ADD COLUMN `clave_confirmacion` VARCHAR(6) NULL AFTER `id_jornada`;    
+
