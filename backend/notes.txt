@@ -42,10 +42,32 @@ ALTER TABLE `crm`.`agenda`
 ADD COLUMN `id_cliente` INT NULL AFTER `hora_fin`;
 ADD INDEX `idx_empresa_cliente` (`id_empresa` ASC, `id_cliente` ASC) VISIBLE;
 
-AGREGUE PAQUETE EN frontend
-    npm install react-datepicker date-fns
-    npm install date-fns
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getClientePorTelefonoOCelular`(
+	prm_id_empresa INT,
+    prm_celular VARCHAR(20)
+)
+BEGIN
+	DECLARE numero VARCHAR(20) DEFAULT ''; 
+    DECLARE nombre_cliente VARCHAR(200) DEFAULT '';
 
-ALTER TABLE `crm`.`agenda` 
-ADD COLUMN `clave_confirmacion` VARCHAR(6) NULL AFTER `id_jornada`;    
+	SELECT fn_solo_numeros(prm_celular) into numero;
+    -- select numero;
 
+	SELECT C.nombre INTO nombre_cliente
+    FROM clientes C
+    WHERE C.id_empresa = prm_id_empresa AND fn_solo_numeros(C.celulares) = numero
+	LIMIT 1;
+    
+    -- SI NO ENCONTRÉ EL CLIENTE LO BUSCO AHORA POR TELEFONO
+    IF nombre_cliente = '' THEN
+    
+		SELECT C.nombre INTO nombre_cliente
+		FROM clientes C
+		WHERE C.id_empresa = prm_id_empresa AND fn_solo_numeros(C.telefonos) = numero
+		LIMIT 1; 
+    
+    END IF;        
+    
+    SELECT nombre_cliente;
+
+END
