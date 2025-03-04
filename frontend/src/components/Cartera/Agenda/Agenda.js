@@ -44,7 +44,7 @@ function Agenda() {
             })
             .catch(error => {
                 setAgenda({})
-                console.log("There was an error ObtenerAgenda->", error)
+                console.log(`There was an error ObtenerAgenda -> Status: ${error.response.status} statusText: ${error.response.statusText} Error: ${error.response.data.error}`)
             })
     }
 
@@ -153,7 +153,7 @@ function Agenda() {
                 id_empresa: 1,
                 fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }),
                 intervalo: cita.intervalo,
-                id_usuario: 1
+                id_cliente: cita.id_cliente
             }
             console.log('postData ->', postData)
 
@@ -207,7 +207,7 @@ function Agenda() {
                 id_empresa: 1,
                 id_agenda: cita.id_agenda,
                 intervalo: cita.intervalo,
-                id_usuario: cita.id_usuario,
+                id_cliente: cita.id_cliente,
                 nombre: cita.Nombre
             }
 

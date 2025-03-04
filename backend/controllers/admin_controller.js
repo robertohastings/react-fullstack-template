@@ -410,10 +410,10 @@ export const getClientePorTelefonoOCelular = async (req, res) => {
 }
 export const postAgenda = async (req, res) => {
     console.log("body postAgenda =>", req.body)
-    //const { id_empresa, fecha, intervalo, id_usuario } = req.body
+    const { id_empresa, fecha, intervalo, id_cliente } = req.body
 
     try {
-        const [result] = await pool.query("CALL postAgenda(?, ?, ?, ?)", [id_empresa, fecha, intervalo, id_usuario])
+        const [result] = await pool.query("CALL postAgenda(?, ?, ?, ?)", [id_empresa, fecha, intervalo, id_cliente])
         //console.log("result ->", result)
 
         const folioConfirmacion = result[0][0].folio_confirmacion
@@ -441,7 +441,7 @@ export const putAgenda = async (req, res) => {
     //const { id_empresa, fecha, intervalo, id_usuario } = req.body
 
     try {
-        const [result] = await pool.query("CALL putAgenda(?, ?, ?, ?, ?)", [id_empresa, id_agenda, intervalo, id_usuario, nombre])
+        const [result] = await pool.query("CALL putAgenda(?, ?, ?, ?, ?)", [id_empresa, id_agenda, intervalo, id_cliente, nombre])
         //console.log("result ->", result)
 
         if (result[1].affectedRows == 0) {
