@@ -6,6 +6,7 @@ import { Row, Col, Modal, Button, Offcanvas, Form } from "react-bootstrap"
 import DatePicker, { registerLocale } from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { es } from "date-fns/locale"
+import { format } from "date-fns"
 import Axios from "axios"
 import { BsSave, BsBackspace, BsCalendar4Event, BsCheck, BsSend, BsEraser, BsSearch } from "react-icons/bs"
 import DispatchContext from "../../../DispatchContext"
@@ -28,14 +29,16 @@ function Agenda() {
 
     const onChange = date => {
         setDate(date)
-        ObtenerAgenda()
+        ObtenerAgenda(date)
     }
 
-    const ObtenerAgenda = async () => {
+    const ObtenerAgenda = async (selectedDate) => {
+        const formattedDate = format(selectedDate, "yyyy-MM-dd")
         await Axios.get("/api/getAgendaPorDia", {
             params: {
                 id_empresa: 1,
-                fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" })
+                fecha: formattedDate
+                //fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" })
             }
         })
             .then(response => {
@@ -49,7 +52,7 @@ function Agenda() {
     }
 
     useEffect(() => {
-        ObtenerAgenda()
+        ObtenerAgenda(date)
     }, [])
 
     const handledRowClick = cita => {
@@ -57,8 +60,10 @@ function Agenda() {
         console.log("cita seleccionada: =>", cita)
         console.log("celular a buscar =>", celularABuscar)
         console.log("nombds a buscar =>", cita.Nombre === " " ? "No hay nombre" : cita.Nombre)
-        if (cita.Nombre === " ") {
+        if (cita.id_agenda === 0) {
             setIsNewRecord(true)
+        } else {
+            setIsNewRecord(false)
         }
         setCita(cita)
         //setCita({})
@@ -81,10 +86,14 @@ function Agenda() {
                     telefono: celular
                 }
             })
-            const data = response.data.cliente[0].nombre_cliente
+            //const data = response.data.cliente[0].nombre_cliente
+            const data = response.data.cliente[0]
             //setNombre(data.cliente.nombre_cliente)
-            setCita(prevCita => ({ ...prevCita, Nombre: data }))
+            setCita(prevCita => ({ ...prevCita, Nombre: data.nombre_cliente }))
+            setCita(prevCita => ({ ...prevCita, id_cliente: data.id_cliente }))
             setCita(prevCita => ({ ...prevCita, Celular: celular }))
+            //setCita(prevCita => ({ ...prevCita, id_cl: celular }))
+
             //setCita(prevCita => ({ ...prevCita, Estatus: cita.Estatus === "Disponible" ? "Reservada" : cita.Estatus }))
 
             console.log("Cliente encontrado ->", data)
@@ -148,6 +157,7 @@ function Agenda() {
         // }
 
         if (cita.id_agenda === 0) {
+            
             // Datos para el POST
             const postData = {
                 id_empresa: 1,
@@ -190,7 +200,7 @@ function Agenda() {
                             // })
                         })
                         .catch(error => {
-                            console.log("There was an error updating agenda: ", error)
+                            console.log(`There was an error in postAgenda -> Status: ${error}`)
                         })
                 } catch (error) {
                     console.log("error:", error)
@@ -202,6 +212,7 @@ function Agenda() {
                 // Manejar el error según sea necesario
             }
         } else {
+            
             // Datos para el PUT
             const putData = {
                 id_empresa: 1,
@@ -220,7 +231,7 @@ function Agenda() {
 
                             appDispatch({
                                 type: "alertMessage",
-                                value: `Cita actualizada...`,
+                                value: `${response.data.message}...`,
                                 typeAlert: "success"
                             })
                         })
@@ -232,7 +243,7 @@ function Agenda() {
                 } finally {
                 }
             } catch (error) {
-                console.log("There was an error with the POST request ->", error)
+                console.log("There was an error with the PUT request ->", error)
             }
 
             console.log("guardando datos ->", putData)
@@ -240,7 +251,7 @@ function Agenda() {
 
         setShowPanel(false)
         setIsNewRecord(false)
-        await ObtenerAgenda()
+        await ObtenerAgenda(date)
     }
 
     return (

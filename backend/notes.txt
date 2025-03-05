@@ -43,6 +43,7 @@ ADD COLUMN `id_cliente` INT NULL AFTER `hora_fin`;
 ADD INDEX `idx_empresa_cliente` (`id_empresa` ASC, `id_cliente` ASC) VISIBLE;
 
 CAMBIOS EN SPS:
-    getAgendaPorDia
+    getClientePorTelefonoOCelular
     postAgenda
+    getAgendaPorDia
     putAgenda

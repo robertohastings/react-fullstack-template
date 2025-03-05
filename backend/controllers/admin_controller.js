@@ -419,9 +419,9 @@ export const postAgenda = async (req, res) => {
         const folioConfirmacion = result[0][0].folio_confirmacion
         //console.log("folio_confirmacion ->", folioConfirmacion)
 
-        if (result[1].affectedRows == 0) {
+        if (!folioConfirmacion) {
             res.status(404).json({
-                message: "No se realizó actualización"
+                message: "No se pudo generar la cita"
             })
         } else {
             return res.status(200).json({
@@ -437,16 +437,18 @@ export const postAgenda = async (req, res) => {
     }
 }
 export const putAgenda = async (req, res) => {
-    console.log("body putAgenda =>", req.body)
-    //const { id_empresa, fecha, intervalo, id_usuario } = req.body
-
+    //console.log("body putAgenda =>", req.body)
+    const { id_empresa, id_agenda, intervalo, id_cliente, nombre } = req.body
+    
     try {
         const [result] = await pool.query("CALL putAgenda(?, ?, ?, ?, ?)", [id_empresa, id_agenda, intervalo, id_cliente, nombre])
-        //console.log("result ->", result)
+        //console.log("result ->", result[0][0])
 
-        if (result[1].affectedRows == 0) {
+        const cambioRelizado = result[0][0].cambio_efectuado
+
+        if (!cambioRelizado) {
             res.status(404).json({
-                message: "No se realizó actualización"
+                message: "No se pudo actualizar la cita"
             })
         } else {
             return res.status(200).json({
