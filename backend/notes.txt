@@ -43,7 +43,16 @@ ADD COLUMN `id_cliente` INT NULL AFTER `hora_fin`;
 ADD INDEX `idx_empresa_cliente` (`id_empresa` ASC, `id_cliente` ASC) VISIBLE;
 
 CAMBIOS EN SPS:
-    getClientePorTelefonoOCelular Listo
-    postAgenda -> Listo
-    getAgendaPorDia -> Listo
-    putAgenda -> Listo
+    nuevo sp:
+
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `putAgendaConfirmar`(
+	IN prm_id_empresa INT,
+    IN prm_id_agenda INT
+)
+BEGIN
+
+	UPDATE agenda SET id_agenda_estatus = 3 WHERE id_empresa = prm_id_empresa and id_agenda = prm_id_agenda;
+    
+    SELECT _cambio_efectuado AS cambio_efectuado;
+
+END    

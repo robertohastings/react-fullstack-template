@@ -461,3 +461,28 @@ export const putAgenda = async (req, res) => {
         })
     }
 }
+export const putAgendaConfirmar = async (req, res) => {
+    //console.log("body putAgenda =>", req.body)
+    const { id_empresa, id_agenda } = req.body
+    
+    try {
+        const [result] = await pool.query("CALL putAgendaConfirmar(?, ?)", [id_empresa, id_agenda])
+        //console.log("result ->", result[0][0])
+
+        const cambioRelizado = result[0][0].cambio_efectuado
+
+        if (!cambioRelizado) {
+            res.status(404).json({
+                message: "No se pudo actualizar la cita"
+            })
+        } else {
+            return res.status(200).json({
+                message: "Agenda actualizada correctamente"
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
+}

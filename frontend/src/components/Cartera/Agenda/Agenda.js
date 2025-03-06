@@ -10,6 +10,7 @@ import { format } from "date-fns"
 import Axios from "axios"
 import { BsSave, BsBackspace, BsCalendar4Event, BsCheck, BsSend, BsEraser, BsSearch } from "react-icons/bs"
 import { VscRefresh } from "react-icons/vsc";
+import { IoMdRefresh } from "react-icons/io";
 import DispatchContext from "../../../DispatchContext"
 
 // Registra la localización en español
@@ -125,25 +126,57 @@ function Agenda() {
         setIsNewRecord(false)
     }
 
-    const handled_Confirmar = () => {
-        let nuevaCita = { ...cita }
-        nuevaCita = { ...nuevaCita, Estatus: "Confirmada" }
-        // Añadir la cita actual al estado de agenda
-        setAgenda(prevAgenda => {
-            // Verificar si la cita ya existe en la agenda
-            const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
-            if (citaExistente) {
-                // Actualizar la cita existente
-                return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
-            } else {
-                console.log("nueva")
-                // Añadir una nueva cita
-                return [...prevAgenda, nuevaCita]
+    const handled_Confirmar = async () => {
+
+        // Datos para el PUT
+        const putData = {
+            id_empresa: 1,
+            id_agenda: cita.id_agenda
+        }
+
+        try {
+            // Hacer el PUT al endpoint
+            try {
+                await Axios.put("/api/putAgendaConfirmar", putData)
+                    .then(response => {
+                        console.log("PUT response ->", response)
+
+                        appDispatch({
+                            type: "alertMessage",
+                            value: `${response.data.message}...`,
+                            typeAlert: "success"
+                        })
+                    })
+                    .catch(error => {
+                        console.log("There was an error updating agenda: ", error)
+                    })
+            } catch (error) {
+                console.log("error:", error)
+            } finally {
             }
-        })
+        } catch (error) {
+            console.log("There was an error with the PUT request ->", error)
+        }        
+
+        // let nuevaCita = { ...cita }
+        // nuevaCita = { ...nuevaCita, Estatus: "Confirmada" }
+        // // Añadir la cita actual al estado de agenda
+        // setAgenda(prevAgenda => {
+        //     // Verificar si la cita ya existe en la agenda
+        //     const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
+        //     if (citaExistente) {
+        //         // Actualizar la cita existente
+        //         return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
+        //     } else {
+        //         console.log("nueva")
+        //         // Añadir una nueva cita
+        //         return [...prevAgenda, nuevaCita]
+        //     }
+        // })
 
         setShowPanel(false)
         setIsNewRecord(false)
+        await ObtenerAgenda(date)
     }
 
     const handled_Guardar = async e => {
@@ -254,6 +287,24 @@ function Agenda() {
         setIsNewRecord(false)
         await ObtenerAgenda(date)
     }
+    // Función para formatear el número de teléfono
+    const formatPhoneNumber = (phoneNumber) => {
+        if (!phoneNumber) return "";
+        // Ejemplo de formato: 123-456-7890
+        return phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1.$2.$3");
+    }   
+    
+    // Función para obtener el estilo de la celda de estatus
+    const getStatusCellStyle = (estatus) => {
+        switch (estatus) {
+            case "Reservada":
+                return { backgroundColor: "yellow" }
+            case "Confirmada":
+                return { backgroundColor: "lightgreen" }
+            default:
+                return {}
+        }
+    }    
 
     return (
         <Page title="Agenda" fluid={true}>
@@ -275,7 +326,7 @@ function Agenda() {
                         disabled={isFetching}
                         locale="es"
                     />
-                    <button className="mx-3" onClick={() => ObtenerAgenda(date)}><VscRefresh/></button>                    
+                    <Button size="sm" variant="light" className="mx-3" onClick={() => ObtenerAgenda(date)}><IoMdRefresh/></Button>                    
                     {/* <p className="pt-3 text-center">Fecha seleccionada: {date.toLocaleDateString()}</p> */}
                 </Col>
                 <Col md={12}>
@@ -296,8 +347,8 @@ function Agenda() {
                                     {cita.intervalo}
                                 </Col>
                                 <Col className="col-4">{cita.Nombre}</Col>
-                                <Col className="col-2">{cita.Celular}</Col>
-                                <Col className="col-1" style={{ cursor: "pointer" }}>
+                                <Col className="col-2">{formatPhoneNumber(cita.Celular)}</Col>
+                                <Col className="col-1 px-2" style={{ cursor: "pointer", ...getStatusCellStyle(cita.Estatus) }} onClick={() => handledRowClick(cita)}>
                                     {cita.Estatus}
                                 </Col>
                                 <Col className="col-1">{cita.clave_confirmacion}</Col>
