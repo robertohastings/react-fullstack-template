@@ -9,6 +9,7 @@ import { es } from "date-fns/locale"
 import { format } from "date-fns"
 import Axios from "axios"
 import { BsSave, BsBackspace, BsCalendar4Event, BsCheck, BsSend, BsEraser, BsSearch } from "react-icons/bs"
+import { VscRefresh } from "react-icons/vsc";
 import DispatchContext from "../../../DispatchContext"
 
 // Registra la localización en español
@@ -273,7 +274,8 @@ function Agenda() {
                         className="form-control text-center"
                         disabled={isFetching}
                         locale="es"
-                    />                    
+                    />
+                    <button className="mx-3" onClick={() => ObtenerAgenda(date)}><VscRefresh/></button>                    
                     {/* <p className="pt-3 text-center">Fecha seleccionada: {date.toLocaleDateString()}</p> */}
                 </Col>
                 <Col md={12}>
