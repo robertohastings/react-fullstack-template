@@ -38,21 +38,42 @@ Pendientes:
 
 cambios en DB:
 
-ALTER TABLE `crm`.`agenda` 
-ADD COLUMN `id_cliente` INT NULL AFTER `hora_fin`;
-ADD INDEX `idx_empresa_cliente` (`id_empresa` ASC, `id_cliente` ASC) VISIBLE;
-
-CAMBIOS EN SPS:
-    nuevo sp:
-
-CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `putAgendaConfirmar`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `putAgendaCancelar`(
 	IN prm_id_empresa INT,
     IN prm_id_agenda INT
 )
 BEGIN
 
-	UPDATE agenda SET id_agenda_estatus = 3 WHERE id_empresa = prm_id_empresa and id_agenda = prm_id_agenda;
+	UPDATE agenda SET id_agenda_estatus = 4 WHERE id_empresa = prm_id_empresa and id_agenda = prm_id_agenda;
+    
+    SELECT _cambio_efectuado AS cambio_efectuado;
+END
+
+
+en sp: getAgendaPorDia
+    agregar el orden en el select
+
+-- Mostrar los registros de la tabla temporal
+	SELECT 	I.*, C.nombre AS Nombre, IFNULL(fn_solo_numeros(C.celulares), '') AS Celular, IFNULL(AE.descripcion, '') AS Estatus,
+			IFNULL(A.id_agenda, 0) AS id_agenda, A.clave_confirmacion, IFNULL(C.id_cliente, 0) AS id_cliente
+	FROM intervalos_tiempo I
+	LEFT JOIN agenda A ON A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = I.hora_inicio AND A.hora_fin = I.hora_fin
+    LEFT JOIN agenda_estatus AE ON AE.id_agenda_estatus = IFNULL(A.id_agenda_estatus, 1)
+    LEFT JOIN clientes C ON C.id_empresa = prm_id_empresa AND C.id_cliente = A.id_cliente
+    ORDER BY I.intervalo;
+
+
+NUEVO SP:
+CREATE DEFINER=`root`@`localhost` PROCEDURE `putAgendaCambiaEstatus`(
+	IN prm_id_empresa INT,
+    IN prm_id_agenda INT,
+    IN prm_id_agenda_estatus SMALLINT
+)
+BEGIN
+
+	UPDATE agenda SET id_agenda_estatus = prm_id_agenda_estatus 
+    WHERE id_empresa = prm_id_empresa and id_agenda = prm_id_agenda;
     
     SELECT _cambio_efectuado AS cambio_efectuado;
 
-END    
+END

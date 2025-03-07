@@ -4,7 +4,7 @@ import { putLandingPage, putLandingPage_QuienesSomos, putLandingPage_Productos,
         putUsuario, getUsuario, postDireccion, getDirecciones, getPuntosDeEntregaCarrito, 
         getFormasDePago, putFormasDePago, postPedido, getPedidoDetalle, getPedidoCanvas, 
         putPedidoEstatus, getAgendaPorDia, getClientePorTelefonoOCelular, 
-        postAgenda, putAgenda, putAgendaConfirmar } from "../controllers/admin_controller.js"
+        postAgenda, putAgenda, putAgendaConfirmar, putAgendaCancelar, putAgendaCambiaEstatus } from "../controllers/admin_controller.js"
 
 const router = Router()
 
@@ -30,5 +30,7 @@ router.get("/getClientePorTelefonoOCelular", getClientePorTelefonoOCelular)
 router.post("/postAgenda", postAgenda)
 router.put("/putAgenda", putAgenda)
 router.put("/putAgendaConfirmar", putAgendaConfirmar)
+router.put("/putAgendaCancelar", putAgendaCancelar)
+router.put("/putAgendaCambiaEstatus", putAgendaCambiaEstatus)
 
 export default router

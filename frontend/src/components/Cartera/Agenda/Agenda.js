@@ -8,9 +8,10 @@ import "react-datepicker/dist/react-datepicker.css"
 import { es } from "date-fns/locale"
 import { format } from "date-fns"
 import Axios from "axios"
-import { BsSave, BsBackspace, BsCalendar4Event, BsCheck, BsSend, BsEraser, BsSearch } from "react-icons/bs"
-import { VscRefresh } from "react-icons/vsc";
+import { BsSave, BsBackspace, BsSend, BsEraser, BsSearch } from "react-icons/bs"
 import { IoMdRefresh } from "react-icons/io";
+import { GiConfirmed } from "react-icons/gi";
+import { FaUserTag } from "react-icons/fa";
 import DispatchContext from "../../../DispatchContext"
 
 // Registra la localización en español
@@ -81,6 +82,42 @@ function Agenda() {
     const handledBuscarCliente = async celular => {
         // alert(`Celular a buscar: ${celular}`)
         setIsFetching(true)
+
+        const getData = {
+            id_empresa: 1,
+            telefono: celular
+        }
+
+
+        try {
+            // Hacer el PUT al endpoint
+            try {
+                await Axios.put("/api/getClientePorTelefonoOCelular", getData)
+                    .then(response => {
+                        //console.log("PUT response ->", response)
+
+                        // appDispatch({
+                        //     type: "alertMessage",
+                        //     value: `${response.data.message}...`,
+                        //     typeAlert: "success"
+                        // })
+
+                        const data = response.data.cliente[0]
+                        setCita(prevCita => ({ ...prevCita, Nombre: data.nombre_cliente }))
+                        setCita(prevCita => ({ ...prevCita, id_cliente: data.id_cliente }))
+                        setCita(prevCita => ({ ...prevCita, Celular: celular }))
+                    })
+                    .catch(error => {
+                        console.log("There was an error updating agenda: ", error)
+                    })
+            } catch (error) {
+                console.log("error:", error)
+            } finally {
+            }
+        } catch (error) {
+            console.log("There was an error with the PUT request ->", error)
+        }          
+
         try {
             const response = await Axios.get("/api/getClientePorTelefonoOCelular", {
                 params: {
@@ -102,42 +139,23 @@ function Agenda() {
         } catch (error) {
             console.log("There was an error handledBuscarCliente->", error)
         }
+
+
         setIsFetching(false)
     }
 
-    const handled_Cancelar = () => {
-        let nuevaCita = { ...cita }
-        nuevaCita = { ...nuevaCita, Estatus: "Disponible", Celular: "", Nombre: "" }
-        // Añadir la cita actual al estado de agenda
-        setAgenda(prevAgenda => {
-            // Verificar si la cita ya existe en la agenda
-            const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
-            if (citaExistente) {
-                // Actualizar la cita existente
-                return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
-            } else {
-                console.log("nueva")
-                // Añadir una nueva cita
-                return [...prevAgenda, nuevaCita]
-            }
-        })
-
-        setShowPanel(false)
-        setIsNewRecord(false)
-    }
-
-    const handled_Confirmar = async () => {
-
+    const handled_CambiarEstatus = async (id_agenda_estatus) => {
         // Datos para el PUT
         const putData = {
             id_empresa: 1,
-            id_agenda: cita.id_agenda
+            id_agenda: cita.id_agenda,
+            id_agenda_estatus: id_agenda_estatus
         }
 
         try {
             // Hacer el PUT al endpoint
             try {
-                await Axios.put("/api/putAgendaConfirmar", putData)
+                await Axios.put("/api/putAgendaCambiaEstatus", putData)
                     .then(response => {
                         console.log("PUT response ->", response)
 
@@ -156,23 +174,7 @@ function Agenda() {
             }
         } catch (error) {
             console.log("There was an error with the PUT request ->", error)
-        }        
-
-        // let nuevaCita = { ...cita }
-        // nuevaCita = { ...nuevaCita, Estatus: "Confirmada" }
-        // // Añadir la cita actual al estado de agenda
-        // setAgenda(prevAgenda => {
-        //     // Verificar si la cita ya existe en la agenda
-        //     const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
-        //     if (citaExistente) {
-        //         // Actualizar la cita existente
-        //         return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
-        //     } else {
-        //         console.log("nueva")
-        //         // Añadir una nueva cita
-        //         return [...prevAgenda, nuevaCita]
-        //     }
-        // })
+        }           
 
         setShowPanel(false)
         setIsNewRecord(false)
@@ -301,6 +303,8 @@ function Agenda() {
                 return { backgroundColor: "yellow" }
             case "Confirmada":
                 return { backgroundColor: "lightgreen" }
+            case "Cancelada":
+                return { backgroundColor: "red"}
             default:
                 return {}
         }
@@ -390,8 +394,8 @@ function Agenda() {
                                         onChange={e => setCelulaABuscar(e.target.value)}
                                         autoComplete="off"
                                         onKeyDown={e => {
-                                            if (!/[0-9]/.test(e.key)) {
-                                                e.preventDefault()
+                                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                                                e.preventDefault();
                                             }
                                         }}
                                     />
@@ -417,7 +421,7 @@ function Agenda() {
                                         </Button>
                                     </Col>
                                     <Col xs={6}>
-                                        <Button variant="secondary" size="sm" className="w-100" title="Presione aquí para enviar un recordatorio" onClick={handledPanelClose}>
+                                        <Button variant="primary" size="sm" className="w-100" title="Presione aquí para enviar un recordatorio" onClick={handledPanelClose}>
                                             <BsBackspace /> Regresar
                                         </Button>
                                     </Col>
@@ -428,29 +432,37 @@ function Agenda() {
                                     <hr />
                                     <Form.Group className="my-4">
                                         <Row className="d-flex justify-content-between">
-                                            <Col xs={6}>
-                                                <Button variant="warning" size="sm" className="w-100" title="Presione aquí para reprogramar la cita">
+                                            {/* <Col xs={6}>
+                                                <Button variant="secondary" size="sm" className="w-100" title="Presione aquí para reprogramar la cita">
                                                     <BsCalendar4Event /> Reprogramar
                                                 </Button>
-                                            </Col>
+                                            </Col> */}
+
                                             <Col xs={6}>
                                                 <Button variant="info" size="sm" className="w-100" title="Presione aquí para enviar un recordatorio">
                                                     <BsSend /> Recordatorio
                                                 </Button>
                                             </Col>
+                                            <Col xs={6}>
+                                                <Button variant="success" size="sm" className="w-100" title="Presione aquí para confirmar la cita" onClick={() => handled_CambiarEstatus(3)}>
+                                                    <FaUserTag /> Confirmar
+                                                </Button>
+                                            </Col>
                                         </Row>
                                         <Row className="d-flex justify-content-between mt-2">
                                             <Col xs={6}>
-                                                <Button variant="primary" size="sm" className="w-100" title="Presione aquí para confirmar la cita" onClick={handled_Confirmar}>
-                                                    <BsCheck /> Confirmar
+                                                <Button variant="warning" size="sm" className="w-100" title="Presione aquí para reservar la cita" onClick={() => handled_CambiarEstatus(2)}>
+                                                    <GiConfirmed /> Reservar
                                                 </Button>
                                             </Col>
                                             <Col xs={6}>
-                                                <Button variant="danger" size="sm" className="w-100" title="Presione aquí para cancelar la cita" onClick={handled_Cancelar}>
+                                                <Button variant="danger" size="sm" className="w-100" title="Presione aquí para cancelar la cita" onClick={() => handled_CambiarEstatus(4)}>
                                                     <BsEraser /> Cancelar
                                                 </Button>
                                             </Col>
                                         </Row>
+                                        {/* <Row className="d-flex justify-content-between mt-2">
+                                        </Row> */}
                                     </Form.Group>
                                 </>
                             )}

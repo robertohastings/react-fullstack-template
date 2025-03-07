@@ -486,3 +486,53 @@ export const putAgendaConfirmar = async (req, res) => {
         })
     }
 }
+export const putAgendaCancelar = async (req, res) => {
+    //console.log("body putAgenda =>", req.body)
+    const { id_empresa, id_agenda } = req.body
+    
+    try {
+        const [result] = await pool.query("CALL putAgendaCancelar(?, ?)", [id_empresa, id_agenda])
+        //console.log("result ->", result[0][0])
+
+        const cambioRelizado = result[0][0].cambio_efectuado
+
+        if (!cambioRelizado) {
+            res.status(404).json({
+                message: "No se pudo actualizar la cita"
+            })
+        } else {
+            return res.status(200).json({
+                message: "Agenda actualizada correctamente"
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
+}
+export const putAgendaCambiaEstatus = async (req, res) => {
+    //console.log("body putAgenda =>", req.body)
+    const { id_empresa, id_agenda, id_agenda_estatus } = req.body
+    
+    try {
+        const [result] = await pool.query("CALL putAgendaCambiaEstatus(?, ?, ?)", [id_empresa, id_agenda, id_agenda_estatus])
+        //console.log("result ->", result[0][0])
+
+        const cambioRelizado = result[0][0].cambio_efectuado
+
+        if (!cambioRelizado) {
+            res.status(404).json({
+                message: "No se pudo actualizar la cita"
+            })
+        } else {
+            return res.status(200).json({
+                message: "Agenda actualizada correctamente"
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
+}
