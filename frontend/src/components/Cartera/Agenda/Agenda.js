@@ -80,7 +80,6 @@ function Agenda() {
         setShowPanel(false)
     }
     const handledBuscarCliente = async celular => {
-        // alert(`Celular a buscar: ${celular}`)
         setIsFetching(true)
 
         const getData = {
@@ -88,35 +87,26 @@ function Agenda() {
             telefono: celular
         }
 
+        // try {
+        //     try {
+        //         await Axios.put("/api/getClientePorTelefonoOCelular", getData)
+        //             .then(response => {
 
-        try {
-            // Hacer el PUT al endpoint
-            try {
-                await Axios.put("/api/getClientePorTelefonoOCelular", getData)
-                    .then(response => {
-                        //console.log("PUT response ->", response)
-
-                        // appDispatch({
-                        //     type: "alertMessage",
-                        //     value: `${response.data.message}...`,
-                        //     typeAlert: "success"
-                        // })
-
-                        const data = response.data.cliente[0]
-                        setCita(prevCita => ({ ...prevCita, Nombre: data.nombre_cliente }))
-                        setCita(prevCita => ({ ...prevCita, id_cliente: data.id_cliente }))
-                        setCita(prevCita => ({ ...prevCita, Celular: celular }))
-                    })
-                    .catch(error => {
-                        console.log("There was an error updating agenda: ", error)
-                    })
-            } catch (error) {
-                console.log("error:", error)
-            } finally {
-            }
-        } catch (error) {
-            console.log("There was an error with the PUT request ->", error)
-        }          
+        //                 const data = response.data.cliente[0]
+        //                 setCita(prevCita => ({ ...prevCita, Nombre: data.nombre_cliente }))
+        //                 setCita(prevCita => ({ ...prevCita, id_cliente: data.id_cliente }))
+        //                 setCita(prevCita => ({ ...prevCita, Celular: celular }))
+        //             })
+        //             .catch(error => {
+        //                 console.log("There was an error updating agenda: ", error)
+        //             })
+        //     } catch (error) {
+        //         console.log("error:", error)
+        //     } finally {
+        //     }
+        // } catch (error) {
+        //     console.log("There was an error with the PUT request ->", error)
+        // }          
 
         try {
             const response = await Axios.get("/api/getClientePorTelefonoOCelular", {
@@ -295,6 +285,10 @@ function Agenda() {
         // Ejemplo de formato: 123-456-7890
         return phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1.$2.$3");
     }   
+    // Función para formatear la fecha en el formato deseado
+    const formatDate = (date) => {
+        return format(date, "EEEE d, yyyy", { locale: es })
+    }
     
     // Función para obtener el estilo de la celda de estatus
     const getStatusCellStyle = (estatus) => {
@@ -304,7 +298,7 @@ function Agenda() {
             case "Confirmada":
                 return { backgroundColor: "lightgreen" }
             case "Cancelada":
-                return { backgroundColor: "red"}
+                return { backgroundColor: "red", color: "white" }
             default:
                 return {}
         }
@@ -321,19 +315,23 @@ function Agenda() {
                         minDate={new Date()} // Muestra solo los días disponibles desde hoy
                         disabled={isFetching}
                     /> */}
-                    <DatePicker
-                        selected={date}
-                        onChange={onChange}
-                        //minDate={new Date()}
-                        dateFormat="dd/MM/yyyy"
-                        className="form-control text-center"
-                        disabled={isFetching}
-                        locale="es"
-                    />
-                    <Button size="sm" variant="light" className="mx-3" onClick={() => ObtenerAgenda(date)}><IoMdRefresh/></Button>                    
-                    {/* <p className="pt-3 text-center">Fecha seleccionada: {date.toLocaleDateString()}</p> */}
+                    <div>
+                        <DatePicker
+                            selected={date}
+                            onChange={onChange}
+                            //minDate={new Date()}
+                            dateFormat="dd/MM/yyyy"
+                            className="form-control text-center"
+                            disabled={isFetching}
+                            locale="es"
+                        />
+                        <Button size="sm" variant="light" className="mx-3" onClick={() => ObtenerAgenda(date)}><IoMdRefresh/></Button>                    
+                    </div>
+                    <div>
+                        <p className="pt-3 text-center" id="id_fechaSeleccionada">{`Fecha seleccionada: ${formatDate(date)}`}</p>
+                    </div>
                 </Col>
-                <Col md={12}>
+                <Col md={12} className="mb-5">
                     <Row className="fw-bold text-center">
                         {" "}
                         {/* Usa fw-bold para resaltar los encabezados */}
@@ -416,7 +414,8 @@ function Agenda() {
                             <Form.Group className="my-4">
                                 <Row className="d-flex justify-content-between">
                                     <Col xs={6}>
-                                        <Button type="submit" variant="success" size="sm" className="w-100" title="Presione aquí para reprogramar la cita" disabled={celularABuscar === " " || cita.Nombre === " "}>
+                                        <Button type="submit" variant="success" size="sm" className="w-100" title="Presione aquí para reprogramar la cita" 
+                                            disabled={celularABuscar === "" || cita.Nombre === ""}>
                                             <BsSave /> Guardar
                                         </Button>
                                     </Col>
