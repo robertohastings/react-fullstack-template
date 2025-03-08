@@ -26,8 +26,10 @@ function Agenda() {
     const [showPanel, setShowPanel] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const telefonoRef = useRef(null)
+    const nombreRef = useRef(null)
     const [isFetching, setIsFetching] = useState(false)
     const [isNewRecord, setIsNewRecord] = useState(false)
+    const [ayudaNombre, setAyudaNombre] = useState('')
     const appDispatch = useContext(DispatchContext)
 
     const onChange = date => {
@@ -35,7 +37,7 @@ function Agenda() {
         ObtenerAgenda(date)
     }
 
-    const ObtenerAgenda = async (selectedDate) => {
+    const                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ObtenerAgenda = async (selectedDate) => {
         const formattedDate = format(selectedDate, "yyyy-MM-dd")
         await Axios.get("/api/getAgendaPorDia", {
             params: {
@@ -125,7 +127,14 @@ function Agenda() {
 
             //setCita(prevCita => ({ ...prevCita, Estatus: cita.Estatus === "Disponible" ? "Reservada" : cita.Estatus }))
 
-            console.log("Cliente encontrado ->", data)
+            if (data.id_cliente === 0){
+                setAyudaNombre('Cliente no encontrado...')
+                setTimeout(() => {
+                    nombreRef.current.focus()
+                }, 100)
+            }
+
+            //console.log("Cliente encontrado ->", data)
         } catch (error) {
             console.log("There was an error handledBuscarCliente->", error)
         }
@@ -189,7 +198,9 @@ function Agenda() {
                 id_empresa: 1,
                 fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }),
                 intervalo: cita.intervalo,
-                id_cliente: cita.id_cliente
+                id_cliente: cita.id_cliente,
+                nombre_cliente: cita.Nombre,
+                celular: celularABuscar
             }
             console.log('postData ->', postData)
 
@@ -407,8 +418,8 @@ function Agenda() {
                             {/* Nombre */}
                             <Form.Group className="mb-3" id="formNombre">
                                 <Form.Label>Nombre:</Form.Label>
-                                <Form.Control type="text" id="nombre" name="nombre" placeholder="escriba el nombre del cliente" value={cita.Nombre} autoComplete="off" onChange={e => setCita(prevCita => ({ ...prevCita, Nombre: e.target.value }))} />
-                                {/* <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text> */}
+                                <Form.Control ref={nombreRef} type="text" id="nombre" name="nombre" placeholder="escriba el nombre del cliente" value={cita.Nombre} autoComplete="off" onChange={e => setCita(prevCita => ({ ...prevCita, Nombre: e.target.value }))} />
+                                <Form.Text className="text-muted">{ayudaNombre}</Form.Text>
                             </Form.Group>
                             {/* Botones */}
                             <Form.Group className="my-4">

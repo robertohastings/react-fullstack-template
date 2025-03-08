@@ -37,43 +37,71 @@ Pendientes:
 
 
 cambios en DB:
+    - en la tabla de clientes, quitar el Not Null en los campos: empresa, celulares y telefonos
+    - cambié el sp: postAgenda para la alta del cliente
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `putAgendaCancelar`(
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `postAgenda`(
 	IN prm_id_empresa INT,
-    IN prm_id_agenda INT
+	IN prm_fecha DATE,
+    IN intervalo VARCHAR(20),
+    IN prm_id_cliente INT,
+    IN prm_nombre_cliente VARCHAR(200),
+    IN prm_celular VARCHAR(90)
 )
 BEGIN
-
-	UPDATE agenda SET id_agenda_estatus = 4 WHERE id_empresa = prm_id_empresa and id_agenda = prm_id_agenda;
+	DECLARE separador INT;
+	DECLARE _hora_inicio TIME;
+    DECLARE _hora_fin TIME;
+    DECLARE _dia_semana INT;
+    DECLARE _id_jornada INT;
+    DECLARE _id_agenda_estatus SMALLINT;
+    DECLARE _id_agenda INT;
+    DECLARE _id_clave_confirmacion VARCHAR(6) DEFAULT '';
+    -- DECLARE _id_cliente INT;
     
-    SELECT _cambio_efectuado AS cambio_efectuado;
-END
-
-
-en sp: getAgendaPorDia
-    agregar el orden en el select
-
--- Mostrar los registros de la tabla temporal
-	SELECT 	I.*, C.nombre AS Nombre, IFNULL(fn_solo_numeros(C.celulares), '') AS Celular, IFNULL(AE.descripcion, '') AS Estatus,
-			IFNULL(A.id_agenda, 0) AS id_agenda, A.clave_confirmacion, IFNULL(C.id_cliente, 0) AS id_cliente
-	FROM intervalos_tiempo I
-	LEFT JOIN agenda A ON A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = I.hora_inicio AND A.hora_fin = I.hora_fin
-    LEFT JOIN agenda_estatus AE ON AE.id_agenda_estatus = IFNULL(A.id_agenda_estatus, 1)
-    LEFT JOIN clientes C ON C.id_empresa = prm_id_empresa AND C.id_cliente = A.id_cliente
-    ORDER BY I.intervalo;
-
-
-NUEVO SP:
-CREATE DEFINER=`root`@`localhost` PROCEDURE `putAgendaCambiaEstatus`(
-	IN prm_id_empresa INT,
-    IN prm_id_agenda INT,
-    IN prm_id_agenda_estatus SMALLINT
-)
-BEGIN
-
-	UPDATE agenda SET id_agenda_estatus = prm_id_agenda_estatus 
-    WHERE id_empresa = prm_id_empresa and id_agenda = prm_id_agenda;
+    SET _dia_semana = WEEKDAY(prm_fecha);
+    SET _id_agenda_estatus = 2;
     
-    SELECT _cambio_efectuado AS cambio_efectuado;
+	SELECT JL.id_jornada INTO _id_jornada
+	FROM jornada_laboral JL
+	WHERE JL.dia_semana = _dia_semana;  
+    
+    -- Buscar la posición del separador "-" para obtener la fecha y hora 
+	SET separador = LOCATE('-', intervalo);    
+    SET _hora_inicio = TIME(SUBSTRING(intervalo, 1, separador - 1));
+	SET _hora_fin = TIME(SUBSTRING(intervalo, separador + 2));
+    
+    -- SELECT _hora_inicio, _hora_fin;
+    
+    -- Si el cliente no existe lo doy de alta
+    IF NOT EXISTS(
+		SELECT 1 FROM clientes C WHERE C.id_empresa = prm_id_empresa AND C.celulares = prm_celular
+    ) THEN
+		INSERT INTO clientes (id_empresa, nombre, celulares) VALUES (prm_id_empresa, prm_nombre_cliente, prm_celular);
+        SET prm_id_cliente = LAST_INSERT_ID();
+    END IF;
+     
+    -- Busco si no hay cita reservada
+    IF NOT EXISTS(
+		SELECT 1
+		FROM agenda A
+		WHERE A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = _hora_inicio AND A.hora_fin = _hora_fin
+    ) THEN
+		
+        -- GENERO CLAVE DE CONFIRMACION
+        SET _id_clave_confirmacion = fn_genera_clave_confirmacion(prm_id_empresa);
+    
+		INSERT INTO agenda (id_empresa, fecha, hora_inicio, hora_fin, id_cliente, id_agenda_estatus, id_jornada, clave_confirmacion) 
+			VALUES (prm_id_empresa, prm_fecha, _hora_inicio, _hora_fin, prm_id_cliente, _id_agenda_estatus, _id_jornada, _id_clave_confirmacion);
+		SET _id_agenda = LAST_INSERT_ID();
+	END IF;
+    
+    SELECT _id_clave_confirmacion AS folio_confirmacion;		
+	
+END    
 
-END
+
+
+
+

@@ -410,10 +410,10 @@ export const getClientePorTelefonoOCelular = async (req, res) => {
 }
 export const postAgenda = async (req, res) => {
     console.log("body postAgenda =>", req.body)
-    const { id_empresa, fecha, intervalo, id_cliente } = req.body
+    const { id_empresa, fecha, intervalo, id_cliente, nombre_cliente, celular } = req.body
 
     try {
-        const [result] = await pool.query("CALL postAgenda(?, ?, ?, ?)", [id_empresa, fecha, intervalo, id_cliente])
+        const [result] = await pool.query("CALL postAgenda(?, ?, ?, ?, ?, ?)", [id_empresa, fecha, intervalo, id_cliente, nombre_cliente, celular])
         //console.log("result ->", result)
 
         const folioConfirmacion = result[0][0].folio_confirmacion
