@@ -318,15 +318,15 @@ function Agenda() {
     return (
         <Page title="Agenda" fluid={true}>
             <h3>Agenda</h3>
-            <Row className="pt-2 d-flex justify-content-center">
-                <Col md={12} className="text-center mb-5">
+            <Row className="pt-2 d-flex justify-content-center mx-1">
+                <Col md={12} className="text-center mb-3">
                     {/* <Calendar
                         value={date}
                         onChange={onChange}
                         minDate={new Date()} // Muestra solo los días disponibles desde hoy
                         disabled={isFetching}
                     /> */}
-                    <div>
+                    <div className="d-flex justify-content-center gap-3">
                         <DatePicker
                             selected={date}
                             onChange={onChange}
@@ -336,36 +336,41 @@ function Agenda() {
                             disabled={isFetching}
                             locale="es"
                         />
-                        <Button size="sm" variant="light" className="mx-3" onClick={() => ObtenerAgenda(date)}><IoMdRefresh/></Button>                    
+                        <Button size="md" variant="success" 
+                            className="" 
+                            onClick={() => ObtenerAgenda(date)}>
+                                <IoMdRefresh/>
+                        </Button>                    
                     </div>
                     <div>
                         <p className="pt-3 text-center" id="id_fechaSeleccionada">{`Fecha seleccionada: ${formatDate(date)}`}</p>
                     </div>
                 </Col>
                 <Col md={12} className="mb-5">
-                    <Row className="fw-bold text-center">
+                    <Row className="fw-bold text-center mb-2" style={{ borderBottom: "1px solid #dee2e6" }}>
                         {" "}
                         {/* Usa fw-bold para resaltar los encabezados */}
-                        <Col className="col-3">Horario</Col>
-                        <Col className="col-4">Nombre</Col>
-                        <Col className="col-2">Celular</Col>
-                        <Col className="col-1">Estatus</Col>
-                        <Col className="col-1">Clave</Col>
-                        <Col className="col-1">Id</Col>
+                        <Col xs={4} md={2} xl={1}>Horario</Col>
+                        <Col xs={5} md={5} xl={4}>Nombre</Col>
+                        <Col md={2} xl={1} className="d-none d-sm-block">Celular</Col>
+                        <Col xs={3} md={2} xl={3}>Estatus</Col>
+                        <Col xl={2} className="d-none d-lg-block">Clave</Col>
+                        <Col xl={1} className="d-none d-lg-block">Id</Col>
                     </Row>
                     {agenda.length > 0 ? (
                         agenda.map((cita, index) => (
-                            <Row className="text-center" key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                                <Col className="col-3" style={{ cursor: "pointer" }} onClick={() => handledRowClick(cita)}>
+                            <Row className="text-center py-2 align-items-center" key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
+                                <Col xs={4} md={2} xl={1} style={{ cursor: "pointer" }} onClick={() => handledRowClick(cita)}>
                                     {cita.intervalo}
                                 </Col>
-                                <Col className="col-4">{cita.Nombre}</Col>
-                                <Col className="col-2">{formatPhoneNumber(cita.Celular)}</Col>
-                                <Col className="col-1 px-2" style={{ cursor: "pointer", ...getStatusCellStyle(cita.Estatus) }} onClick={() => handledRowClick(cita)}>
+                                <Col xs={5} md={5} xl={4}>{cita.Nombre}</Col>
+                                <Col md={2} xl={1} className="d-none d-sm-block">{formatPhoneNumber(cita.Celular)}</Col>
+                                <Col xs={3} md={3} xl={3} style={{ cursor: "pointer", ...getStatusCellStyle(cita.Estatus) }} 
+                                    onClick={() => handledRowClick(cita)}>
                                     {cita.Estatus}
                                 </Col>
-                                <Col className="col-1">{cita.clave_confirmacion}</Col>
-                                <Col className="col-1">{cita.id_agenda}</Col>
+                                <Col xl={2} className="d-none d-lg-block">{cita.clave_confirmacion}</Col>
+                                <Col xl={1} className="d-none d-lg-block">{cita.id_agenda}</Col>
                             </Row>
                         ))
                     ) : (
@@ -380,16 +385,28 @@ function Agenda() {
                         <Offcanvas.Title>Agendar cita: {cita.intervalo}</Offcanvas.Title>
                     </Offcanvas.Header>
                     <Offcanvas.Body>
+                        { cita.clave_confirmacion && (
+                            <p>Clave: {cita.clave_confirmacion}</p>   
+                        )}
                         {/* Captura de cita */}
                         <Form className="px-2 border rounded pt-3" onSubmit={handled_Guardar}>
                             <Form.Group className="mb-3" id="formHorario">
-                                <Form.Label>Horario:</Form.Label>
-                                <Form.Control type="text" id="horario" name="horario" placeholder="confirme el horario de la cita" defaultValue={cita.intervalo} />
-                                {/* <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text> */}
+                                <Row>
+                                    <Col xs={6} md={6}> 
+                                        <Form.Label>Horario:</Form.Label>
+                                        <Form.Control type="text" id="horario" name="horario" placeholder="confirme el horario de la cita" defaultValue={cita.intervalo} />
+                                        {/* <Form.Text className="text-muted"></Form.Text> */}
+                                    </Col>
+                                    <Col xs={6} md={6}>
+                                        <Form.Label>Estatus:</Form.Label>
+                                        <Form.Control type="text" id="estatus" name="estatus" placeholder="estatus de la cita" defaultValue={cita.Estatus} />
+                                        {/* <Form.Text className="text-muted"></Form.Text> */}
+                                    </Col>
+                                </Row>
                             </Form.Group>
                             {/* telefono */}
                             <Form.Group as={Row} className="mb-3" id="formTelefono">
-                                <Col md={9}>
+                                <Col xs={9} md={9}>
                                     <Form.Label>Teléfono:</Form.Label>
                                     <Form.Control
                                         ref={telefonoRef}
@@ -409,9 +426,13 @@ function Agenda() {
                                         }}
                                     />
                                 </Col>
-                                <Col md={3} className="d-flex align-items-end mb-1">
-                                    <Button variant="primary" size="sm" onClick={() => handledBuscarCliente(celularABuscar)} title="Presione aquí para buscar el cliente por número de teléfono" disabled={isFetching}>
-                                        <BsSearch /> Buscar
+                                <Col xs={3} md={3} className="d-flex align-items-end mb-1">
+                                    <Button variant="primary" 
+                                        size="sm" className="w-100"
+                                        onClick={() => handledBuscarCliente(celularABuscar)} 
+                                        title="Presione aquí para buscar el cliente por número de teléfono" 
+                                        disabled={isFetching}>
+                                        <BsSearch />
                                     </Button>
                                 </Col>
                             </Form.Group>
