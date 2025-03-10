@@ -101,7 +101,49 @@ BEGIN
 	
 END    
 
-copiar el sp: putAgenda
+CREATE DEFINER=`root`@`localhost` PROCEDURE `putAgenda`(
+	IN prm_id_empresa INT,
+    IN prm_id_agenda INT,
+    IN prm_intervalo VARCHAR(13),
+    IN prm_id_cliente INT,
+    IN prm_nombre VARCHAR(90)
+)
+BEGIN
+	DECLARE _cambio_efectuado BIT DEFAULT 0;
+
+	-- ACTUALIZO EL NOMBRE DEL USUARIO SI ESTE CAMBIO
+	IF EXISTS (
+			SELECT 1
+			FROM clientes C
+			WHERE C.id_empresa = prm_id_empresa AND C.id_cliente = prm_id_cliente AND C.nombre <> prm_nombre
+		)
+	THEN 
+		UPDATE clientes C SET C.nombre = prm_nombre
+        WHERE C.id_empresa = prm_id_empresa AND C.id_cliente = prm_id_cliente;
+        
+        SET _cambio_efectuado = 1;
+        
+    END IF;
+    
+    SELECT _cambio_efectuado AS cambio_efectuado;
+    
+    -- TODO: CAMBIAR EL HORARIO DE LA CITA EN AGENDA
+END
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `putAgendaCambiaEstatus`(
+	IN prm_id_empresa INT,
+    IN prm_id_agenda INT,
+    IN prm_id_agenda_estatus SMALLINT
+)
+BEGIN
+
+	UPDATE agenda SET id_agenda_estatus = prm_id_agenda_estatus 
+    WHERE id_empresa = prm_id_empresa and id_agenda = prm_id_agenda;
+    
+    SELECT _cambio_efectuado AS cambio_efectuado;
+
+END
 
 
 
