@@ -256,7 +256,9 @@ function Agenda() {
                 id_agenda: cita.id_agenda,
                 intervalo: cita.intervalo,
                 id_cliente: cita.id_cliente,
-                nombre: cita.Nombre
+                nombre: cita.Nombre,
+                fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }),
+                celular: celularABuscar
             }
 
             try {

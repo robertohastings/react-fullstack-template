@@ -12,6 +12,7 @@ import uploadRoutes from "./routes/upload.routes.js"
 import comprasRoutes from "./routes/compras.routes.js"
 import catalogosRoutes from "./routes/catalogos.routes.js"
 import whatsappRoutes from "./routes/whatsapp.routes.js"
+import agendaRoutes from "./routes/agenda.routes.js"
 
 const app = express()
 //const PORT = process.env.PORT || 8080
@@ -38,6 +39,7 @@ app.use("/api", route)
 app.use("/api", usersRoutes)
 app.use("/api/", landingRoutes)
 app.use("/api/", adminRoutes)
+app.use("/api/", agendaRoutes)
 app.use("/api/", inventarioRoutes)
 app.use("/api/", uploadRoutes)
 app.use("/api/", comprasRoutes)
