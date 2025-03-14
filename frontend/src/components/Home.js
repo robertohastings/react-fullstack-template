@@ -29,7 +29,8 @@ function Home() {
 
     return (
         <Page title="Home" fluid={true}>
-            {appState.landingPage.settings.mostrar_sitioEnMantenimiento === 1 && (
+            {(appState.landingPage.settings.mostrar_sitioEnMantenimiento === 1 || 
+                appState.landingPage.settings.mostrar_landingPage === 0) && (
                 <>
                     <Row className="m-3">
                         <Col className="d-flex justify-content-center align-items-center pt-5">
@@ -44,36 +45,8 @@ function Home() {
                 </>
             )}
 
-            {appState.landingPage.settings.mostrar_sitioEnMantenimiento === 0 && (
-                // <Row className="m-4">
-                //     <Col md={6}>
-                //         <Card>
-                //             <Card.Img variant="top" src="https://fiestatijuana.mx/image-not-available.png" />
-                //             <Card.Body>
-                //                 <Card.Title>Productos</Card.Title>
-                //                 <Card.Text>Descripción del Producto</Card.Text>
-                //                 <Link to="/">
-                //                     <Button onClick={handledClick} variant="primary">
-                //                         Ver
-                //                     </Button>
-                //                 </Link>
-                //             </Card.Body>
-                //         </Card>
-                //     </Col>
-                //     <Col md={6}>
-                //         <Card>
-                //             <Card.Img variant="top" src="https://fiestatijuana.mx/image-not-available.png" />
-                //             <Card.Body>
-                //                 <Card.Title>Servicios</Card.Title>
-                //                 <Card.Text>Descripción del Servicio</Card.Text>
-                //                 <Link to="/">
-                //                     <Button variant="primary">Ver</Button>
-                //                 </Link>
-                //             </Card.Body>
-                //         </Card>
-                //     </Col>
-                // </Row>
-
+            {(appState.landingPage.settings.mostrar_sitioEnMantenimiento === 0 && 
+                appState.landingPage.settings.mostrar_landingPage === 1) && (
                 <Container fluid>
                     {/* Carousel */}
                     <Carousel className="carousel-section pt-5">

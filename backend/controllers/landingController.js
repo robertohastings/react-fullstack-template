@@ -40,7 +40,9 @@ export const getLandingPage = async (req, res) => {
                     mostrar_productos_verMas: rows[0][0][0].mostrar_productos_verMas,
                     mostrar_servicios: rows[0][0][0].mostrar_servicios,
                     mostrar_contactanos: rows[0][0][0].mostrar_contactanos,
-                    mostrar_sitioEnMantenimiento: rows[0][0][0].mostrar_sitioEnMantenimiento
+                    mostrar_sitioEnMantenimiento: rows[0][0][0].mostrar_sitioEnMantenimiento,
+                    mostrar_landingPage: rows[0][0][0].mostrar_landingPage
+                    
                 }
             }
         }

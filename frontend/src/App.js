@@ -39,6 +39,7 @@ function App() {
     //const [cart, setCart] = useContext(CartContext)
     //const [data, setData] = useState({})
     const [isLoading, setIsLoading] = useState(true)
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     const [enMtto, setEnMtto] = useState({
         settings: {
@@ -58,7 +59,7 @@ function App() {
         hostname: "localhost",
         idLandingPage: 1,
         loggedIn: Boolean(localStorage.getItem("complexappToken")),
-        showLoggedIn: false,
+        showLoggedIn: !Boolean(localStorage.getItem("complexappToken")),
         flashMessages: [],
         alert: {
             message: [],
@@ -179,6 +180,9 @@ function App() {
 
                     //dispatch({ type: "tenant", data: response.data.landingPage.idEmpresa })
                     dispatch({ type: "landingPage", data: response.data.landingPage })
+                    console.log('showLoogedIn: ', Boolean(localStorage.getItem("complexappToken")))
+                    //dispatch({ type: "showLoggedIn", data: Boolean(localStorage.getItem("complexappToken")) })
+                    setIsLoggedIn(Boolean(localStorage.getItem("complexappToken")))
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)
@@ -217,6 +221,7 @@ function App() {
                             <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
                             <Notifications show={state.notifications} />
                             <LoggedIn show={state.showLoggedIn} />
+                            {/* <LoggedIn show={!isLoggedIn} /> */}
                             <Header shoppingCart={state.carrito} />
 
                             <main>

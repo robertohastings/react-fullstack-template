@@ -64,6 +64,7 @@ function Header(props) {
 
     const handled_LoggedOut = () => {
         appDispatch({ type: "logout", value: true })
+        appDispatch({ type: "showLoggedIn", value: true })
     }
 
     return (

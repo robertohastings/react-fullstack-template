@@ -174,5 +174,54 @@ BEGIN
 END
 
 
+ALTER TABLE `crm`.`landingpage` 
+ADD COLUMN `mostrar_landingPage` TINYINT(4) NULL AFTER `mostrar_sitioEnMantenimiento`;
 
+UPDATE `crm`.`landingpage` SET `mostrar_landingPage` = '1' WHERE (`id_empresa` = '1') and (`id_landingPage` = '1');
+UPDATE `crm`.`landingpage` SET `mostrar_landingPage` = '1' WHERE (`id_empresa` = '2') and (`id_landingPage` = '1');
+
+agregar mostrar_landingPage en getLandingPage:
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLandingPage`(
+	/*IN prm_id_empresa INT,
+    IN prm_id_landingPage BIGINT,*/
+    IN prm_host VARCHAR(200)
+)
+BEGIN
+	
+	SELECT  quienes_somos,
+			servicios,
+            productos,
+            mostrar_quienes_somos,
+            mostrar_productos,
+            mostrar_productos_verMas,
+            mostrar_servicios,
+            mostrar_contactanos,
+            mostrar_sitioEnMantenimiento,
+            mostrar_landingPage,
+            l.id_empresa
+    FROM hosts H 
+    INNER JOIN landingPage L ON L.id_empresa = H.id_empresa
+    WHERE H.host = prm_host ;
+	
+	SELECT 	id_categoria, nombre, 
+			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
+    FROM hosts H
+    INNER JOIN categorias C ON C.id_empresa = H.id_empresa
+    WHERE H.host = prm_host 
+    AND EXISTS(
+			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
+        );	
+    /*
+	SELECT 	id_categoria, nombre, 
+			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
+    FROM categorias C
+    INNER JOIN hosts H ON H.host = C.host
+    WHERE h.host = prm_host 
+    AND EXISTS(
+			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
+        );
+	*/
+
+END
 
