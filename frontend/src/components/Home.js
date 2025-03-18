@@ -34,13 +34,20 @@ function Home() {
                 <>
                     <Row className="m-3">
                         <Col className="d-flex justify-content-center align-items-center pt-5">
-                            <Image src="/img/website-maintenance.jpg" fluid />
+                            {appState.landingPage.settings.mostrar_sitioEnMantenimiento === 1 && (
+                                <Image src="/img/website-maintenance.jpg" fluid />
+                            )}
+                            {appState.landingPage.settings.mostrar_landingPage === 0 && (
+                                <Image src="/img/erp_md.webp" fluid />
+                            )}                            
                         </Col>
                     </Row>
                     <Row>
-                        <Col className="d-flex justify-content-center align-items-center">
-                            <p>Sitio en Mantenimiento</p>
-                        </Col>
+                        {appState.landingPage.settings.mostrar_sitioEnMantenimiento === 1 && (
+                            <Col className="d-flex justify-content-center align-items-center">
+                                <p>Sitio en Mantenimiento</p>
+                            </Col>
+                        )}
                     </Row>
                 </>
             )}

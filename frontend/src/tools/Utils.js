@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js"
+import {jwtDecode} from "jwt-decode"
 
 //const SECRET_KEY = "tu_clave_secreta";
 const SECRET_KEY = process.env.REACT_APP_SECRET_KEY
@@ -33,4 +34,18 @@ export const getDecryptedItem = key => {
     //console.log('decryptData', id_empresa)
     if (!encryptedData) return null
     return decryptData(encryptedData)
+}
+
+// Función para validar el token
+export const isTokenValid = token => {
+    if (!token) return false
+
+    try {
+        const decoded = jwtDecode(token)
+        const currentTime = Date.now() / 1000 // Tiempo actual en segundos
+        return decoded.exp > currentTime // Verifica si el token no ha expirado
+    } catch (error) {
+        console.error("Error al decodificar el token:", error)
+        return false
+    }
 }

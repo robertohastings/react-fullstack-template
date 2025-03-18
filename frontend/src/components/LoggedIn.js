@@ -59,6 +59,17 @@ function LoggedIn(props) {
                     if (response.data.success === false) {
                         seterrorMessage(response.data.data.message)
                     } else {
+                        // Obtengo menú dinámico del usuario autenticado
+                        const { padres, hijos } = response.data.data.menu;
+                        const menuJerarquico = padres.map((padre) => {
+                            return {
+                              ...padre,
+                              hijos: hijos.filter((hijo) => hijo.id_padre === padre.id_procMenu),
+                            };
+                          });
+                        console.log("Menu jerarquico:", menuJerarquico)
+
+
                         seterrorMessage("")
                         appDispatch({
                             type: "login",
@@ -66,7 +77,8 @@ function LoggedIn(props) {
                                 id_usuario: response.data.data.id_usuario,
                                 token: response.data.data.token,
                                 username: response.data.data.nombre,
-                                avatar: "no-avatar"
+                                avatar: "no-avatar",
+                                menu: menuJerarquico
                             }
                         })
                         handledClose()
@@ -84,7 +96,7 @@ function LoggedIn(props) {
 
     return (
         <>
-            <Modal show={props.show} onHide={handledClose} size="sm">
+            <Modal show={props.show} onHide={handledClose} size="sm" centered>
                 <Modal.Header closeButton={true}>
                     <Modal.Title>
                         <div>
@@ -98,18 +110,20 @@ function LoggedIn(props) {
                             <p className="text-white bg-danger rounded-2 p-2">{errorMessage}</p>
                         </div>
                     )}
-                    <Form className="mt-2">
-                        <Form.Group className="mb-3" controlId="email">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" placeholder="name@example.com" autoFocus onChange={handled_Email} defaultValue={email} autoComplete="off" />
+                    <Form className="mt-3">
+                        <Form.Group className="mb-4 text-center" controlId="email">
+                            <Form.Label className="fw-bold">Email</Form.Label>
+                            <Form.Control type="email" placeholder="name@example.com" autoFocus onChange={handled_Email} 
+                                defaultValue={email} autoComplete="off" className="text-center"/>
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="password">
-                            <Form.Label>Contraseña</Form.Label>
-                            <Form.Control type="password" placeholder="Contraseña" onChange={handled_Password} defaultValue={password} autoComplete="off" />
+                        <Form.Group className="mb-3 text-center" controlId="password">
+                            <Form.Label className="fw-bold">Contraseña</Form.Label>
+                            <Form.Control type="password" placeholder="Contraseña" onChange={handled_Password} 
+                                defaultValue={password} autoComplete="off" className="text-center"/>
                             <p className="fst-italic text-sm fs-6">Mínimo 10 caracteres</p>
                         </Form.Group>
                     </Form>
-                    <div>
+                    <div className="mt-5 mb-3">
                         <Container>
                             <Row>
                                 <Col className="d-flex justify-content-center">

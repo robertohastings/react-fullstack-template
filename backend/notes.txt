@@ -173,22 +173,12 @@ BEGIN
 
 END
 
+agregar en el select: id_landingPage en getLandingPage:
 
-ALTER TABLE `crm`.`landingpage` 
-ADD COLUMN `mostrar_landingPage` TINYINT(4) NULL AFTER `mostrar_sitioEnMantenimiento`;
-
-UPDATE `crm`.`landingpage` SET `mostrar_landingPage` = '1' WHERE (`id_empresa` = '1') and (`id_landingPage` = '1');
-UPDATE `crm`.`landingpage` SET `mostrar_landingPage` = '1' WHERE (`id_empresa` = '2') and (`id_landingPage` = '1');
-
-agregar mostrar_landingPage en getLandingPage:
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getLandingPage`(
-	/*IN prm_id_empresa INT,
-    IN prm_id_landingPage BIGINT,*/
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getLandingPage`(
     IN prm_host VARCHAR(200)
 )
 BEGIN
-	
 	SELECT  quienes_somos,
 			servicios,
             productos,
@@ -199,29 +189,85 @@ BEGIN
             mostrar_contactanos,
             mostrar_sitioEnMantenimiento,
             mostrar_landingPage,
-            l.id_empresa
-    FROM hosts H 
-    INNER JOIN landingPage L ON L.id_empresa = H.id_empresa
-    WHERE H.host = prm_host ;
-	
-	SELECT 	id_categoria, nombre, 
-			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
-    FROM hosts H
-    INNER JOIN categorias C ON C.id_empresa = H.id_empresa
-    WHERE H.host = prm_host 
-    AND EXISTS(
-			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
-        );	
-    /*
-	SELECT 	id_categoria, nombre, 
-			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
-    FROM categorias C
-    INNER JOIN hosts H ON H.host = C.host
-    WHERE h.host = prm_host 
-    AND EXISTS(
-			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
-        );
-	*/
+            L.id_empresa,
+            L.id_landingPage
 
-END
+
+-- instalar npm install jwt-decode en frontend
+
+-- agregar el campo: mostrar_carritoDeCompras en la tabla landingPage
+
+ALTER TABLE `crm`.`landingPage` 
+ADD COLUMN `mostrar_carritoDeCompras` TINYINT(1) NULL AFTER `mostrar_landingPage`;
+
+Agregar el campo: mostrar_carritoDeCompras en el sp: getLandingPage
+
+mostrar_landingPage,
+mostrar_carritoDeCompras,
+
+-- Actualizar el valor del campo 
+    UPDATE `crm`.`landingPage` SET `mostrar_carritoDeCompras` = '0' WHERE (`id_empresa` = '1') and (`id_landingPage` = '1');
+
+ALTER TABLE `crm`.`roles` 
+ADD COLUMN `id_empresa` INT NULL FIRST;
+
+UPDATE `crm`.`roles` SET `id_empresa` = '1' WHERE (`id_rol` = '1');
+UPDATE `crm`.`roles` SET `id_empresa` = '1' WHERE (`id_rol` = '2');
+
+ALTER TABLE `crm`.`roles` 
+DROP INDEX `nombre` ;
+;
+
+ALTER TABLE `crm`.`roles` 
+CHANGE COLUMN `id_empresa` `id_empresa` INT NOT NULL DEFAULT NULL ,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`id_empresa`, `id_rol`);
+;
+
+ALTER TABLE `crm`.`roles` 
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`id_empresa`, `id_rol`);
+;
+
+ALTER TABLE `crm`.`usuarios` 
+CHANGE COLUMN `id_empresa` `id_empresa` BIGINT NOT NULL FIRST;
+
+CREATE TABLE `crm`.`usuario_rol` (
+  `id_empresa` INT NOT NULL,
+  `id_usuario` INT NOT NULL,
+  `id_rol` INT NOT NULL,
+  PRIMARY KEY (`id_empresa`, `id_usuario`, `id_rol`))
+ENGINE = MyISAM;
+
+ALTER TABLE `crm`.`usuario_rol` 
+ENGINE = InnoDB ;
+
+ALTER TABLE `crm`.`usuario_rol` 
+ADD INDEX `ix_usuarios` (`id_empresa` ASC) VISIBLE,
+ADD INDEX `ix_roles` (`id_empresa` ASC, `id_rol` ASC) VISIBLE;
+;
+
+CREATE TABLE procMenu (
+    id_empresa INT,
+    id_procMenu INT AUTO_INCREMENT,
+    id_padre INT,
+    nombre VARCHAR(255) NOT NULL,
+    orden INT,
+    activo BOOLEAN,
+    linkTo VARCHAR(255),
+    icono VARCHAR(255), -- Opcional
+    PRIMARY KEY (id_empresa, id_procMenu)
+)ENGINE = MyISAM;
+
+CREATE TABLE rol_menu (
+    id_empresa INT,
+    id_rol INT,
+    id_procMenu INT,
+    PRIMARY KEY (id_empresa, id_rol, id_procMenu)
+)ENGINE = MyISAM;
+
+ALTER TABLE `crm`.`rol_menu` 
+ADD INDEX `ix_roles` (`id_empresa` ASC, `id_rol` ASC) VISIBLE,
+ADD INDEX `ix_procMenu` (`id_empresa` ASC, `id_procMenu` ASC) VISIBLE;
+;
 

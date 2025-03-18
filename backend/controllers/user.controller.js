@@ -33,6 +33,14 @@ export const getUsuarioLogin = async (req, res) => {
             console.log("password:", password)
             data.password = ""
             if (compare) {
+                
+                //obtengo el menú dinámico del usuario autenticado
+                const rowsMenu = await pool.query(`CALL getMenuUsuario(?, ?)`, [req.query.id_empresa, data.id_usuario])
+                data.menu = {
+                    padres: rowsMenu[0][0],
+                    hijos: rowsMenu[0][1]
+                }
+
                 data.status = 200
                 data.message = "Usuario autenticado"
 
@@ -43,13 +51,7 @@ export const getUsuarioLogin = async (req, res) => {
                 }
 
                 jwt.sign({ user }, JWT_SECRET, { expiresIn: "1h" }, (err, token) => {
-                    // if (err) {
-                    //   res.status(500).json({ error: 'Error al generar el token JWT' });
-                    // } else {
-                    //   //res.json({ token });
 
-                    //   data.token = token
-                    // }
                     console.log("token:", token)
                     data.token = token
                     console.log("data:", data)

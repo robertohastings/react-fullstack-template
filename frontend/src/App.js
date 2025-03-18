@@ -7,9 +7,11 @@ import StateContext from "./StateContext"
 import DispatchContext from "./DispatchContext"
 import ShoppingCartProvider from "./context/ShoppingCartContext"
 import { setEncryptedItem, getDecryptedItem } from "./tools/Utils"
+import { isTokenValid } from "./tools/Utils"
 
 //My Components
 import Header from "./components/Header"
+import Header2 from "./components/Header2"
 import Footer from "./components/Footer"
 import Home from "./components/Home"
 import AboutUs from "./components/AboutUs"
@@ -58,8 +60,10 @@ function App() {
         idEmpresa: 1,
         hostname: "localhost",
         idLandingPage: 1,
-        loggedIn: Boolean(localStorage.getItem("complexappToken")),
-        showLoggedIn: !Boolean(localStorage.getItem("complexappToken")),
+        //loggedIn: Boolean(localStorage.getItem("complexappToken")),
+        loggedIn: isTokenValid(localStorage.getItem("complexappToken")),
+        //showLoggedIn: !Boolean(localStorage.getItem("complexappToken")),
+        showLoggedIn: !isTokenValid(localStorage.getItem("complexappToken")),
         flashMessages: [],
         alert: {
             message: [],
@@ -69,7 +73,8 @@ function App() {
             idUser: localStorage.getItem("complexappIdUser"),
             token: localStorage.getItem("complexappToken"),
             username: localStorage.getItem("complexappUsername"),
-            avatar: localStorage.getItem("complexappAvatar")
+            avatar: localStorage.getItem("complexappAvatar"),
+            menu: []
         },
         isSearchOpen: false,
         isChatOpen: false,
@@ -90,7 +95,7 @@ function App() {
                 break
             case "login":
                 draft.loggedIn = true
-                //draft.user = action.data
+                draft.user.menu = action.data.menu
                 localStorage.setItem("complexappIdUser", action.data.id_usuario)
                 localStorage.setItem("complexappToken", action.data.token)
                 localStorage.setItem("complexappUsername", action.data.username)
@@ -182,7 +187,8 @@ function App() {
                     dispatch({ type: "landingPage", data: response.data.landingPage })
                     console.log('showLoogedIn: ', Boolean(localStorage.getItem("complexappToken")))
                     //dispatch({ type: "showLoggedIn", data: Boolean(localStorage.getItem("complexappToken")) })
-                    setIsLoggedIn(Boolean(localStorage.getItem("complexappToken")))
+
+                    //setIsLoggedIn(Boolean(localStorage.getItem("complexappToken")))
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)
@@ -223,6 +229,7 @@ function App() {
                             <LoggedIn show={state.showLoggedIn} />
                             {/* <LoggedIn show={!isLoggedIn} /> */}
                             <Header shoppingCart={state.carrito} />
+                            {/* <Header2 shoppingCart={state.carrito} /> */}
 
                             <main>
                                 <Routes>
