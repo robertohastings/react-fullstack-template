@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Navbar, Nav, NavDropdown, Dropdown} from "react-bootstrap"
 import { Link } from "react-router-dom"
@@ -17,8 +17,9 @@ import { CartContext } from "../context/ShoppingCartContext"
 
 function Header2(props) {
     const [cart, setCart] = useContext(CartContext)
+    const [menu, setMenu] = useState([])
 
-    console.log("cart length:", cart)
+    //console.log("cart length:", cart)
     
 
     const quantity = cart.reduce((acc, curr) => {
@@ -29,7 +30,23 @@ function Header2(props) {
     const appState = useContext(StateContext)
 
     console.log("menu:", appState.user.menu)
-    const [menu, setMenu] = useState(appState.user.menu)
+    
+
+    useEffect(() => {
+
+        const {padres, hijos } = appState.user.menu
+
+        const menuJerarquico = padres.map((padre) => {
+            return {
+              ...padre,
+              hijos: hijos.filter((hijo) => hijo.id_padre === padre.id_procMenu),
+            };
+          });        
+        
+        setMenu(menuJerarquico);
+
+    }, [appState.user.menu])
+
     //const [carrito, setCarrito] = useState([])
     //const [carrito, setCarrito] = useState(appState.carrito ?? [])
 

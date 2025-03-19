@@ -74,7 +74,7 @@ function App() {
             token: localStorage.getItem("complexappToken"),
             username: localStorage.getItem("complexappUsername"),
             avatar: localStorage.getItem("complexappAvatar"),
-            menu: []
+            menu: getDecryptedItem("hostregioUsuarioMenu")
         },
         isSearchOpen: false,
         isChatOpen: false,
@@ -100,6 +100,7 @@ function App() {
                 localStorage.setItem("complexappToken", action.data.token)
                 localStorage.setItem("complexappUsername", action.data.username)
                 localStorage.setItem("complexappAvatar", action.data.avatar)
+                setEncryptedItem("hostregioUsuarioMenu", action.data.menu)
                 break
             case "logout":
                 draft.loggedIn = false
@@ -228,8 +229,8 @@ function App() {
                             <Notifications show={state.notifications} />
                             <LoggedIn show={state.showLoggedIn} />
                             {/* <LoggedIn show={!isLoggedIn} /> */}
-                            <Header shoppingCart={state.carrito} />
-                            {/* <Header2 shoppingCart={state.carrito} /> */}
+                            {/* <Header shoppingCart={state.carrito} /> */}
+                            <Header2 shoppingCart={state.carrito} />
 
                             <main>
                                 <Routes>
