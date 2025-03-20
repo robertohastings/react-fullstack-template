@@ -17,9 +17,8 @@ import { CartContext } from "../context/ShoppingCartContext"
 
 function Header2(props) {
     const [cart, setCart] = useContext(CartContext)
-    const [menu, setMenu] = useState([])
-
-    //console.log("cart length:", cart)
+    
+    
     
 
     const quantity = cart.reduce((acc, curr) => {
@@ -29,23 +28,35 @@ function Header2(props) {
     const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
 
+    const [menu, setMenu] = useState([])
     console.log("menu:", appState.user.menu)
-    
 
     useEffect(() => {
+        if (appState.user.menu && Array.isArray(appState.user.menu)) {
+            setMenu(appState.user.menu);
+        } else {
+            console.error("El menú no es un arreglo válido:", appState.user.menu);
+        }
+    }, [appState.user.menu]);
 
-        const {padres, hijos } = appState.user.menu
+    //const [userMenu, setUserMenu] = useState([appState.user.menu])
+    
 
-        const menuJerarquico = padres.map((padre) => {
-            return {
-              ...padre,
-              hijos: hijos.filter((hijo) => hijo.id_padre === padre.id_procMenu),
-            };
-          });        
+    // useEffect(() => {
+
+    //     const {padres, hijos } = appState.user.menu
+
+    //     const menuJerarquico = padres.map((padre) => {
+    //         return {
+    //           ...padre,
+    //           hijos: hijos.filter((hijo) => hijo.id_padre === padre.id_procMenu),
+    //         };
+    //       });
+    //       console.log('menuJerarquico', menuJerarquico)        
         
-        setMenu(menuJerarquico);
+    //     setMenu(menuJerarquico);
 
-    }, [appState.user.menu])
+    // }, [userMenu])
 
     //const [carrito, setCarrito] = useState([])
     //const [carrito, setCarrito] = useState(appState.carrito ?? [])
@@ -88,33 +99,54 @@ function Header2(props) {
         appDispatch({ type: "showLoggedIn", value: true })
     }
 
+    function Icon({ svgString }) {
+        if (!svgString) {
+          return null; // O un icono por defecto si no hay SVG
+        }
+      
+        return <div dangerouslySetInnerHTML={{ __html: svgString }} style={{ color: "white" }} />;
+    }
+
     return (
         <>
-            <div className="flex-row my-3 my-md-0">            
-                <Nav>
-                    {menu.map((item) => (
-                        <React.Fragment key={item.id_procMenu}>
-                        {item.hijos && item.hijos.length > 0 ? (
-                            <Dropdown>
-                            <Dropdown.Toggle variant="link">
-                                {/* <Icon name={item.icono} /> {item.nombre} */}
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                {item.hijos.map((hijo) => (
-                                <Dropdown.Item key={hijo.id_procMenu} as={Link} to={hijo.linkTo}>
-                                    {/* <Icon name={hijo.icono} /> {hijo.nombre} */}
-                                </Dropdown.Item>
-                                ))}
-                            </Dropdown.Menu>
-                            </Dropdown>
-                        ) : (
-                            <Nav.Link as={Link} to={item.linkTo}>
-                            {/* <Icon name={item.icono} /> {item.nombre} */}
-                            </Nav.Link>
-                        )}
-                        </React.Fragment>
-                    ))}
-                </Nav>
+            <div className="flex-row my-3 my-md-0">
+                {/* {console.log('menu map', menu)} */}
+                <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+
+                    <Navbar.Collapse id="basic-navbar-nav">
+
+                        <Nav className="me-auto">
+                            {menu && menu.length > 0 ? (
+                                menu.map((item, index) => (
+                                    item.hijos && item.hijos.length > 0 ? (
+                                        <NavDropdown key={index} title={item.nombre} id={`nav-${item.nombre}`} drop="down-centered">
+                                            {item.hijos.map((hijo, hijoIndex) => (
+                                                <NavDropdown.Item key={hijoIndex} as={Link} to={hijo.linkTo}>
+                                                    {hijo.nombre}
+                                                </NavDropdown.Item>
+                                            ))}
+                                        </NavDropdown>
+                                    ) : (
+                                        <Nav.Link key={index} as={Link} to={item.linkTo}>
+                                            {item.icono && item.icono.trim() !== "" ? (
+                                                <Icon svgString={item.icono} />
+                                            ) : (
+                                                item.nombre
+                                            )}
+                                            
+                                        </Nav.Link>
+                                    )
+                                ))
+                            ) : (
+                                <Nav.Link disabled>No hay elementos en el menú</Nav.Link>
+                            )}
+                        </Nav>
+
+                    </Navbar.Collapse>
+
+                </Navbar>
+
             </div>
         </>
     )
