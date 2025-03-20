@@ -63,7 +63,7 @@ function App() {
         //loggedIn: Boolean(localStorage.getItem("complexappToken")),
         loggedIn: isTokenValid(localStorage.getItem("complexappToken")),
         //showLoggedIn: !Boolean(localStorage.getItem("complexappToken")),
-        showLoggedIn: !isTokenValid(localStorage.getItem("complexappToken")),
+        showLoggedIn: !isTokenValid(localStorage.getItem("complexappToken")) || !getDecryptedItem("hostregioUsuarioMenu"),
         flashMessages: [],
         alert: {
             message: [],
