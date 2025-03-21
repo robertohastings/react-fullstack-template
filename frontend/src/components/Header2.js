@@ -144,7 +144,7 @@ function Header2(props) {
                                                     as={hijo.linkTo ? Link : "button"} 
                                                     to={hijo.linkTo || undefined}
                                                     onClick={actions[hijo.nombre] || undefined}
-                                                    style={{ cursor: actions[hijo.nombre] ? "pointer" : "default"}}
+                                                    style={{ cursor: actions[hijo.nombre] ? "pointer" : "pointer"}}
                                                 >
                                                     {hijo.nombre}
                                                 </NavDropdown.Item>
