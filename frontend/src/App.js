@@ -107,6 +107,8 @@ function App() {
                 localStorage.removeItem("complexappToken")
                 localStorage.removeItem("complexappUsername")
                 localStorage.removeItem("complexappAvatar")
+                localStorage.removeItem("hostregioUsuarioMenu")
+                //window.location.reload()
                 break
             case "landingPage":
                 console.log("action data landingPage:", action.data)
@@ -235,6 +237,7 @@ function App() {
                             <main>
                                 <Routes>
                                     <Route path="/" element={<Home />} />
+                                    {/* <Route path="/Header2" element={<Header2/>} /> */}
                                     <Route path="/AboutUs" element={<AboutUs />} />
                                     <Route path="/ContactUs" element={<ContactUs />} />
                                     <Route path="/Products" element={<Products />} />

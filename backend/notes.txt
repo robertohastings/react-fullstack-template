@@ -237,3 +237,62 @@ update procmenu set linkTo = 'Admin/LandingPage' where id_empresa = 1 and id_pro
 
 update procmenu set orden = 115
 where id_empresa = 1 and id_procMenu = 13;
+
+-- insert procmenu (id_empresa, id_padre, nombre, orden, activo, linkTo, icono) VALUES (1, 11, 'Ver Notificaciones', 10, 1, '', '');
+
+insert into rol_menu (id_empresa, id_rol, id_procMenu) VALUES (1, 1, 50)
+
+ALTER TABLE `crm`.`procmenu` 
+ADD COLUMN `soloLanding` BIT(1) NULL DEFAULT 0 AFTER `icono`;
+
+update procmenu set soloLanding = 1 where id_empresa = 1 and id_procMenu in (1, 14, 15, 16, 17, 38);
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLandingPage`(
+    IN prm_host VARCHAR(200)
+)
+BEGIN
+	
+	SELECT  quienes_somos,
+			servicios,
+            productos,
+            mostrar_quienes_somos,
+            mostrar_productos,
+            mostrar_productos_verMas,
+            mostrar_servicios,
+            mostrar_contactanos,
+            mostrar_sitioEnMantenimiento,
+            mostrar_landingPage,
+            mostrar_carritoDeCompras,
+            L.id_empresa,
+            L.id_landingPage
+    FROM hosts H 
+    INNER JOIN landingPage L ON L.id_empresa = H.id_empresa
+    WHERE H.host = prm_host ;
+	
+	SELECT 	id_categoria, nombre, 
+			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
+    FROM hosts H
+    INNER JOIN categorias C ON C.id_empresa = H.id_empresa
+    WHERE H.host = prm_host 
+    AND EXISTS(
+			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
+        );	
+        
+	SELECT PM.id_procMenu, PM.nombre, PM.activo, PM.linkTo, PM.icono
+	FROM hosts H
+	INNER JOIN procmenu PM ON PM.id_empresa = H.id_empresa AND PM.soloLanding = 1 AND activo = 1
+	WHERE H.host = prm_host 
+	ORDER BY PM.orden;
+        
+    /*
+	SELECT 	id_categoria, nombre, 
+			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
+    FROM categorias C
+    INNER JOIN hosts H ON H.host = C.host
+    WHERE h.host = prm_host 
+    AND EXISTS(
+			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
+        );
+	*/
+
+END

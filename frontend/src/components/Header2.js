@@ -17,9 +17,7 @@ import { CartContext } from "../context/ShoppingCartContext"
 
 function Header2(props) {
     const [cart, setCart] = useContext(CartContext)
-    
-    
-    
+
 
     const quantity = cart.reduce((acc, curr) => {
         return acc + parseInt(curr.cantidad)
@@ -29,6 +27,7 @@ function Header2(props) {
     const appState = useContext(StateContext)
 
     const [menu, setMenu] = useState([])
+    const [menuLanding, setMenuLanding] =  useState([])
     console.log("menu:", appState.user.menu)
 
     useEffect(() => {
@@ -38,6 +37,14 @@ function Header2(props) {
             console.error("El menú no es un arreglo válido:", appState.user.menu);
         }
     }, [appState.user.menu]);
+
+    useEffect(() => {
+        if (appState.landingPage.menuLanding && Array.isArray(appState.landingPage.menuLanding)) {
+            setMenuLanding(appState.landingPage.menuLanding)
+        }else {
+            console.error("El menú no es un arreglo válido:", appState.landingPage.menuLanding);
+        }
+    }, [appState.landingPage.menuLanding])
 
     //const [userMenu, setUserMenu] = useState([appState.user.menu])
     
@@ -97,12 +104,13 @@ function Header2(props) {
     const handled_LoggedOut = () => {
         appDispatch({ type: "logout", value: true })
         appDispatch({ type: "showLoggedIn", value: true })
+
     }
 
     const actions = {
         "Salir" : handled_LoggedOut,
         "Entrar" : handled_LoggedIn,
-        "Notificaciones": handled_Notificactions
+        "Ver Notificaciones": handled_Notificactions
     }
 
 
@@ -116,79 +124,105 @@ function Header2(props) {
 
     return (
         <>
-            <div className="flex-row my-3 my-md-0">
-                <Navbar bg="dark" variant="dark" expand="lg" fixed="top" style={{ width: '100%' }} >
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            {appState.loggedIn ? (
+                <>
+                    <div className="flex-row my-3 my-md-0">
+                        <Navbar bg="dark" variant="dark" expand="lg" fixed="top" style={{ width: '100%' }} >
+                            <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-                    <Navbar.Collapse id="basic-navbar-nav">
+                            <Navbar.Collapse id="basic-navbar-nav">
 
-                        <Nav className="w-100 d-flex justify-content-between px-3" >
-                            {menu && menu.length > 0 ? (
-                                menu.map((item, index) => (
-                                    item.hijos && item.hijos.length > 0 ? (
-                                        <NavDropdown 
-                                            key={index} 
-                                            title={
-                                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "5px" }}>
-                                                    {item.icono && item.icono.trim() !== "" ? (
-                                                        <Icon svgString={item.icono} />
-                                                    ) : <>{item.nombre}</>}                                                    
-                                                </div>
-                                            } 
-                                            id={`nav-${item.nombre}`} 
-                                            drop={index === menu.length - 1 ? "start" : "down-centered"} 
-                                            className="menu-dropdown" >
-                                            {item.hijos.map((hijo, hijoIndex) => (
-                                                <NavDropdown.Item 
-                                                    key={hijoIndex} 
-                                                    as={hijo.linkTo ? Link : "button"} 
-                                                    to={hijo.linkTo || undefined}
-                                                    onClick={actions[hijo.nombre] || undefined}
-                                                    style={{ cursor: actions[hijo.nombre] ? "pointer" : "pointer"}}
-                                                >
-                                                    {hijo.nombre}
-                                                </NavDropdown.Item>
-                                            ))}
-                                        </NavDropdown>
+                                <Nav className="w-100 d-flex justify-content-between px-3" >
+                                    {menu && menu.length > 0 ? (
+                                        menu.map((item, index) => (
+                                            item.hijos && item.hijos.length > 0 ? (
+                                                <NavDropdown 
+                                                        key={index} 
+                                                        title={
+                                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "5px" }}>
+                                                                {item.icono && item.icono.trim() !== "" ? (
+                                                                    <Icon svgString={item.icono} />
+                                                                ) : <>{item.nombre}</>}                                                    
+                                                            </div>
+                                                        }
+                                                        id={`nav-${item.nombre}`} 
+                                                        drop={index === menu.length - 1 ? "start" : "down-centered"} 
+                                                        className="menu-dropdown" 
+                                                    >
+                                                    {item.hijos.map((hijo, hijoIndex) => (
+                                                        <NavDropdown.Item 
+                                                            key={hijoIndex} 
+                                                            as={hijo.linkTo ? Link : "button"} 
+                                                            to={hijo.linkTo || undefined}
+                                                            onClick={actions[hijo.nombre] || undefined}
+                                                            style={{ cursor: actions[hijo.nombre] ? "pointer" : "pointer"}}
+                                                        >
+                                                            {hijo.nombre}
+                                                        </NavDropdown.Item>
+                                                    ))}
+                                                </NavDropdown>
+                                            ) : (
+                                                <Nav.Link key={index} as={Link} to={item.linkTo}>
+                                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "5px"  }}>
+                                                        {item.icono && item.icono.trim() !== "" ? (
+                                                            <Icon svgString={item.icono} />
+                                                        ) : <>{item.nombre}</>}
+                                                        
+                                                    </div>
+                                                </Nav.Link>
+                                            )
+                                        ))
                                     ) : (
+                                        <Nav.Link disabled>Escriba su email y contraseña.</Nav.Link>
+                                    )}
+                                </Nav>
+
+                            </Navbar.Collapse>
+
+                        </Navbar>
+
+                    </div>
+                    <style type="text/css">
+                        {`
+                            .menu-dropdown .dropdown-toggle::after {
+                            display: none;
+                            margin-left: 0.255em;
+                            vertical-align: 0.255em;
+                            content: "";
+                            border-top: 0.3em solid;
+                            border-right: 0.3em solid transparent;
+                            border-bottom: 0;
+                            border-left: 0.3em solid transparent;
+                            }
+                            .menu-dropdown .dropdown-toggle {
+                            display: flex;
+                            align-items: center;
+                            }
+                        `}
+                    </style>     
+                </>       
+            ) : (
+                <div className="flex-row my-3 my-md-0">
+                    <Navbar bg="dark" variant="dark" expand="lg" fixed="top" style={{ width: '100%' }} >
+                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <Nav className="w-100 d-flex justify-content-between px-3">
+                                {menuLanding && menuLanding.length > 0 && (
+                                    menuLanding.map((item, index) => (
                                         <Nav.Link key={index} as={Link} to={item.linkTo}>
                                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "5px"  }}>
                                                 {item.icono && item.icono.trim() !== "" ? (
                                                     <Icon svgString={item.icono} />
-                                                ) : <>{item.nombre}</>}
-                                                
-                                            </div>
+                                                ) : <>{item.nombre}</>}                                                
+                                            </div>                                            
                                         </Nav.Link>
-                                    )
-                                ))
-                            ) : (
-                                <Nav.Link disabled>No hay elementos en el menú</Nav.Link>
-                            )}
-                        </Nav>
-
-                    </Navbar.Collapse>
-
-                </Navbar>
-
-            </div>
-            <style type="text/css">
-                {`
-                    .menu-dropdown .dropdown-toggle::after {
-                    display: none;
-                    margin-left: 0.255em;
-                    vertical-align: 0.255em;
-                    content: "";
-                    border-top: 0.3em solid;
-                    border-right: 0.3em solid transparent;
-                    border-bottom: 0;
-                    border-left: 0.3em solid transparent;
-                    }
-                    .menu-dropdown .dropdown-toggle {
-                    display: flex;
-                    align-items: center;
-                    }
-                `}
-            </style>            
+                                    ))
+                                )}
+                            </Nav>
+                        </Navbar.Collapse>
+                    </Navbar>
+                </div>
+            )}
         </>
     )
 }

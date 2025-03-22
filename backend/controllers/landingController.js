@@ -34,6 +34,7 @@ export const getLandingPage = async (req, res) => {
                 servicios: rows[0][0][0].servicios,
                 productos: rows[0][0][0].productos,
                 categorias: rows[0][1],
+                menuLanding: rows[0][2],
                 settings: {
                     mostrar_quienes_somos: rows[0][0][0].mostrar_quienes_somos,
                     mostrar_productos: rows[0][0][0].mostrar_productos,
