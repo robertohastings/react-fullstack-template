@@ -40,6 +40,7 @@ function App() {
     //.log("Aquí")
     //const [cart, setCart] = useContext(CartContext)
     //const [data, setData] = useState({})
+    const api_url = process.env.REACT_APP_API_URL
     const [isLoading, setIsLoading] = useState(true)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
@@ -169,7 +170,7 @@ function App() {
             //         setIsLoading(true)
             //     })
             axios
-                .get("/api/getLandingPage", {
+                .get(`${api_url}/getLandingPage`, {
                     params: {
                         hostname
                     }

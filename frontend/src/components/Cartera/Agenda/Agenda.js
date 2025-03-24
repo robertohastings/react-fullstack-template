@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react"
+import { Navigate, useNavigate } from "react-router-dom"
 import Page from "../../Page"
 import { Row, Col, Modal, Button, Offcanvas, Form } from "react-bootstrap"
 //import Calendar from "react-calendar"
@@ -13,11 +14,18 @@ import { IoMdRefresh } from "react-icons/io";
 import { GiConfirmed } from "react-icons/gi";
 import { FaUserTag } from "react-icons/fa";
 import DispatchContext from "../../../DispatchContext"
+import StateContext from "../../../StateContext"
 
 // Registra la localización en español
 registerLocale("es", es)
 
 function Agenda() {
+    const navigate = useNavigate()
+    const appState = useContext(StateContext)
+    if (!appState.loggedIn) { 
+        navigate('LoggedIn')
+    }
+
     const [date, setDate] = useState(new Date())
     const [agenda, setAgenda] = useState([])
     const [cita, setCita] = useState([])

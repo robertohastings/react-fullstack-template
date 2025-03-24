@@ -285,3 +285,4 @@ UPDATE `crm`.`procMenu` SET `orden` = '210' WHERE (`id_empresa` = '1') and (`id_
 update procMenu set soloLanding = 0 where id_empresa = 1 and id_procMenu=38;
 
 delete from rol_menu where id_empresa = 1 and id_rol = 1 and id_procMenu = 38;
+
