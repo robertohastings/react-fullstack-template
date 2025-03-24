@@ -201,14 +201,14 @@ function Header2(props) {
                         `}
                     </style>     
                 </>       
-            ) : (
+            ) : appState.landingPage.settings.mostrar_landingPage ? (
                 <div className="flex-row my-3 my-md-0">
                     <Navbar bg="dark" variant="dark" expand="lg" fixed="top" style={{ width: '100%' }} >
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="w-100 d-flex justify-content-between px-3">
                                 {menuLanding && menuLanding.length > 0 && (
-                                    menuLanding.map((item, index) => (
+                                    menuLanding.map((item, index) => ( 
                                         <Nav.Link key={index} as={Link} to={item.linkTo}>
                                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "5px"  }}>
                                                 {item.icono && item.icono.trim() !== "" ? (
@@ -218,7 +218,45 @@ function Header2(props) {
                                         </Nav.Link>
                                     ))
                                 )}
+                                <NavDropdown
+                                    title={
+                                        <>
+                                            <RiUser3Line />                                    
+                                        </>
+                                    }
+                                    id="nav-dropdown"
+                                    drop="start"                            
+                                >
+                                    <NavDropdown.Item onClick={handled_LoggedIn}>
+                                        <PiPassword /> Entrar
+                                    </NavDropdown.Item>
+                                </NavDropdown>    
                             </Nav>
+
+                        </Navbar.Collapse>
+                    </Navbar>
+                </div>
+            ) : (
+                <div className="flex-row my-3 my-md-0">
+                    <Navbar bg="dark" variant="dark" expand="lg" fixed="top" style={{ width: '100%' }} >
+                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <Nav className="w-100 d-flex justify-content-between px-3">
+                                <NavDropdown
+                                    title={
+                                        <>
+                                            <RiUser3Line />                                    
+                                        </>
+                                    }
+                                    id="nav-dropdown"
+                                    drop="end"                            
+                                >
+                                    <NavDropdown.Item onClick={handled_LoggedIn}>
+                                        <PiPassword /> Entrar
+                                    </NavDropdown.Item>
+                                </NavDropdown>    
+                            </Nav>
+
                         </Navbar.Collapse>
                     </Navbar>
                 </div>
