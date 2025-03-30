@@ -11,8 +11,8 @@ frontend/node_modules
 backend/node_modules
 
 # Build outputs
-dist
-build
+# dist
+# build
 
 # Environment variables
 # .env
@@ -25,6 +25,7 @@ build
 
 # Ignore package-lock.json in frontend
 /frontend/package-lock.json
+# /frontend/package.json
 /frontend/.env
 
 # Mac files

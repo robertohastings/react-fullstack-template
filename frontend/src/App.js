@@ -153,6 +153,7 @@ function App() {
         //    setCart(carritoLS)
 
         const hostname = window.location.hostname
+        alert(hostname)
         dispatch({ type: "hostname", data: hostname })
         console.log(`hostname: ${hostname}`)
 
