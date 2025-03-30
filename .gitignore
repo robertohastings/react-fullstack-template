@@ -21,7 +21,7 @@ backend/node_modules
 .vscode
 
 # BackUp .env
-/backend/.env
+#/backend/.env
 
 # Ignore package-lock.json in frontend
 /frontend/package-lock.json
