@@ -152,8 +152,14 @@ function App() {
         //     const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
         //    setCart(carritoLS)
 
-        const hostname = window.location.hostname
-        alert(hostname)
+        var hostname = window.location.hostname
+        //alert(hostname)
+        if (hostname === "localhost") {
+            hostname = "herbolaria.hostregio.app"
+        }
+    
+        //console.log("hostname: ", hostname)
+
         dispatch({ type: "hostname", data: hostname })
         console.log(`hostname: ${hostname}`)
 

@@ -25,7 +25,7 @@ import { PORT } from "./config.js"
 
 //cuando es error 404 NotFound hay que revisar las rutas que estén bien escritas
 
-const allowedOrigins = ['http://localhost:3001', 'https://api.hostregio.app']; // Ajusta según tus dominios permitidos
+const allowedOrigins = ['http://localhost:3001', 'https://api.hostregio.app', 'https://herbolaria.hostregio.app']; // Ajusta según tus dominios permitidos
 
 app.use(cors({
     origin: allowedOrigins,
