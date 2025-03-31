@@ -26,7 +26,7 @@ frontend/node_modules
 # Ignore package-lock.json in frontend
 /frontend/package-lock.json
 # /frontend/package.json
-/frontend/.env
+#/frontend/.env
 
 # Mac files
 .DS_Store
