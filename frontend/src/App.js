@@ -154,7 +154,7 @@ function App() {
 
         var hostname = window.location.hostname
         //alert(hostname)
-        const esLocalHost = true
+        const esLocalHost = false
 
         if (hostname === "localhost" && !esLocalHost) {
             hostname = "herbolaria.hostregio.app"

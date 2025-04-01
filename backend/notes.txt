@@ -286,3 +286,69 @@ update procMenu set soloLanding = 0 where id_empresa = 1 and id_procMenu=38;
 
 delete from rol_menu where id_empresa = 1 and id_rol = 1 and id_procMenu = 38;
 
+---
+CASA 31/03/25
+
+ALTER TABLE `crm`.`jornada_laboral` 
+ADD COLUMN `duracion_cita` SMALLINT NULL AFTER `hora_fin`;
+
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '1');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '20' WHERE (`id_empresa` = '1') and (`id_jornada` = '2');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '3');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '4');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '5');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '6');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '7');
+
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getAgendaPorDia`(
+	IN prm_id_empresa INT,
+	IN prm_fecha DATE
+)
+BEGIN
+	DECLARE dia_semana INT;    
+    DECLARE duracion_cita INT;
+    	
+    DECLARE _hora_inicio TIME;
+	DECLARE _hora_fin TIME;
+	DECLARE _hora_actual TIME;
+    
+    DECLARE id_jornada INT;
+         
+    SET dia_semana = WEEKDAY(prm_fecha);
+    -- SET duracion_cita = 30;
+    
+	SELECT JL.hora_inicio, JL.hora_fin, JL.hora_inicio, JL.duracion_cita INTO _hora_inicio, _hora_fin, _hora_actual, duracion_cita 
+	FROM jornada_laboral JL
+	WHERE JL.id_empresa = prm_id_empresa AND JL.dia_semana = dia_semana;      
+    
+    CREATE TEMPORARY TABLE IF NOT EXISTS intervalos_tiempo (intervalo VARCHAR(20), hora_inicio TIME, hora_fin TIME);
+    
+    -- bucle WHILE y tabla temporal
+	WHILE _hora_actual < _hora_fin DO
+        -- Calcular la hora fin del intervalo actual sumando la duración de la cita
+        SET @hora_fin_intervalo = ADDTIME(_hora_actual, SEC_TO_TIME(duracion_cita * 60));
+
+        -- Formatear el intervalo de tiempo como una cadena
+        SET @intervalo = CONCAT(TIME_FORMAT(_hora_actual, '%H:%i'), ' - ', TIME_FORMAT(@hora_fin_intervalo, '%H:%i'));
+
+        -- Insertar el intervalo en la tabla temporal
+        INSERT INTO intervalos_tiempo (intervalo, hora_inicio, hora_fin) VALUES (@intervalo, _hora_actual, @hora_fin_intervalo);
+
+        -- Actualizar la hora actual para el siguiente intervalo
+        SET _hora_actual = @hora_fin_intervalo;
+	END WHILE;    
+    
+	-- Mostrar los registros de la tabla temporal
+	SELECT 	I.*, C.nombre AS Nombre, IFNULL(fn_solo_numeros(C.celulares), '') AS Celular, IFNULL(AE.descripcion, '') AS Estatus,
+			IFNULL(A.id_agenda, 0) AS id_agenda, A.clave_confirmacion, IFNULL(C.id_cliente, 0) AS id_cliente
+	FROM intervalos_tiempo I
+	LEFT JOIN agenda A ON A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = I.hora_inicio AND A.hora_fin = I.hora_fin
+    LEFT JOIN agenda_estatus AE ON AE.id_agenda_estatus = IFNULL(A.id_agenda_estatus, 1)
+    LEFT JOIN clientes C ON C.id_empresa = prm_id_empresa AND C.id_cliente = A.id_cliente 
+    ORDER BY I.intervalo;
+	-- WHERE A.id_agenda IS NULL;
+    
+	-- Eliminar la tabla temporal (opcional)
+	DROP TEMPORARY TABLE intervalos_tiempo;   
+END
+

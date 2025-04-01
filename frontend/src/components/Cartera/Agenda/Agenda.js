@@ -64,7 +64,8 @@ function Agenda() {
             })
             .catch(error => {
                 setAgenda({})
-                console.log(`There was an error ObtenerAgenda -> Status: ${error.response.status} statusText: ${error.response.statusText} Error: ${error.response.data.error}`)
+                // console.log(`There was an error ObtenerAgenda -> Status: ${error.response.status} statusText: ${error.response.statusText} Error: ${error.response.data.error}`)
+                console.log(`There was an error ObtenerAgenda -> Error: ${error}`)
             })
     }
 
@@ -349,6 +350,8 @@ function Agenda() {
                             className="form-control text-center"
                             disabled={isFetching}
                             locale="es"
+                            //readOnly
+                            onFocus={(e) => e.target.blur()} // Evita que el campo de fecha se enfoque
                         />
                         <Button size="md" variant="success" 
                             className="" 
