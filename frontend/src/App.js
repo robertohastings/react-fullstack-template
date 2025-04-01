@@ -58,7 +58,7 @@ function App() {
     */
 
     const initialState = {
-        idEmpresa: 1,
+        idEmpresa: getDecryptedItem("hostregioTenant") ?? 1,
         hostname: "localhost",
         idLandingPage: 1,
         //loggedIn: Boolean(localStorage.getItem("complexappToken")),
@@ -154,7 +154,9 @@ function App() {
 
         var hostname = window.location.hostname
         //alert(hostname)
-        if (hostname === "localhost") {
+        const esLocalHost = true
+
+        if (hostname === "localhost" && !esLocalHost) {
             hostname = "herbolaria.hostregio.app"
         }
     

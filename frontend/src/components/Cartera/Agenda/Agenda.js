@@ -20,6 +20,7 @@ import StateContext from "../../../StateContext"
 registerLocale("es", es)
 
 function Agenda() {
+    const api_url = process.env.REACT_APP_API_URL
     const navigate = useNavigate()
     const appState = useContext(StateContext)
     if (!appState.loggedIn) { 
@@ -45,11 +46,14 @@ function Agenda() {
         ObtenerAgenda(date)
     }
 
+    const id_empresa = appState.id_empresa
+    console.log('Id Empresa ->', id_empresa)
+
     const                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ObtenerAgenda = async (selectedDate) => {
         const formattedDate = format(selectedDate, "yyyy-MM-dd")
-        await Axios.get("/api/getAgendaPorDia", {
+        await Axios.get(`${api_url}/getAgendaPorDia`, {
             params: {
-                id_empresa: 1,
+                id_empresa,
                 fecha: formattedDate
                 //fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" })
             }
