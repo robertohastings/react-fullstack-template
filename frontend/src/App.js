@@ -141,43 +141,25 @@ function App() {
 
     const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
+    var hostname = window.location.hostname
     useEffect(() => {
-        console.log("Aquí....")
-        //localStorage.setItem("complexappCarrito", JSON.stringify([]))
-        localStorage.setItem("complexappLanding", JSON.stringify([]))
-        //const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
-        //setCarrito(carritoLS)
-        //dispatch({ type: "setCarrito" })
+        const esLocalHost = false // false si quiero simular un dominio valido, true si el dominio es localhost
 
-        //     const carritoLS = JSON.parse(localStorage.getItem("carrito")) ?? []
-        //    setCart(carritoLS)
-
-        var hostname = window.location.hostname
-        //alert(hostname)
-        const esLocalHost = false
-
+        // Si estamos en production
         if (hostname === "localhost" && !esLocalHost) {
+
             hostname = "herbolaria.hostregio.app"
         }
-    
-        //console.log("hostname: ", hostname)
 
         dispatch({ type: "hostname", data: hostname })
         console.log(`hostname: ${hostname}`)
+    }, [])
 
+    useEffect(() => {
+        console.log("Aquí....")
+        localStorage.setItem("complexappLanding", JSON.stringify([]))
+       
         try {
-            // await axios
-            //     .get("/api/landingPage")
-            //     .then(response => {
-            //         console.log("data:", response.data)
-            //         setData(response.data)
-            //         setIsLoading(false)
-            //         dispatch({ type: "landinPage", data: response.data })
-            //     })
-            //     .catch(error => {
-            //         console.error("There was an error fetching the data!", error)
-            //         setIsLoading(true)
-            //     })
             axios
                 .get(`${api_url}/getLandingPage`, {
                     params: {
@@ -186,22 +168,17 @@ function App() {
                 })
                 .then(response => {
                     console.log("dataLanding:", response.data)
-                    //setData(response.data)
                     setIsLoading(false)
-                    //c
+                    
                     localStorage.setItem("complexappLanding", JSON.stringify(response.data.landingPage))
-                    //localStorage.setItem("hostregioTenant", JSON.stringify(response.data.landingPage.idEmpresa))
-
+ 
                     setEncryptedItem("hostregioTenant", response.data.landingPage.idEmpresa)
                     setEncryptedItem("hostregioLandingPage", response.data.landingPage)
                     setEncryptedItem("hostregioLandingPageId", response.data.landingPage.idLandingPage)
 
-                    //dispatch({ type: "tenant", data: response.data.landingPage.idEmpresa })
                     dispatch({ type: "landingPage", data: response.data.landingPage })
+                    dispatch({ type: "idEmpresa", data: response.data.landingPage.idEmpresa })
                     console.log('showLoogedIn: ', Boolean(localStorage.getItem("complexappToken")))
-                    //dispatch({ type: "showLoggedIn", data: Boolean(localStorage.getItem("complexappToken")) })
-
-                    //setIsLoggedIn(Boolean(localStorage.getItem("complexappToken")))
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)

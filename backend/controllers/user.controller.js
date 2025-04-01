@@ -13,7 +13,7 @@ export const getUsuarioLogin = async (req, res) => {
         console.log('Encrypted password: ', req.query.password)
         console.log('Descrypted password: ', decryptData(req.query.password))
 
-        const rows = await pool.query(`CALL getUsuarioLogin(?, ?, ?);`, [req.query.id_empresa, req.query.email, decryptData(req.query.password)])
+        const rows = await pool.query(`CALL getUsuarioLogin(?, ?, ?);`, [req.query.hostname, req.query.email, decryptData(req.query.password)])
 
         let data = rows[0][0][0]
         console.log("data:", data)

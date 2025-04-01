@@ -11,6 +11,7 @@ import { encryptData } from "../tools/Utils"
 
 function LoggedIn(props) {
     const api_url = process.env.REACT_APP_API_URL
+    const hostnameTesting = process.env.REACT_APP_HOSTNAME_TESTING
     const appDispatch = useContext(DispatchContext)
     const appState = useContext(StateContext)
 
@@ -18,11 +19,21 @@ function LoggedIn(props) {
     const [password, setPassword] = useState("")
     const [errorMessage, seterrorMessage] = useState("")
     const [isFetching, setIsFetching] = useState(false)
+    const [hostname, setHostname] = useState("")
 
     useEffect(() => {
         setEmail('')
         setPassword('')
         seterrorMessage('')
+
+        // Obtengo el hostname        
+        if (window.location.hostname === 'localhost') {
+            appDispatch({ type: "hostname", value: hostnameTesting })
+        }
+        console.log("Hostname -> windows.location:", window.location.hostname)
+        console.log("Hostname -> appState:", appState.hostname)
+        console.log("Hostname -> hostnameTesting:", hostnameTesting)
+
     }, [])
 
 
@@ -40,16 +51,18 @@ function LoggedIn(props) {
         setPassword(e.target.value)
     }
     const handled_In = async () => {
-        console.log(`IdEmpresa desde el state: ${appState.idEmpresa}`)
-        //const id_empresa = getDecryptedItem("hostregioTenant")
+        //console.log(`IdEmpresa desde el state: ${appState.idEmpresa}`)
+        //console.log(`Empresa: ${id_empresa}`)
+
         const id_empresa = appState.idEmpresa
-        console.log(`Empresa: ${id_empresa}`)
+        const hostname = appState.hostname
+
         try {
             setIsFetching(true)
             await axios
                 .get(`${api_url}/usersLogin`, {
                     params: {
-                        id_empresa,
+                        hostname,
                         email: email,
                         password: encryptData(password)
                     }

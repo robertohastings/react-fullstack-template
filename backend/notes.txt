@@ -352,3 +352,71 @@ BEGIN
 	DROP TEMPORARY TABLE intervalos_tiempo;   
 END
 
+-- AGRGUE NUEVO ESTATUS EN agenda_estatus = 'No asistió'
+
+ALTER TABLE `crm`.`agenda_estatus` 
+ADD COLUMN `id_empresa` INT NULL FIRST,
+CHANGE COLUMN `id_agenda_estatus` `id_agenda_estatus` SMALLINT NULL ,
+DROP PRIMARY KEY;
+;
+
+update agenda_estatus set id_empresa = 1;
+
+ALTER TABLE `crm`.`agenda_estatus` 
+CHANGE COLUMN `id_empresa` `id_empresa` INT NOT NULL ,
+CHANGE COLUMN `id_agenda_estatus` `id_agenda_estatus` SMALLINT NOT NULL AUTO_INCREMENT ,
+ADD PRIMARY KEY (`id_empresa`, `id_agenda_estatus`);
+;
+
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getUsuarioLogin`(
+	IN hostname VARCHAR(200),
+    IN email varchar(180),
+    IN password VARCHAR(90)
+)
+BEGIN
+	DECLARE mensaje VARCHAR(200);
+    DECLARE status_code INT;
+    DECLARE idEmpresa INT;
+    
+    -- OBTENGO EL id_empresa
+    SELECT id_empresa INTO idEmpresa FROM hosts WHERE host = hostname;
+    
+	/*REVISO SI EXISTE PRIMERO EL CORREO*/
+    IF NOT EXISTS(
+		SELECT 1
+		FROM usuarios U
+		WHERE U.id_empresa = idEmpresa AND U.email = email
+    ) THEN 
+		SET mensaje = 'Correo no encontrado', status_code = 401;
+        SELECT mensaje AS message, status_code AS status;
+	ELSE 
+		/*REVISO SI EXISTE EL PASSWORD COINCIDE CON EL CORREO
+		IF NOT EXISTS(
+			SELECT 1
+			FROM usuarios U
+			WHERE U.id_empresa = id_empresa AND U.email = email AND U.password = password
+        ) THEN
+			SET mensaje = 'Contraseña incorrecta', status_code = 401;
+            SELECT mensaje AS message, status_code AS status;
+		ELSE
+        			            
+            UPDATE usuarios SET fecha_ultimo_acceso = now()
+            WHERE id_empresa = id_empresa AND email = email AND password = password;
+            
+            */
+            SET mensaje = 'Usuario autenticado', status_code = 200;
+            
+            SELECT 	U.id_usuario, U.email, U.nombre, U.apellidos, U.celular,
+					mensaje AS message, status_code AS status, U.password, '' AS token,
+                    IFNULL(U.imagen, '') AS fotografia, 
+                    R.id_rol, R.nombre AS rol,
+                    CASE WHEN R.id_rol IN (1, 2) THEN 1 ELSE 0 END AS isAdmin
+			FROM usuarios U
+            INNER JOIN usuarios_roles UR ON UR.id_empresa = U.id_empresa AND UR.id_usuario = U.id_usuario
+            INNER JOIN roles R ON R.id_empresa = UR.id_empresa AND R.id_rol = UR.id_rol
+			WHERE U.id_empresa = idEmpresa AND U.email = email /*AND U.password = password*/;
+            
+		/*END IF;*/
+	END IF;
+    
+END
