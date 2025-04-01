@@ -46,14 +46,14 @@ function Agenda() {
         ObtenerAgenda(date)
     }
 
-    const id_empresa = appState.id_empresa
+    const id_empresa = appState.idEmpresa
     console.log('Id Empresa ->', id_empresa)
 
     const                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ObtenerAgenda = async (selectedDate) => {
         const formattedDate = format(selectedDate, "yyyy-MM-dd")
         await Axios.get(`${api_url}/getAgendaPorDia`, {
             params: {
-                id_empresa,
+                id_empresa: id_empresa,
                 fecha: formattedDate
                 //fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" })
             }
