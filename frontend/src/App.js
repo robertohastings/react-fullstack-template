@@ -41,25 +41,36 @@ function App() {
     //const [cart, setCart] = useContext(CartContext)
     //const [data, setData] = useState({})
     const api_url = process.env.REACT_APP_API_URL
+    const hostnameTesting = process.env.REACT_APP_HOSTNAME_TESTING
     const [isLoading, setIsLoading] = useState(true)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
-
+    const [hostname, setHostname] = useState("")
     const [enMtto, setEnMtto] = useState({
         settings: {
             mostrar_sitioEnMantenimiento: 1
         }
     })
+    const esLocalHost = false // false si quiero simular un dominio valido, true si el dominio es localhost
 
-    /*
-        idEmpresa: getDecryptedItem("hostregioTenant"),
-        hostname: getDecryptedItem("hostregioHostname"),
-        idLandingPage: getDecryptedItem("hostregioLandingPageId"),
-        landingPage: getDecryptedItem("hostregioLandingPage"),
-    */
+    useEffect(() => {
+
+        // Si estamos en production
+        if (window.location.hostname === "localhost" && !esLocalHost) {
+            console.log(1)
+            console.log('hostnameTesting:', hostnameTesting)
+            setHostname(hostnameTesting)            
+        } else {
+            console.log(2)
+            setHostname(window.location.hostname)
+        }
+        console.log("Effect app")
+        console.log(`hostname: ${hostname}`)
+    }, [])    
+
 
     const initialState = {
         idEmpresa: getDecryptedItem("hostregioTenant") ?? 1,
-        hostname: "localhost",
+        hostname: hostname,
         idLandingPage: 1,
         //loggedIn: Boolean(localStorage.getItem("complexappToken")),
         loggedIn: isTokenValid(localStorage.getItem("complexappToken")),
@@ -141,29 +152,18 @@ function App() {
 
     const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
-    var hostname = window.location.hostname
-    useEffect(() => {
-        const esLocalHost = false // false si quiero simular un dominio valido, true si el dominio es localhost
 
-        // Si estamos en production
-        if (hostname === "localhost" && !esLocalHost) {
-
-            hostname = "herbolaria.hostregio.app"
-        }
-
-        dispatch({ type: "hostname", data: hostname })
-        console.log(`hostname: ${hostname}`)
-    }, [])
 
     useEffect(() => {
         console.log("Aquí....")
         localStorage.setItem("complexappLanding", JSON.stringify([]))
+        console.log('api_url:', api_url)
        
         try {
             axios
                 .get(`${api_url}/getLandingPage`, {
                     params: {
-                        hostname
+                        hostname: hostname,
                     }
                 })
                 .then(response => {

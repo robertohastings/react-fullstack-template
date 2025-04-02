@@ -27,7 +27,7 @@ export const setEncryptedItem = (key, data) => {
 
 // Función para recuperar y desencriptar desde localStorage
 export const getDecryptedItem = key => {
-    console.log("keygetDecrypted -> key", key)
+    //console.log("keygetDecrypted -> key", key)
     const encryptedData = localStorage.getItem(key)
     //console.log("antes del decryptdata encryptedData:", encryptedData)
     //const id_empresa = decryptData(encryptedData)

@@ -27,12 +27,12 @@ function LoggedIn(props) {
         seterrorMessage('')
 
         // Obtengo el hostname        
-        if (window.location.hostname === 'localhost') {
-            appDispatch({ type: "hostname", value: hostnameTesting })
-        }
-        console.log("Hostname -> windows.location:", window.location.hostname)
-        console.log("Hostname -> appState:", appState.hostname)
-        console.log("Hostname -> hostnameTesting:", hostnameTesting)
+        // if (window.location.hostname === 'localhost') {
+        //     appDispatch({ type: "hostname", value: hostnameTesting })
+        // }
+        // console.log("Hostname -> windows.location:", window.location.hostname)
+        // console.log("Hostname -> appState:", appState.hostname)
+        // console.log("Hostname -> hostnameTesting:", hostnameTesting)
 
     }, [])
 
@@ -51,18 +51,18 @@ function LoggedIn(props) {
         setPassword(e.target.value)
     }
     const handled_In = async () => {
-        //console.log(`IdEmpresa desde el state: ${appState.idEmpresa}`)
-        //console.log(`Empresa: ${id_empresa}`)
 
-        const id_empresa = appState.idEmpresa
-        const hostname = appState.hostname
+
+        //const id_empresa = appState.idEmpresa
+        //const hostname = appState.hostname
+        console.log("hostname login:", appState.hostname)
 
         try {
             setIsFetching(true)
             await axios
                 .get(`${api_url}/usersLogin`, {
                     params: {
-                        hostname,
+                        hostname: appState.hostname,
                         email: email,
                         password: encryptData(password)
                     }
