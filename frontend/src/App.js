@@ -52,25 +52,25 @@ function App() {
     })
     const esLocalHost = false // false si quiero simular un dominio valido, true si el dominio es localhost
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        // Si estamos en production
-        if (window.location.hostname === "localhost" && !esLocalHost) {
-            console.log(1)
-            console.log('hostnameTesting:', hostnameTesting)
-            setHostname(hostnameTesting)            
-        } else {
-            console.log(2)
-            setHostname(window.location.hostname)
-        }
-        console.log("Effect app")
-        console.log(`hostname: ${hostname}`)
-    }, [])    
+    //     // Si estamos en production
+    //     if (window.location.hostname === "localhost" && !esLocalHost) {
+    //         console.log(1)
+    //         console.log('hostnameTesting:', hostnameTesting)
+    //         setHostname(hostnameTesting)            
+    //     } else {
+    //         console.log(2)
+    //         setHostname(window.location.hostname)
+    //     }
+    //     console.log("Effect app")
+    //     console.log(`hostname: ${hostname}`)
+    // }, [])    
 
 
     const initialState = {
         idEmpresa: getDecryptedItem("hostregioTenant") ?? 1,
-        hostname: hostname,
+        hostname: getDecryptedItem("hostregioHostname") ?? window.location.hostname,
         idLandingPage: 1,
         //loggedIn: Boolean(localStorage.getItem("complexappToken")),
         loggedIn: isTokenValid(localStorage.getItem("complexappToken")),
@@ -103,7 +103,8 @@ function App() {
                 setEncryptedItem("hostregioTenant", action.data)
                 break
             case "hostname":
-                setEncryptedItem("hostregioHostname", action.data)
+                draft.hostname = action.data
+                //setEncryptedItem("hostregioHostname", action.data)
                 break
             case "login":
                 draft.loggedIn = true
@@ -153,11 +154,24 @@ function App() {
     const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
 
-
     useEffect(() => {
         console.log("Aquí....")
         localStorage.setItem("complexappLanding", JSON.stringify([]))
         console.log('api_url:', api_url)
+
+        // Si estamos en production
+        var hostname = window.location.hostname
+        if (window.location.hostname === "localhost" && !esLocalHost) {
+            console.log(1)
+            console.log('hostnameTesting:', hostnameTesting)
+            hostname = hostnameTesting
+            //setHostname(hostnameTesting)            
+        } else {
+            console.log(2)
+            //setHostname(window.location.hostname)
+        }
+        console.log("Effect app")
+        console.log(`hostname: ${hostname}`)
        
         try {
             axios
@@ -171,14 +185,36 @@ function App() {
                     setIsLoading(false)
                     
                     localStorage.setItem("complexappLanding", JSON.stringify(response.data.landingPage))
- 
+                    
+                    // creo cockies encriptadas
                     setEncryptedItem("hostregioTenant", response.data.landingPage.idEmpresa)
                     setEncryptedItem("hostregioLandingPage", response.data.landingPage)
                     setEncryptedItem("hostregioLandingPageId", response.data.landingPage.idLandingPage)
+                    setEncryptedItem("hostregioLandingPageSettings", response.data.landingPage.settings)                    
 
+                    // seteo el estado directo el response
                     dispatch({ type: "landingPage", data: response.data.landingPage })
                     dispatch({ type: "idEmpresa", data: response.data.landingPage.idEmpresa })
+                    dispatch({ type: "hostname", data: hostname })
                     console.log('showLoogedIn: ', Boolean(localStorage.getItem("complexappToken")))
+
+                    //
+                    console.log("appState user menu:", state.user.menu)
+                    console.log("Menú landing:", response.data.landingPage.menuLanding)
+                    if (Array.isArray(state.user.menu) && state.user.menu.length === 0) {
+                        console.log("No hay menú en el estate")
+                        //dispatch({ type: "showLoggedIn", value: true })
+                        if (Array.isArray(response.data.landingPage.menuLanding) && response.data.landingPage.menuLanding.length > 0){
+                            console.log("Si menú en landing")
+                            setEncryptedItem("hostregioUsuarioMenu", response.data.landingPage.menuLanding)
+                        }
+                    }
+
+
+                    // if (response.data.landingPage.menuLanding.length = 0) {
+                    //     console.log("No hay menú")
+                    //     dispatch({ type: "showLoggedIn", value: true })
+                    // }
                 })
                 .catch(error => {
                     console.error("There was an error fetching the data!", error)

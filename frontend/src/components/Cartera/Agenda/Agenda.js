@@ -98,35 +98,14 @@ function Agenda() {
         setIsFetching(true)
 
         const getData = {
-            id_empresa: 1,
+            id_empresa: id_empresa,
             telefono: celular
-        }
-
-        // try {
-        //     try {
-        //         await Axios.put("/api/getClientePorTelefonoOCelular", getData)
-        //             .then(response => {
-
-        //                 const data = response.data.cliente[0]
-        //                 setCita(prevCita => ({ ...prevCita, Nombre: data.nombre_cliente }))
-        //                 setCita(prevCita => ({ ...prevCita, id_cliente: data.id_cliente }))
-        //                 setCita(prevCita => ({ ...prevCita, Celular: celular }))
-        //             })
-        //             .catch(error => {
-        //                 console.log("There was an error updating agenda: ", error)
-        //             })
-        //     } catch (error) {
-        //         console.log("error:", error)
-        //     } finally {
-        //     }
-        // } catch (error) {
-        //     console.log("There was an error with the PUT request ->", error)
-        // }          
+        }        
 
         try {
             const response = await Axios.get("/api/getClientePorTelefonoOCelular", {
                 params: {
-                    id_empresa: 1,
+                    id_empresa: id_empresa,
                     telefono: celular
                 }
             })
@@ -159,7 +138,7 @@ function Agenda() {
     const handled_CambiarEstatus = async (id_agenda_estatus) => {
         // Datos para el PUT
         const putData = {
-            id_empresa: 1,
+            id_empresa: id_empresa,
             id_agenda: cita.id_agenda,
             id_agenda_estatus: id_agenda_estatus
         }
@@ -208,7 +187,7 @@ function Agenda() {
             
             // Datos para el POST
             const postData = {
-                id_empresa: 1,
+                id_empresa: id_empresa,
                 fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }),
                 intervalo: cita.intervalo,
                 id_cliente: cita.id_cliente,
@@ -229,25 +208,6 @@ function Agenda() {
                                 value: `${response.data.message}. Folio confirmación: ${response.data.folio_confirmacion}`,
                                 typeAlert: "success"
                             })
-
-                            // Si el POST es satisfactorio, continuar con la actualización de la agenda
-                            // Añadir la cita actual al estado de agenda
-                            // setAgenda(prevAgenda => {
-                            //     // Verificar si la cita ya existe en la agenda
-                            //     const citaExistente = prevAgenda.find(item => item.intervalo === cita.intervalo)
-                            //     if (citaExistente) {
-                            //         console.log("existente")
-                            //         // Actualizar la cita existente
-                            //         return prevAgenda.map(item => (item.intervalo === nuevaCita.intervalo ? nuevaCita : item))
-
-                            //         //return prevAgenda.map(item => (item.intervalo === cita.intervalo ? cita : item))
-                            //     } else {
-                            //         console.log("nueva")
-                            //         // Añadir una nueva cita
-                            //         return [...prevAgenda, nuevaCita]
-                            //         //return [...prevAgenda, cita]
-                            //     }
-                            // })
                         })
                         .catch(error => {
                             console.log(`There was an error in postAgenda -> Status: ${error}`)
@@ -259,13 +219,12 @@ function Agenda() {
                 }
             } catch (error) {
                 console.log("There was an error with the POST request ->", error)
-                // Manejar el error según sea necesario
             }
         } else {
             
             // Datos para el PUT
             const putData = {
-                id_empresa: 1,
+                id_empresa: id_empresa,
                 id_agenda: cita.id_agenda,
                 intervalo: cita.intervalo,
                 id_cliente: cita.id_cliente,

@@ -9,9 +9,13 @@ config()
 
 export const getUsuarioLogin = async (req, res) => {
     try {
-
+        console.log("getUsuarioLogin req.query ->", req.query)
         console.log('Encrypted password: ', req.query.password)
         console.log('Descrypted password: ', decryptData(req.query.password))
+
+        //let passwordHash = await bcrypt.hash(decryptData(req.query.password), 8);
+        //console.log('passwordHash:', passwordHash);
+
 
         const rows = await pool.query(`CALL getUsuarioLogin(?, ?, ?);`, [req.query.hostname, req.query.email, decryptData(req.query.password)])
 
@@ -19,9 +23,6 @@ export const getUsuarioLogin = async (req, res) => {
         console.log("data:", data)
 
         const password = decryptData(req.query.password)
-
-        //let passwordHash = await bcrypt.hash(password, 8);
-        //console.log('passwordHash:', passwordHash);
 
         //data.password = ''
         //console.log('status:', data )
@@ -35,7 +36,7 @@ export const getUsuarioLogin = async (req, res) => {
             if (compare) {
                 
                 //obtengo el menú dinámico del usuario autenticado
-                const rowsMenu = await pool.query(`CALL getMenuUsuario(?, ?)`, [req.query.id_empresa, data.id_usuario])
+                const rowsMenu = await pool.query(`CALL getMenuUsuario(?, ?)`, [req.query.hostname, data.id_usuario])
                 data.menu = {
                     padres: rowsMenu[0][0],
                     hijos: rowsMenu[0][1]
@@ -63,6 +64,7 @@ export const getUsuarioLogin = async (req, res) => {
                     })
                 })
             } else {
+
                 data.status = 401
                 data.message = "Contraseña incorrecta"
 
@@ -74,6 +76,8 @@ export const getUsuarioLogin = async (req, res) => {
             }
             //1 Corintios 7:23
         } else {
+            console.log("hashSaved:", hashSaved)
+            console.log("password:", password)
             data.status = 401
 
             res.json({

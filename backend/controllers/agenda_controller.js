@@ -69,7 +69,7 @@ export const postAgenda = async (req, res) => {
     }
 }
 export const putAgenda = async (req, res) => {
-    //console.log("body putAgenda =>", req.body)
+    console.log("body putAgenda =>", req.body)
     const { id_empresa, id_agenda, intervalo, id_cliente, nombre, fecha, celular } = req.body
     
     try {
