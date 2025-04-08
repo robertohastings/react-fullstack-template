@@ -103,7 +103,7 @@ function Agenda() {
         }        
 
         try {
-            const response = await Axios.get("/api/getClientePorTelefonoOCelular", {
+            const response = await Axios.get(`${api_url}/getClientePorTelefonoOCelular`, {
                 params: {
                     id_empresa: id_empresa,
                     telefono: celular
@@ -146,7 +146,7 @@ function Agenda() {
         try {
             // Hacer el PUT al endpoint
             try {
-                await Axios.put("/api/putAgendaCambiaEstatus", putData)
+                await Axios.put(`${api_url}/putAgendaCambiaEstatus`, putData)
                     .then(response => {
                         console.log("PUT response ->", response)
 
@@ -199,7 +199,7 @@ function Agenda() {
             try {
                 // Hacer el POST al endpoint
                 try {
-                    await Axios.post("/api/postAgenda", postData)
+                    await Axios.post(`${api_url}/postAgenda`, postData)
                         .then(response => {
                             console.log("POST response ->", response)
 
@@ -236,7 +236,7 @@ function Agenda() {
             try {
                 // Hacer el PUT al endpoint
                 try {
-                    await Axios.put("/api/putAgenda", putData)
+                    await Axios.put(`${api_url}/putAgenda`, putData)
                         .then(response => {
                             console.log("POST response ->", response)
 
