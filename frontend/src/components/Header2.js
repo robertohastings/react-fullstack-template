@@ -14,10 +14,11 @@ import DispatchContext from "../DispatchContext"
 import StateContext from "../StateContext"
 //import Carrito from "./Carrito"
 import { CartContext } from "../context/ShoppingCartContext"
+import { is } from "date-fns/locale"
 
 function Header2(props) {
     const [cart, setCart] = useContext(CartContext)
-
+    const [expanded, setExpanded] = useState(false);
 
     const quantity = cart.reduce((acc, curr) => {
         return acc + parseInt(curr.cantidad)
@@ -127,7 +128,15 @@ function Header2(props) {
             {appState.loggedIn ? (
                 <>
                     <div className="flex-row my-3 my-md-0">
-                        <Navbar bg="dark" variant="dark" expand="lg" fixed="top" style={{ width: '100%' }} >
+                        <Navbar 
+                            bg="dark" 
+                            variant="dark" 
+                            expand="lg" 
+                            fixed="top" 
+                            style={{ width: '100%' }}
+                            expanded={expanded} // Controla el estado del colapso
+                            onToggle={(isExpanded) => setExpanded(isExpanded)} // Actualiza el estado al expandir/colapsar
+                        >
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
                             <Navbar.Collapse id="basic-navbar-nav">
@@ -154,7 +163,10 @@ function Header2(props) {
                                                             key={hijoIndex} 
                                                             as={hijo.linkTo ? Link : "button"} 
                                                             to={hijo.linkTo || undefined}
-                                                            onClick={actions[hijo.nombre] || undefined}
+                                                            onClick={() => {
+                                                                actions[hijo.nombre]?.();
+                                                                setExpanded(false); // Cierra el menú al seleccionar una opción
+                                                            }}
                                                             style={{ cursor: actions[hijo.nombre] ? "pointer" : "pointer"}}
                                                         >
                                                             {hijo.nombre}
@@ -162,7 +174,14 @@ function Header2(props) {
                                                     ))}
                                                 </NavDropdown>
                                             ) : (
-                                                <Nav.Link key={index} as={Link} to={item.linkTo}>
+                                                <Nav.Link 
+                                                    key={index} 
+                                                    as={Link} 
+                                                    to={item.linkTo}
+                                                    onClick={() => {                                                        
+                                                        setExpanded(false); // Cierra el menú al seleccionar una opción
+                                                    }}
+                                                >
                                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "5px"  }}>
                                                         {item.icono && item.icono.trim() !== "" ? (
                                                             <Icon svgString={item.icono} />
