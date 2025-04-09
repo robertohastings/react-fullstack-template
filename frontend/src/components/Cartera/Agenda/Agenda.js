@@ -8,7 +8,8 @@ import DatePicker, { registerLocale } from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { es } from "date-fns/locale"
 import { format } from "date-fns"
-import Axios from "axios"
+import axios from "axios"
+import axiosInstance from "../../../tools/AxiosInstance"
 import { BsSave, BsBackspace, BsSend, BsEraser, BsSearch } from "react-icons/bs"
 import { IoMdRefresh } from "react-icons/io";
 import { GiConfirmed } from "react-icons/gi";
@@ -49,29 +50,31 @@ function Agenda() {
     const id_empresa = appState.idEmpresa
     console.log('Id Empresa ->', id_empresa)
 
-    const                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ObtenerAgenda = async (selectedDate) => {
-        const formattedDate = format(selectedDate, "yyyy-MM-dd")
-        await Axios.get(`${api_url}/getAgendaPorDia`, {
-            params: {
-                id_empresa: id_empresa,
-                fecha: formattedDate
-                //fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" })
+    const ObtenerAgenda = async (selectedDate) => {
+        try {
+            const response = await axiosInstance.get("/getAgendaPorDia", {
+                params: {
+                    id_empresa: appState.idEmpresa,
+                    fecha: selectedDate.toISOString().split("T")[0],
+                },
+            })
+            setAgenda(response.data.agenda)
+        } catch (error) {
+            if (axios.isCancel(error)) {
+                console.error("Solicitud cancelada:", error.message)
+            } else if (error.response && error.response.status === 401) {
+                // Si el token es inválido, redirige al usuario al componente LoggedIn
+                appDispatch({ type: "logout" }) // Limpia el estado global
+                navigate("/") // Redirige al inicio de sesión
+            } else {
+                console.error("Error al obtener la agenda:", error)
             }
-        })
-            .then(response => {
-                setAgenda(response.data.agenda)
-                console.log("ObtenerAgenda ->", response.data.agenda)
-            })
-            .catch(error => {
-                setAgenda({})
-                // console.log(`There was an error ObtenerAgenda -> Status: ${error.response.status} statusText: ${error.response.statusText} Error: ${error.response.data.error}`)
-                console.log(`There was an error ObtenerAgenda -> Error: ${error}`)
-            })
+        }
     }
 
     useEffect(() => {
         ObtenerAgenda(date)
-    }, [])
+    }, [date])
 
     const handledRowClick = cita => {
         setCelulaABuscar("")
@@ -103,7 +106,7 @@ function Agenda() {
         }        
 
         try {
-            const response = await Axios.get(`${api_url}/getClientePorTelefonoOCelular`, {
+            const response = await axios.get(`${api_url}/getClientePorTelefonoOCelular`, {
                 params: {
                     id_empresa: id_empresa,
                     telefono: celular
@@ -146,7 +149,7 @@ function Agenda() {
         try {
             // Hacer el PUT al endpoint
             try {
-                await Axios.put(`${api_url}/putAgendaCambiaEstatus`, putData)
+                await axios.put(`${api_url}/putAgendaCambiaEstatus`, putData)
                     .then(response => {
                         console.log("PUT response ->", response)
 
@@ -199,7 +202,7 @@ function Agenda() {
             try {
                 // Hacer el POST al endpoint
                 try {
-                    await Axios.post(`${api_url}/postAgenda`, postData)
+                    await axios.post(`${api_url}/postAgenda`, postData)
                         .then(response => {
                             console.log("POST response ->", response)
 
@@ -236,7 +239,7 @@ function Agenda() {
             try {
                 // Hacer el PUT al endpoint
                 try {
-                    await Axios.put(`${api_url}/putAgenda`, putData)
+                    await axios.put(`${api_url}/putAgenda`, putData)
                         .then(response => {
                             console.log("POST response ->", response)
 

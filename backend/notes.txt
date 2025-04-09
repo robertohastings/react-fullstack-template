@@ -367,5 +367,141 @@ CHANGE COLUMN `id_empresa` `id_empresa` INT NOT NULL ,
 CHANGE COLUMN `id_agenda_estatus` `id_agenda_estatus` SMALLINT NOT NULL AUTO_INCREMENT ,
 ADD PRIMARY KEY (`id_empresa`, `id_agenda_estatus`);
 ;
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getAgendaPorDia`(
+	IN prm_id_empresa INT,
+	IN prm_fecha DATE
+)
+BEGIN
+	DECLARE dia_semana INT;    
+    DECLARE duracion_cita INT;
+    	
+    DECLARE _hora_inicio TIME;
+	DECLARE _hora_fin TIME;
+	DECLARE _hora_actual TIME;
+    
+    DECLARE id_jornada INT;
+         
+    SET dia_semana = WEEKDAY(prm_fecha);
+    -- SET duracion_cita = 30;
+    
+	SELECT JL.hora_inicio, JL.hora_fin, JL.hora_inicio, JL.duracion_cita INTO _hora_inicio, _hora_fin, _hora_actual, duracion_cita 
+	FROM jornada_laboral JL
+	WHERE JL.id_empresa = prm_id_empresa AND JL.dia_semana = dia_semana;      
+    
+    CREATE TEMPORARY TABLE IF NOT EXISTS intervalos_tiempo (intervalo VARCHAR(20), hora_inicio TIME, hora_fin TIME);
+    
+    -- bucle WHILE y tabla temporal
+	WHILE _hora_actual < _hora_fin DO
+        -- Calcular la hora fin del intervalo actual sumando la duración de la cita
+        SET @hora_fin_intervalo = ADDTIME(_hora_actual, SEC_TO_TIME(duracion_cita * 60));
 
-revisar el sp: getAgendaPorDia y ver si en agenda_estatus estoy buscando en el on primero por el id_empresa
+        -- Formatear el intervalo de tiempo como una cadena
+        SET @intervalo = CONCAT(TIME_FORMAT(_hora_actual, '%H:%i'), ' - ', TIME_FORMAT(@hora_fin_intervalo, '%H:%i'));
+
+        -- Insertar el intervalo en la tabla temporal
+        INSERT INTO intervalos_tiempo (intervalo, hora_inicio, hora_fin) VALUES (@intervalo, _hora_actual, @hora_fin_intervalo);
+
+        -- Actualizar la hora actual para el siguiente intervalo
+        SET _hora_actual = @hora_fin_intervalo;
+	END WHILE;    
+    
+	-- Mostrar los registros de la tabla temporal
+	SELECT 	I.*, C.nombre AS Nombre, IFNULL(fn_solo_numeros(C.celulares), '') AS Celular, IFNULL(AE.descripcion, '') AS Estatus,
+			IFNULL(A.id_agenda, 0) AS id_agenda, A.clave_confirmacion, IFNULL(C.id_cliente, 0) AS id_cliente
+	FROM intervalos_tiempo I
+	LEFT JOIN agenda A ON A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = I.hora_inicio AND A.hora_fin = I.hora_fin
+    LEFT JOIN agenda_estatus AE ON AE.id_empresa = prm_id_empresa AND AE.id_agenda_estatus = IFNULL(A.id_agenda_estatus, 1)
+    LEFT JOIN clientes C ON C.id_empresa = prm_id_empresa AND C.id_cliente = A.id_cliente 
+    ORDER BY I.intervalo;
+	-- WHERE A.id_agenda IS NULL;
+    
+	-- Eliminar la tabla temporal (opcional)
+	DROP TEMPORARY TABLE intervalos_tiempo;   
+END
+
+Es una buena práctica crear una carpeta llamada helpers o middlewares en tu backend para almacenar funciones reutilizables como la validación de tokens. En este caso, puedes crear un middleware llamado authenticateToken que valide el token antes de que se ejecute la lógica de tu controlador.
+
+Pasos para implementar authenticateToken:
+Crea la carpeta helpers o middlewares:
+
+En tu proyecto, crea una carpeta llamada middlewares (o helpers si prefieres).
+Crea el archivo authenticateToken.js:
+
+Este archivo contendrá la lógica para validar el token.
+Modifica el controlador getAgendaPorDia para usar el middleware:
+
+Usa el middleware en tu ruta para validar el token antes de ejecutar la lógica del controlador.
+
+Implementación:
+1. Crea el archivo authenticateToken.js:
+
+import jwt from "jsonwebtoken"
+
+export const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers["authorization"]
+    const token = authHeader && authHeader.split(" ")[1] // Extrae el token del encabezado
+
+    if (!token) {
+        return res.status(401).json({
+            success: false,
+            message: "Token no proporcionado",
+        })
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({
+                success: false,
+                message: "Token inválido o expirado",
+            })
+        }
+
+        req.user = user // Agrega la información del usuario al objeto `req`
+        next() // Continúa con el siguiente middleware o controlador
+    })
+}
+
+2. Modifica el controlador getAgendaPorDia para usar el middleware:
+En el archivo agenda_controller.js, importa y usa el middleware authenticateToken.
+
+import { pool } from "../db.js"
+import { authenticateToken } from "../middlewares/authenticateToken.js"
+
+export const getAgendaPorDia = [
+    authenticateToken, // Middleware para validar el token
+    async (req, res) => {
+        try {
+            console.log("getAgendaPorDia ->", req.query)
+            const { id_empresa, fecha } = req.query
+
+            const rows = await pool.query(`CALL getAgendaPorDia(?, ?);`, [id_empresa, fecha])
+
+            console.log("rows ->", rows[0][0])
+
+            res.status(200).json({
+                success: true,
+                agenda: rows[0][0],
+            })
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                error: `An error occurred: ${error}`,
+            })
+        }
+    },
+]
+
+Explicación:
+Middleware authenticateToken:
+
+Extrae el token del encabezado Authorization.
+Usa jwt.verify para validar el token con la clave secreta (JWT_SECRET).
+Si el token es válido, agrega la información del usuario al objeto req y llama a next() para continuar con el controlador.
+Si el token no es válido o no está presente, devuelve un error 401 o 403.
+Controlador getAgendaPorDia:
+
+Ahora incluye el middleware authenticateToken como el primer argumento.
+Si el token es válido, ejecuta la lógica del controlador.
+Reutilización del middleware:
+
+Puedes usar authenticateToken en cualquier controlador que necesite validar el token antes de ejecutar su lógica.

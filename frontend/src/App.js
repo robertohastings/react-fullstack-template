@@ -50,7 +50,7 @@ function App() {
             mostrar_sitioEnMantenimiento: 1
         }
     })
-    const esLocalHost = true // false si quiero simular un dominio valido, true si el dominio es localhost
+    const esLocalHost = false // false si quiero simular un dominio valido, true si el dominio es localhost
 
     // useEffect(() => {
 
@@ -69,7 +69,6 @@ function App() {
 
 
     const initialState = {
-        idEmpresa: getDecryptedItem("hostregioTenant") ?? 1,
         hostname: getDecryptedItem("hostregioHostname") ?? window.location.hostname,
         idLandingPage: 1,
         //loggedIn: Boolean(localStorage.getItem("complexappToken")),
@@ -93,6 +92,7 @@ function App() {
         unreadReadChatCount: 0,
         //landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
         landingPage: getDecryptedItem("hostregioLandingPage") ?? enMtto,
+        idEmpresa: getDecryptedItem("hostregioTenant") ?? getDecryptedItem("hostregioLandingPage")?.idEmpresa,
         notifications: false
         //carrito: JSON.parse(localStorage.getItem("carrito")) ?? []
     }
