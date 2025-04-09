@@ -50,7 +50,7 @@ function App() {
             mostrar_sitioEnMantenimiento: 1
         }
     })
-    const esLocalHost = false // false si quiero simular un dominio valido, true si el dominio es localhost
+    const esLocalHost = true // false si quiero simular un dominio valido, true si el dominio es localhost
 
     // useEffect(() => {
 

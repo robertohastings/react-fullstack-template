@@ -76,9 +76,9 @@ export const getUsuarioLogin = async (req, res) => {
             }
             //1 Corintios 7:23
         } else {
-            console.log("hashSaved:", hashSaved)
-            console.log("password:", password)
-            data.status = 401
+            //console.log("hashSaved:", hashSaved)
+            //console.log("password:", password)
+            //data.status = 401
 
             res.json({
                 success: false,
@@ -87,7 +87,7 @@ export const getUsuarioLogin = async (req, res) => {
             })
         }
     } catch (error) {
-        //console.log('Error: ', error)
+        //console.log('Por aquí entro: ', error)
         // res.status(500).json({
         //     message: `${error}`
         // })

@@ -5,6 +5,8 @@ import DispatchContext from "../DispatchContext"
 import StateContext from "../StateContext"
 import { PiGoogleLogo } from "react-icons/pi"
 import { LuUserCircle2 } from "react-icons/lu"
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"; // Importa íconos para mostrar/ocultar contraseña
+
 import axios from "axios"
 //import { getDecryptedItem } from "../tools/Utils"
 import { encryptData } from "../tools/Utils"
@@ -20,6 +22,8 @@ function LoggedIn(props) {
     const [errorMessage, seterrorMessage] = useState("")
     const [isFetching, setIsFetching] = useState(false)
     const [hostname, setHostname] = useState("")
+    const [showPassword, setShowPassword] = useState(false); // Estado para alternar la visibilidad de la contraseña
+
 
     useEffect(() => {
         setEmail('')
@@ -36,6 +40,9 @@ function LoggedIn(props) {
 
     }, [])
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword); // Cambia el estado de visibilidad
+    };
 
     const handledClose = () => {
         appDispatch({ type: "showLoggedIn", value: false })
@@ -46,8 +53,8 @@ function LoggedIn(props) {
     }
 
     const handled_Password = e => {
-        console.log('Password:', e.target.value)
-        console.log('Password encrypted:', encryptData(e.target.value))
+        // console.log('Password:', e.target.value)
+        // console.log('Password encrypted:', encryptData(e.target.value))
         setPassword(e.target.value)
     }
     const handled_In = async () => {
@@ -129,10 +136,33 @@ function LoggedIn(props) {
                             <Form.Control type="email" placeholder="name@example.com" autoFocus onChange={handled_Email} 
                                 defaultValue={email} autoComplete="off" className="text-center"/>
                         </Form.Group>
-                        <Form.Group className="mb-3 text-center" controlId="password">
+
+                        <Form.Group className="mb-3 text-center position-relative" controlId="password">
                             <Form.Label className="fw-bold">Contraseña</Form.Label>
-                            <Form.Control type="password" placeholder="Contraseña" onChange={handled_Password} 
-                                defaultValue={password} autoComplete="off" className="text-center"/>
+                            <div className="position-relative">
+                                <Form.Control 
+                                    type={showPassword ? "text" : "password"} // Cambia entre "text" y "password"
+                                    placeholder="Contraseña" 
+                                    onChange={handled_Password} 
+                                    value={password} 
+                                    autoComplete="off" 
+                                    className="text-center"
+                                />
+                                <span
+                                    onClick={togglePasswordVisibility}
+                                    style={{
+                                        position: "absolute",
+                                        right: "10px",
+                                        top: "50%",
+                                        transform: "translateY(-50%)",
+                                        cursor: "pointer",
+                                        color: "#6c757d",
+                                        zIndex: 10, // Asegura que el ícono esté por encima del campo de texto
+                                    }}
+                                >
+                                    {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+                                </span>                                
+                            </div>
                             <p className="fst-italic text-sm fs-6">Mínimo 10 caracteres</p>
                         </Form.Group>
                     </Form>

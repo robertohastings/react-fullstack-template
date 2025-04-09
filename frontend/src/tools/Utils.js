@@ -27,13 +27,21 @@ export const setEncryptedItem = (key, data) => {
 
 // Función para recuperar y desencriptar desde localStorage
 export const getDecryptedItem = key => {
-    //console.log("keygetDecrypted -> key", key)
-    const encryptedData = localStorage.getItem(key)
-    //console.log("antes del decryptdata encryptedData:", encryptedData)
-    //const id_empresa = decryptData(encryptedData)
-    //console.log('decryptData', id_empresa)
-    if (!encryptedData) return null
-    return decryptData(encryptedData)
+
+    // const encryptedData = localStorage.getItem(key)
+    // if (!encryptedData) return null
+    // return decryptData(encryptedData)
+
+    const item = localStorage.getItem(key);
+    if (!item) return null; // Devuelve null si el valor no existe
+
+    try {
+        return JSON.parse(item); // Intenta analizar el JSON
+    } catch (error) {
+        console.error(`Error al analizar el valor de ${key}:`, error);
+        return null; // Devuelve null si el JSON es inválido
+    }
+
 }
 
 // Función para validar el token

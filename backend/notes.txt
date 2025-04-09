@@ -289,230 +289,83 @@ delete from rol_menu where id_empresa = 1 and id_rol = 1 and id_procMenu = 38;
 ---
 CASA 31/03/25
 
-comparar sps:
+ALTER TABLE `crm`.`jornada_laboral` 
+ADD COLUMN `duracion_cita` SMALLINT NULL AFTER `hora_fin`;
 
-CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getUsuarioLogin`(
-	IN hostname VARCHAR(200),
-    IN email varchar(180),
-    IN password VARCHAR(90)
-)
-BEGIN
-	DECLARE mensaje VARCHAR(200);
-    DECLARE status_code INT;
-    DECLARE idEmpresa INT;
-    
-    -- OBTENGO EL id_empresa
-    SELECT id_empresa INTO idEmpresa FROM hosts WHERE host = hostname;
-    
-	/*REVISO SI EXISTE PRIMERO EL CORREO*/
-    IF NOT EXISTS(
-		SELECT 1
-		FROM usuarios U
-		WHERE U.id_empresa = idEmpresa AND U.email = email
-    ) THEN 
-		SET mensaje = 'Correo no encontrado', status_code = 401;
-        SELECT mensaje AS message, status_code AS status;
-	ELSE 
-		/*REVISO SI EXISTE EL PASSWORD COINCIDE CON EL CORREO
-		IF NOT EXISTS(
-			SELECT 1
-			FROM usuarios U
-			WHERE U.id_empresa = id_empresa AND U.email = email AND U.password = password
-        ) THEN
-			SET mensaje = 'Contraseña incorrecta', status_code = 401;
-            SELECT mensaje AS message, status_code AS status;
-		ELSE
-        			            
-            UPDATE usuarios SET fecha_ultimo_acceso = now()
-            WHERE id_empresa = id_empresa AND email = email AND password = password;
-            
-            */
-            SET mensaje = 'Usuario autenticado', status_code = 200;
-            
-            SELECT 	U.id_usuario, U.email, U.nombre, U.apellidos, U.celular,
-					mensaje AS message, status_code AS status, U.password, '' AS token,
-                    IFNULL(U.imagen, '') AS fotografia, 
-                    R.id_rol, R.nombre AS rol,
-                    CASE WHEN R.id_rol IN (1, 2) THEN 1 ELSE 0 END AS isAdmin
-			FROM usuarios U
-            INNER JOIN usuarios_roles UR ON UR.id_empresa = U.id_empresa AND UR.id_usuario = U.id_usuario
-            INNER JOIN roles R ON R.id_empresa = UR.id_empresa AND R.id_rol = UR.id_rol
-			WHERE U.id_empresa = idEmpresa AND U.email = email /*AND U.password = password*/;
-            
-		/*END IF;*/
-	END IF;
-    
-END
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '1');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '20' WHERE (`id_empresa` = '1') and (`id_jornada` = '2');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '3');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '4');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '5');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '6');
+UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '7');
 
-CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getLandingPage`(IN `prm_host` VARCHAR(200))
-BEGIN
-
-	SELECT  quienes_somos,
-			servicios,
-            productos,
-            mostrar_quienes_somos,
-            mostrar_productos,
-            mostrar_productos_verMas,
-            mostrar_servicios,
-            mostrar_contactanos,
-            mostrar_sitioEnMantenimiento,
-            mostrar_landingPage,
-            mostrar_carritoDeCompras,
-            L.id_empresa,
-            L.id_landingPage
-    FROM hosts H 
-    INNER JOIN landingPage L ON L.id_empresa = H.id_empresa
-    WHERE H.host = prm_host ;
-	
-	SELECT 	id_categoria, nombre, 
-			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
-    FROM hosts H
-    INNER JOIN categorias C ON C.id_empresa = H.id_empresa
-    WHERE H.host = prm_host 
-    AND EXISTS(
-			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
-        );	
-        
-	SELECT PM.id_procMenu, PM.nombre, PM.activo, PM.linkTo, PM.icono
-	FROM hosts H
-	INNER JOIN procMenu PM ON PM.id_empresa = H.id_empresa AND PM.soloLanding = 1 AND activo = 1
-	WHERE H.host = prm_host 
-	ORDER BY PM.orden;        
-        
-    /*
-	SELECT 	id_categoria, nombre, 
-			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
-    FROM categorias C
-    INNER JOIN hosts H ON H.host = C.host
-    WHERE h.host = prm_host 
-    AND EXISTS(
-			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
-        );
-	*/
-END
-
-CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `postAgenda`(
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getAgendaPorDia`(
 	IN prm_id_empresa INT,
-	IN prm_fecha DATE,
-    IN intervalo VARCHAR(20),
-    IN prm_id_cliente INT,
-    IN prm_nombre_cliente VARCHAR(200),
-    IN prm_celular VARCHAR(90)    
+	IN prm_fecha DATE
 )
 BEGIN
-	DECLARE separador INT;
-	DECLARE _hora_inicio TIME;
-    DECLARE _hora_fin TIME;
-    DECLARE _dia_semana INT;
-    DECLARE _id_jornada INT;
-    DECLARE _id_agenda_estatus SMALLINT;
-    DECLARE _id_agenda INT;
-    DECLARE _id_clave_confirmacion VARCHAR(6) DEFAULT '';
-    -- DECLARE _id_cliente INT;
+	DECLARE dia_semana INT;    
+    DECLARE duracion_cita INT;
+    	
+    DECLARE _hora_inicio TIME;
+	DECLARE _hora_fin TIME;
+	DECLARE _hora_actual TIME;
     
-    SET _dia_semana = WEEKDAY(prm_fecha);
-    SET _id_agenda_estatus = 2;
+    DECLARE id_jornada INT;
+         
+    SET dia_semana = WEEKDAY(prm_fecha);
+    -- SET duracion_cita = 30;
     
-	SELECT JL.id_jornada INTO _id_jornada
+	SELECT JL.hora_inicio, JL.hora_fin, JL.hora_inicio, JL.duracion_cita INTO _hora_inicio, _hora_fin, _hora_actual, duracion_cita 
 	FROM jornada_laboral JL
-	WHERE JL.id_empresa = prm_id_empresa AND JL.dia_semana = _dia_semana;  
+	WHERE JL.id_empresa = prm_id_empresa AND JL.dia_semana = dia_semana;      
     
-    -- Buscar la posición del separador "-" para obtener la fecha y hora 
-	SET separador = LOCATE('-', intervalo);    
-    SET _hora_inicio = TIME(SUBSTRING(intervalo, 1, separador - 1));
-	SET _hora_fin = TIME(SUBSTRING(intervalo, separador + 2));
+    CREATE TEMPORARY TABLE IF NOT EXISTS intervalos_tiempo (intervalo VARCHAR(20), hora_inicio TIME, hora_fin TIME);
     
-    -- SELECT _hora_inicio, _hora_fin;
+    -- bucle WHILE y tabla temporal
+	WHILE _hora_actual < _hora_fin DO
+        -- Calcular la hora fin del intervalo actual sumando la duración de la cita
+        SET @hora_fin_intervalo = ADDTIME(_hora_actual, SEC_TO_TIME(duracion_cita * 60));
+
+        -- Formatear el intervalo de tiempo como una cadena
+        SET @intervalo = CONCAT(TIME_FORMAT(_hora_actual, '%H:%i'), ' - ', TIME_FORMAT(@hora_fin_intervalo, '%H:%i'));
+
+        -- Insertar el intervalo en la tabla temporal
+        INSERT INTO intervalos_tiempo (intervalo, hora_inicio, hora_fin) VALUES (@intervalo, _hora_actual, @hora_fin_intervalo);
+
+        -- Actualizar la hora actual para el siguiente intervalo
+        SET _hora_actual = @hora_fin_intervalo;
+	END WHILE;    
     
-    -- Si el cliente no existe lo doy de alta
-    IF NOT EXISTS(
-		SELECT 1 FROM clientes C WHERE C.id_empresa = prm_id_empresa AND C.celulares = prm_celular
-    ) THEN
-		INSERT INTO clientes (id_empresa, nombre, celulares) VALUES (prm_id_empresa, prm_nombre_cliente, prm_celular);
-        SET prm_id_cliente = LAST_INSERT_ID();
-    END IF;
-     
-    -- Busco si no hay cita reservada
-    IF NOT EXISTS(
-		SELECT 1
-		FROM agenda A
-		WHERE A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = _hora_inicio AND A.hora_fin = _hora_fin
-    ) THEN
-		
-        -- GENERO CLAVE DE CONFIRMACION
-        SET _id_clave_confirmacion = fn_genera_clave_confirmacion(prm_id_empresa);
+	-- Mostrar los registros de la tabla temporal
+	SELECT 	I.*, C.nombre AS Nombre, IFNULL(fn_solo_numeros(C.celulares), '') AS Celular, IFNULL(AE.descripcion, '') AS Estatus,
+			IFNULL(A.id_agenda, 0) AS id_agenda, A.clave_confirmacion, IFNULL(C.id_cliente, 0) AS id_cliente
+	FROM intervalos_tiempo I
+	LEFT JOIN agenda A ON A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = I.hora_inicio AND A.hora_fin = I.hora_fin
+    LEFT JOIN agenda_estatus AE ON AE.id_agenda_estatus = IFNULL(A.id_agenda_estatus, 1)
+    LEFT JOIN clientes C ON C.id_empresa = prm_id_empresa AND C.id_cliente = A.id_cliente 
+    ORDER BY I.intervalo;
+	-- WHERE A.id_agenda IS NULL;
     
-		INSERT INTO agenda (id_empresa, fecha, hora_inicio, hora_fin, id_cliente, id_agenda_estatus, id_jornada, clave_confirmacion) 
-			VALUES (prm_id_empresa, prm_fecha, _hora_inicio, _hora_fin, prm_id_cliente, _id_agenda_estatus, _id_jornada, _id_clave_confirmacion);
-		SET _id_agenda = LAST_INSERT_ID();
-	END IF;
-    
-    SELECT _id_clave_confirmacion AS folio_confirmacion;		
-	
+	-- Eliminar la tabla temporal (opcional)
+	DROP TEMPORARY TABLE intervalos_tiempo;   
 END
 
-CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `putAgenda`(
-	IN prm_id_empresa INT,
-    IN prm_id_agenda INT,
-    IN intervalo VARCHAR(20),
-    IN prm_id_cliente INT,
-    IN prm_nombre_cliente VARCHAR(200),
-    IN prm_fecha DATE,
-    IN prm_celular VARCHAR(90)
-)
-BEGIN
-	DECLARE separador INT;
-	DECLARE _hora_inicio TIME;
-    DECLARE _hora_fin TIME;
-    DECLARE _dia_semana INT;
-    DECLARE _id_jornada INT;
-    DECLARE _id_agenda_estatus SMALLINT;
-    DECLARE _id_agenda INT;
-    DECLARE _id_clave_confirmacion VARCHAR(6) DEFAULT '';
-    -- DECLARE _id_cliente INT;
-    
-    SET _dia_semana = WEEKDAY(prm_fecha);
-    SET _id_agenda_estatus = 2;
-    
-	SELECT JL.id_jornada INTO _id_jornada
-	FROM jornada_laboral JL
-	WHERE JL.dia_semana = _dia_semana;  
-    
-    -- Buscar la posición del separador "-" para obtener la fecha y hora 
-	SET separador = LOCATE('-', intervalo);    
-    SET _hora_inicio = TIME(SUBSTRING(intervalo, 1, separador - 1));
-	SET _hora_fin = TIME(SUBSTRING(intervalo, separador + 2));
-    
-    -- SELECT _hora_inicio, _hora_fin;
-    
-    -- Si el cliente no existe lo doy de alta
-    IF NOT EXISTS(
-		SELECT 1 FROM clientes C WHERE C.id_empresa = prm_id_empresa AND C.celulares = prm_celular
-    ) THEN
-		INSERT INTO clientes (id_empresa, nombre, celulares) VALUES (prm_id_empresa, prm_nombre_cliente, prm_celular);
-        SET prm_id_cliente = LAST_INSERT_ID();
-    END IF;
-     
-    -- Busco si no hay cita reservada
-    IF NOT EXISTS(
-		SELECT 1
-		FROM agenda A
-		WHERE A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = _hora_inicio AND A.hora_fin = _hora_fin
-    ) THEN
-		
-        -- GENERO CLAVE DE CONFIRMACION
-        SET _id_clave_confirmacion = fn_genera_clave_confirmacion(prm_id_empresa);
-    
-		INSERT INTO agenda (id_empresa, fecha, hora_inicio, hora_fin, id_cliente, id_agenda_estatus, id_jornada, clave_confirmacion) 
-			VALUES (prm_id_empresa, prm_fecha, _hora_inicio, _hora_fin, prm_id_cliente, _id_agenda_estatus, _id_jornada, _id_clave_confirmacion);
-		SET _id_agenda = LAST_INSERT_ID();
-        
-	ELSE 
-    
-		UPDATE agenda SET id_cliente = prm_id_cliente, id_agenda_estatus = _id_agenda_estatus WHERE id_empresa = prm_id_empresa AND id_agenda = prm_id_agenda;
-        
-	END IF;
-    
-    SELECT _id_clave_confirmacion AS folio_confirmacion;		
-	
-END
+-- AGRGUE NUEVO ESTATUS EN agenda_estatus = 'No asistió'
+
+ALTER TABLE `crm`.`agenda_estatus` 
+ADD COLUMN `id_empresa` INT NULL FIRST,
+CHANGE COLUMN `id_agenda_estatus` `id_agenda_estatus` SMALLINT NULL ,
+DROP PRIMARY KEY;
+;
+
+update agenda_estatus set id_empresa = 1;
+
+ALTER TABLE `crm`.`agenda_estatus` 
+CHANGE COLUMN `id_empresa` `id_empresa` INT NOT NULL ,
+CHANGE COLUMN `id_agenda_estatus` `id_agenda_estatus` SMALLINT NOT NULL AUTO_INCREMENT ,
+ADD PRIMARY KEY (`id_empresa`, `id_agenda_estatus`);
+;
+
+revisar el sp: getAgendaPorDia y ver si en agenda_estatus estoy buscando en el on primero por el id_empresa
