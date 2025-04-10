@@ -66,6 +66,15 @@ function Agenda() {
                 // Si el token es inválido, redirige al usuario al componente LoggedIn
                 appDispatch({ type: "logout" }) // Limpia el estado global
                 navigate("/") // Redirige al inicio de sesión
+            } else if (error.response.status === 403) {
+                // Si el token es válido pero no tiene permisos, redirige o muestra un mensaje
+                //console.error("Acceso denegado: No tienes permisos para esta acción.");
+                appDispatch({
+                    type: "alertMessage",
+                    value: "Acceso denegado: No tienes permisos para esta acción.",
+                    typeAlert: "danger",
+                });
+                navigate("/"); // Opcional: Redirige al inicio de sesión o a otra página                
             } else {
                 console.error("Error al obtener la agenda:", error)
             }
@@ -78,9 +87,9 @@ function Agenda() {
 
     const handledRowClick = cita => {
         setCelulaABuscar("")
-        console.log("cita seleccionada: =>", cita)
-        console.log("celular a buscar =>", celularABuscar)
-        console.log("nombds a buscar =>", cita.Nombre === " " ? "No hay nombre" : cita.Nombre)
+        //console.log("cita seleccionada: =>", cita)
+        //console.log("celular a buscar =>", celularABuscar)
+        //console.log("nombds a buscar =>", cita.Nombre === " " ? "No hay nombre" : cita.Nombre)
         if (cita.id_agenda === 0) {
             setIsNewRecord(true)
         } else {
@@ -100,40 +109,51 @@ function Agenda() {
     const handledBuscarCliente = async celular => {
         setIsFetching(true)
 
-        const getData = {
-            id_empresa: id_empresa,
-            telefono: celular
-        }        
+        // const getData = {
+        //     id_empresa: id_empresa,
+        //     telefono: celular
+        // }        
 
         try {
-            const response = await axios.get(`${api_url}/getClientePorTelefonoOCelular`, {
+            const response = await axiosInstance.get("/getClientePorTelefonoOCelular", {
                 params: {
                     id_empresa: id_empresa,
                     telefono: celular
                 }
             })
-            //const data = response.data.cliente[0].nombre_cliente
+
             const data = response.data.cliente[0]
-            //setNombre(data.cliente.nombre_cliente)
+
             setCita(prevCita => ({ ...prevCita, Nombre: data.nombre_cliente }))
             setCita(prevCita => ({ ...prevCita, id_cliente: data.id_cliente }))
             setCita(prevCita => ({ ...prevCita, Celular: celular }))
-            //setCita(prevCita => ({ ...prevCita, id_cl: celular }))
-
-            //setCita(prevCita => ({ ...prevCita, Estatus: cita.Estatus === "Disponible" ? "Reservada" : cita.Estatus }))
 
             if (data.id_cliente === 0){
                 setAyudaNombre('Cliente no encontrado...')
                 setTimeout(() => {
                     nombreRef.current.focus()
                 }, 100)
+            } else {
+                setAyudaNombre('')
             }
 
-            //console.log("Cliente encontrado ->", data)
         } catch (error) {
-            console.log("There was an error handledBuscarCliente->", error)
+            if (axios.isCancel(error)) {
+                console.error("Solicitud cancelada:", error.message)
+            } else if (error.response && error.response.status === 401) { // Si el token es inválido, redirige al usuario al componente LoggedIn                
+                appDispatch({ type: "logout" }) // Limpia el estado global
+                navigate("/") // Redirige al inicio de sesión
+            } else if (error.response.status === 403) { //// Si el token es válido pero no tiene permisos
+                appDispatch({
+                    type: "alertMessage",
+                    value: "Acceso denegado: No tienes permisos para esta acción.",
+                    typeAlert: "danger",
+                });
+                navigate("/"); // Opcional: Redirige al inicio de sesión o a otra página                
+            } else {
+                console.error("Error al obtener buscar cliente:", error)
+            }
         }
-
 
         setIsFetching(false)
     }
@@ -392,8 +412,8 @@ function Agenda() {
                                         type="text"
                                         pattern="\d*"
                                         inputMode="numeric"
-                                        id="telefono"
-                                        name="telefono"
+                                        id="telefono-unique"
+                                        name="telefono-unique"
                                         placeholder="escriba el número de contacto del cliente"
                                         defaultValue={cita.Celular}
                                         onChange={e => setCelulaABuscar(e.target.value)}

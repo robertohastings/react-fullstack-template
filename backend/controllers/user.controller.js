@@ -3,7 +3,8 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { config } from "dotenv"
 import { decryptData } from "../helpers/crypto.js"
-const JWT_SECRET = "secreto_del_jwt"
+//const JWT_SECRET = "secreto_del_jwt"
+const JWT_SECRET = process.env.JWT_SECRET
 
 config()
 

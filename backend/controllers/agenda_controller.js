@@ -1,6 +1,8 @@
 import { pool } from "../db.js"
+import { authenticateToken } from "../middlewares/authenticateToken.js"
 
 export const getAgendaPorDia = async (req, res) => {
+    //console.log("getAgendaPorDia ->", req.query)
     try {
         console.log("getAgendaPorDia ->", req.query)
         const { id_empresa, fecha } = req.query
@@ -19,6 +21,29 @@ export const getAgendaPorDia = async (req, res) => {
             error: `An error ocurred: ${error}`
         })
     }
+
+    // authenticateToken, // Middleware para validar el token
+    // async (req, res) => {
+    //     console.log('here')
+    //     try {
+    //         console.log("getAgendaPorDia ->", req.query)
+    //         const { id_empresa, fecha } = req.query
+
+    //         const rows = await pool.query(`CALL getAgendaPorDia(?, ?);`, [id_empresa, fecha])
+
+    //         console.log("rows ->", rows[0][0])
+
+    //         res.status(200).json({
+    //             success: true,
+    //             agenda: rows[0][0],
+    //         })
+    //     } catch (error) {
+    //         res.status(500).json({
+    //             success: false,
+    //             error: `An error occurred: ${error}`,
+    //         })
+    //     }
+    // }
 }
 
 export const getClientePorTelefonoOCelular = async (req, res) => {

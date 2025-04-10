@@ -13,6 +13,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("complexappToken")
+        //console.log('token axiosInstance:', token)
 
         // Verifica si el token es válido
         if (token && !isTokenValid(token)) {

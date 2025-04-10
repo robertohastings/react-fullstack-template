@@ -50,7 +50,7 @@ function App() {
             mostrar_sitioEnMantenimiento: 1
         }
     })
-    const esLocalHost = false // false si quiero simular un dominio valido, true si el dominio es localhost
+    const esLocalHost = true // false si quiero simular un dominio valido, true si el dominio es localhost
 
     // useEffect(() => {
 
@@ -99,6 +99,10 @@ function App() {
 
     function ourReducer(draft, action) {
         switch (action.type) {
+            case "idEmpresa":
+                console.log("Actualizando idEmpresa:", action.data);
+                draft.idEmpresa = action.data; // Actualiza el estado con el nuevo idEmpresa
+                break;            
             case "tenant":
                 setEncryptedItem("hostregioTenant", action.data)
                 break
@@ -172,6 +176,10 @@ function App() {
         }
         console.log("Effect app")
         console.log(`hostname: ${hostname}`)
+        //console.log('decrypted landing page:', getDecryptedItem("hostregioLandingPage"))
+        
+
+
        
         try {
             axios
