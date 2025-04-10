@@ -47,10 +47,20 @@ function App() {
     const [hostname, setHostname] = useState("")
     const [enMtto, setEnMtto] = useState({
         settings: {
+            mostrar_landingPage: 0,
             mostrar_sitioEnMantenimiento: 1
         }
     })
-    const esLocalHost = true // false si quiero simular un dominio valido, true si el dominio es localhost
+    // const [enMtto, setEnMtto] = useState({
+    //     success: true,
+    //     landingPage: {
+    //         settings: {
+    //             mostrar_landingPage: 0,
+    //             mostrar_sitioEnMantenimiento: 1
+    //         }
+    //     }
+    // })
+    const esLocalHost = false // false si quiero simular un dominio valido, true si el dominio es localhost
 
     // useEffect(() => {
 
@@ -67,6 +77,7 @@ function App() {
     //     console.log(`hostname: ${hostname}`)
     // }, [])    
 
+    console.log('getDecryptedItem -> hostregioLandingPage', getDecryptedItem("hostregioLandingPage"))
 
     const initialState = {
         hostname: getDecryptedItem("hostregioHostname") ?? window.location.hostname,
@@ -85,13 +96,17 @@ function App() {
             token: localStorage.getItem("complexappToken"),
             username: localStorage.getItem("complexappUsername"),
             avatar: localStorage.getItem("complexappAvatar"),
-            menu: getDecryptedItem("hostregioUsuarioMenu")
+            //menu: getDecryptedItem("hostregioUsuarioMenu") ?? []
+            //menu: getDecryptedItem("hostregioLandingPage")?.menuLanding
+            menu: []
         },
         isSearchOpen: false,
         isChatOpen: false,
         unreadReadChatCount: 0,
         //landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
-        landingPage: getDecryptedItem("hostregioLandingPage") ?? enMtto,
+        //landingPage: getDecryptedItem("hostregioLandingPage") ?? enMtto,
+        landingPage: enMtto,
+        //landingPage: getDecryptedItem("hostregioLandingPage") ?? enMtto,
         idEmpresa: getDecryptedItem("hostregioTenant") ?? getDecryptedItem("hostregioLandingPage")?.idEmpresa,
         notifications: false
         //carrito: JSON.parse(localStorage.getItem("carrito")) ?? []
@@ -99,6 +114,10 @@ function App() {
 
     function ourReducer(draft, action) {
         switch (action.type) {
+            case "menu":
+                console.log("action data menu:", action.data)
+                draft.user.menu = action.data // Actualiza el estado con el nuevo menú
+                break
             case "idEmpresa":
                 console.log("Actualizando idEmpresa:", action.data);
                 draft.idEmpresa = action.data; // Actualiza el estado con el nuevo idEmpresa
@@ -177,10 +196,7 @@ function App() {
         console.log("Effect app")
         console.log(`hostname: ${hostname}`)
         //console.log('decrypted landing page:', getDecryptedItem("hostregioLandingPage"))
-        
-
-
-       
+               
         try {
             axios
                 .get(`${api_url}/getLandingPage`, {
@@ -204,11 +220,12 @@ function App() {
                     dispatch({ type: "landingPage", data: response.data.landingPage })
                     dispatch({ type: "idEmpresa", data: response.data.landingPage.idEmpresa })
                     dispatch({ type: "hostname", data: hostname })
-                    console.log('showLoogedIn: ', Boolean(localStorage.getItem("complexappToken")))
+                    dispatch({ type: "menu", data: response.data.landingPage.menuLanding})
+                    //console.log('showLoogedIn: ', Boolean(localStorage.getItem("complexappToken")))
 
                     //
-                    console.log("appState user menu:", state.user.menu)
-                    console.log("Menú landing:", response.data.landingPage.menuLanding)
+                    //console.log("appState user menu:", state.user.menu)
+                    //console.log("Menú landing:", response.data.landingPage.menuLanding)
                     if (Array.isArray(state.user.menu) && state.user.menu.length === 0) {
                         console.log("No hay menú en el estate")
                         //dispatch({ type: "showLoggedIn", value: true })

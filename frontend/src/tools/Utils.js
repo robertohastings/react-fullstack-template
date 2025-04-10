@@ -32,15 +32,38 @@ export const getDecryptedItem = key => {
     // if (!encryptedData) return null
     // return decryptData(encryptedData)
 
-    const item = localStorage.getItem(key);
-    if (!item) return null; // Devuelve null si el valor no existe
+    // const item = localStorage.getItem(key);
+    // if (!item) return null; // Devuelve null si el valor no existe
+
+    // try {
+    //     return JSON.parse(item); // Intenta analizar el JSON
+    // } catch (error) {
+    //     console.error(`Error al analizar el valor de ${key}:`, error);
+    //     return null; // Devuelve null si el JSON es inválido
+    // }
+
+    // try {
+    //     const encryptedData = localStorage.getItem(key)
+    //     if (!encryptedData) return null
+
+    //     const decryptedData = decryptData(encryptedData) // Desencripta el dato
+    //     return JSON.parse(decryptedData) // Intenta parsear el JSON
+    // } catch (error) {
+    //     console.error(`Error al obtener o parsear el item '${key}':`, error)
+    //     return null // Devuelve null si ocurre un error
+    // }    
 
     try {
-        return JSON.parse(item); // Intenta analizar el JSON
+        const encryptedData = localStorage.getItem(key)
+        if (!encryptedData) return null
+
+        const decryptedData = decryptData(encryptedData) // Desencripta el dato
+        const parsedData = JSON.parse(decryptedData) // Intenta parsear el JSON
+        return parsedData
     } catch (error) {
-        console.error(`Error al analizar el valor de ${key}:`, error);
-        return null; // Devuelve null si el JSON es inválido
-    }
+        //console.error(`Error al obtener o parsear el item '${key}':`, error)
+        return [] // Devuelve null si ocurre un error
+    }    
 
 }
 
