@@ -52,10 +52,10 @@ function App() {
             mostrar_sitioEnMantenimiento: 1
         }
     })
+    const currentHostname = window.location.hostname;
+    const esLocalHost = false; // Cambia a false si no estás en localhost
 
     useEffect(() => {
-        const currentHostname = window.location.hostname;
-        const esLocalHost = true; // Cambia a false si no estás en localhost
         setHostname(esLocalHost ? hostnameTesting : currentHostname);
     }, [hostnameTesting]);
  
@@ -123,7 +123,8 @@ function App() {
 
         const storedData = getDecryptedItem("hostregioLandingPage");
 
-        const resolvedHostname = hostname || window.location.hostname; // Usa un valor predeterminado si hostname es undefined
+        //const resolvedHostname = hostname || window.location.hostname; // Usa un valor predeterminado si hostname es undefined
+        const resolvedHostname = esLocalHost ? currentHostname : hostnameTesting ;
 
         if (storedData && isTokenValid(storedData.token)) {
             // Si los datos existen y el token es válido, inicializa el estado
