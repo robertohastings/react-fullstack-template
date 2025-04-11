@@ -7,10 +7,10 @@ const router = Router()
 
 router.get("/getAgendaPorDia", authenticateToken, getAgendaPorDia)
 router.get("/getClientePorTelefonoOCelular", authenticateToken, getClientePorTelefonoOCelular)
-router.post("/postAgenda", postAgenda)
-router.put("/putAgenda", putAgenda)
+router.post("/postAgenda", authenticateToken, postAgenda)
+router.put("/putAgenda", authenticateToken, putAgenda)
 router.put("/putAgendaConfirmar", putAgendaConfirmar)
 router.put("/putAgendaCancelar", putAgendaCancelar)
-router.put("/putAgendaCambiaEstatus", putAgendaCambiaEstatus)
+router.put("/putAgendaCambiaEstatus", authenticateToken, putAgendaCambiaEstatus)
 
 export default router

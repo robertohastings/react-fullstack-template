@@ -29,15 +29,15 @@ function Header2(props) {
 
     const [menu, setMenu] = useState([])
     const [menuLanding, setMenuLanding] =  useState([])
-    console.log("menu:", appState.user.menu)
+    console.log("menu:", appState.menu)
 
     useEffect(() => {
-        if (appState.user.menu && Array.isArray(appState.user.menu)) {
-            setMenu(appState.user.menu);
+        if (appState.menu && Array.isArray(appState.menu)) {
+            setMenu(appState.menu);
         } else {
-            console.error("El menú no es un arreglo válido:", appState.user.menu);
+            console.error("El menú no es un arreglo válido:", appState.menu);
         }
-    }, [appState.user.menu]);
+    }, [appState.menu]);
 
     useEffect(() => {
         if (appState.landingPage.menuLanding && Array.isArray(appState.landingPage.menuLanding)) {
@@ -47,12 +47,12 @@ function Header2(props) {
         }
     }, [appState.landingPage.menuLanding])
 
-    //const [userMenu, setUserMenu] = useState([appState.user.menu])
+    //const [userMenu, setUserMenu] = useState([appState.menu])
     
 
     // useEffect(() => {
 
-    //     const {padres, hijos } = appState.user.menu
+    //     const {padres, hijos } = appState.menu
 
     //     const menuJerarquico = padres.map((padre) => {
     //         return {

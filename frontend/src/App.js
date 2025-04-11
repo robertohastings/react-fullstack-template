@@ -8,6 +8,7 @@ import DispatchContext from "./DispatchContext"
 import ShoppingCartProvider from "./context/ShoppingCartContext"
 import { setEncryptedItem, getDecryptedItem } from "./tools/Utils"
 import { isTokenValid } from "./tools/Utils"
+import { setTokenGetter } from "./tools/AxiosInstance"
 
 //My Components
 import Header from "./components/Header"
@@ -42,231 +43,149 @@ function App() {
     //const [data, setData] = useState({})
     const api_url = process.env.REACT_APP_API_URL
     const hostnameTesting = process.env.REACT_APP_HOSTNAME_TESTING
+    const [hostname, setHostname] = useState()
     const [isLoading, setIsLoading] = useState(true)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const [hostname, setHostname] = useState("")
     const [enMtto, setEnMtto] = useState({
         settings: {
             mostrar_landingPage: 0,
             mostrar_sitioEnMantenimiento: 1
         }
     })
-    // const [enMtto, setEnMtto] = useState({
-    //     success: true,
-    //     landingPage: {
-    //         settings: {
-    //             mostrar_landingPage: 0,
-    //             mostrar_sitioEnMantenimiento: 1
-    //         }
-    //     }
-    // })
-    const esLocalHost = false // false si quiero simular un dominio valido, true si el dominio es localhost
 
-    // useEffect(() => {
-
-    //     // Si estamos en production
-    //     if (window.location.hostname === "localhost" && !esLocalHost) {
-    //         console.log(1)
-    //         console.log('hostnameTesting:', hostnameTesting)
-    //         setHostname(hostnameTesting)            
-    //     } else {
-    //         console.log(2)
-    //         setHostname(window.location.hostname)
-    //     }
-    //     console.log("Effect app")
-    //     console.log(`hostname: ${hostname}`)
-    // }, [])    
-
-    console.log('getDecryptedItem -> hostregioLandingPage', getDecryptedItem("hostregioLandingPage"))
-
+    useEffect(() => {
+        const currentHostname = window.location.hostname;
+        const esLocalHost = true; // Cambia a false si no estás en localhost
+        setHostname(esLocalHost ? hostnameTesting : currentHostname);
+    }, [hostnameTesting]);
+ 
     const initialState = {
-        hostname: getDecryptedItem("hostregioHostname") ?? window.location.hostname,
-        idLandingPage: 1,
-        //loggedIn: Boolean(localStorage.getItem("complexappToken")),
-        loggedIn: isTokenValid(localStorage.getItem("complexappToken")),
-        //showLoggedIn: !Boolean(localStorage.getItem("complexappToken")),
-        showLoggedIn: !isTokenValid(localStorage.getItem("complexappToken")) || !getDecryptedItem("hostregioUsuarioMenu"),
+        hostname: "",
+        token: "",
+        loggedIn: false,
+        menu: [],
+        landingPage: null,
+        idEmpresa: null,
+        usuario: {
+            idUsuario: 0,
+            username: '',
+            avatar: '',
+            menu: []
+        },
         flashMessages: [],
         alert: {
             message: [],
-            typeAlert: ""
+            typeAlert: "",
         },
-        user: {
-            idUser: localStorage.getItem("complexappIdUser"),
-            token: localStorage.getItem("complexappToken"),
-            username: localStorage.getItem("complexappUsername"),
-            avatar: localStorage.getItem("complexappAvatar"),
-            //menu: getDecryptedItem("hostregioUsuarioMenu") ?? []
-            //menu: getDecryptedItem("hostregioLandingPage")?.menuLanding
-            menu: []
-        },
-        isSearchOpen: false,
-        isChatOpen: false,
-        unreadReadChatCount: 0,
-        //landingPage: JSON.parse(localStorage.getItem("complexappLanding")),
-        //landingPage: getDecryptedItem("hostregioLandingPage") ?? enMtto,
-        landingPage: enMtto,
-        //landingPage: getDecryptedItem("hostregioLandingPage") ?? enMtto,
-        idEmpresa: getDecryptedItem("hostregioTenant") ?? getDecryptedItem("hostregioLandingPage")?.idEmpresa,
-        notifications: false
-        //carrito: JSON.parse(localStorage.getItem("carrito")) ?? []
-    }
+        notifications: false,
+    };
 
     function ourReducer(draft, action) {
         switch (action.type) {
-            case "menu":
-                console.log("action data menu:", action.data)
-                draft.user.menu = action.data // Actualiza el estado con el nuevo menú
-                break
-            case "idEmpresa":
-                console.log("Actualizando idEmpresa:", action.data);
-                draft.idEmpresa = action.data; // Actualiza el estado con el nuevo idEmpresa
-                break;            
-            case "tenant":
-                setEncryptedItem("hostregioTenant", action.data)
-                break
-            case "hostname":
-                draft.hostname = action.data
-                //setEncryptedItem("hostregioHostname", action.data)
-                break
+            case "initialize":
+                draft.hostname = action.data.hostname;
+                draft.token = action.data.token;
+                draft.loggedIn = action.data.loggedIn;
+                draft.menu = action.data.menu;
+                draft.landingPage = action.data.landingPage;
+                draft.idEmpresa = action.data.idEmpresa;
+                break;
             case "login":
-                draft.loggedIn = true
-                draft.user.menu = action.data.menu
-                localStorage.setItem("complexappIdUser", action.data.id_usuario)
-                localStorage.setItem("complexappToken", action.data.token)
-                localStorage.setItem("complexappUsername", action.data.username)
-                localStorage.setItem("complexappAvatar", action.data.avatar)
-                setEncryptedItem("hostregioUsuarioMenu", action.data.menu)
-                break
+                draft.usuario.idUsuario = action.data.idUsuario;
+                draft.usuario.username = action.data.username;
+                draft.usuario.avatar = action.data.avatar;
+                draft.usuario.menu = action.data.menu;
+                draft.menu = action.data.menu;
+                draft.loggedIn = true;
+                draft.token = action.data.token
+                setTokenGetter(() => action.data.token);
+                break;                
             case "logout":
-                draft.loggedIn = false
-                localStorage.removeItem("complexappToken")
-                localStorage.removeItem("complexappUsername")
-                localStorage.removeItem("complexappAvatar")
-                localStorage.removeItem("hostregioUsuarioMenu")
-                //window.location.reload()
-                break
-            case "landingPage":
-                console.log("action data landingPage:", action.data)
-                draft.landingPage = action.data
-                localStorage.setItem("complexappLanding", JSON.stringify(action.data))
-                break
-            case "landingPageSettings":
-                //console.log('action data landingPage:', action.data)
-                draft.landingPage.settings = action.data
-                break
-            case "flashMessage":
-                draft.flashMessages.push(action.value)
-                break
-            case "notifications":
-                draft.notifications = action.value
-                break
-            case "showLoggedIn":
-                draft.showLoggedIn = action.value
-                break
+                draft.loggedIn = false;
+                localStorage.removeItem("hostregioLandingPage");
+                break;
+            case "menu":
+                draft.menu = action.data
+                break;
             case "alertMessage":
-                draft.alert.message.push(action.value)
-                draft.alert.typeAlert = action.typeAlert
-                break
+                draft.alert.message.push(action.value);
+                draft.alert.typeAlert = action.typeAlert;
+                break;
             default:
-            //do nothing
+                break;
         }
-        return
     }
 
     const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
-
     useEffect(() => {
-        console.log("Aquí....")
-        localStorage.setItem("complexappLanding", JSON.stringify([]))
-        console.log('api_url:', api_url)
+        //if (!hostname) return; // Espera a que hostname esté definido
 
-        // Si estamos en production
-        var hostname = window.location.hostname
-        if (window.location.hostname === "localhost" && !esLocalHost) {
-            console.log(1)
-            console.log('hostnameTesting:', hostnameTesting)
-            hostname = hostnameTesting
-            //setHostname(hostnameTesting)            
+        const storedData = getDecryptedItem("hostregioLandingPage");
+
+        const resolvedHostname = hostname || window.location.hostname; // Usa un valor predeterminado si hostname es undefined
+
+        if (storedData && isTokenValid(storedData.token)) {
+            // Si los datos existen y el token es válido, inicializa el estado
+            dispatch({
+                type: "initialize",
+                data: {
+                    hostname: resolvedHostname,
+                    token: storedData.token,
+                    loggedIn: true,
+                    menu: storedData.menu,
+                    landingPage: storedData.landingPage,
+                    idEmpresa: storedData.idEmpresa,
+                },
+            });
         } else {
-            console.log(2)
-            //setHostname(window.location.hostname)
-        }
-        console.log("Effect app")
-        console.log(`hostname: ${hostname}`)
-        //console.log('decrypted landing page:', getDecryptedItem("hostregioLandingPage"))
-               
-        try {
+            // Si no hay datos o el token no es válido, realiza la llamada a la API
             axios
                 .get(`${api_url}/getLandingPage`, {
-                    params: {
-                        hostname: hostname,
-                    }
+                    params: { hostname: resolvedHostname },
                 })
-                .then(response => {
-                    console.log("dataLanding:", response.data)
-                    setIsLoading(false)
-                    
-                    localStorage.setItem("complexappLanding", JSON.stringify(response.data.landingPage))
-                    
-                    // creo cockies encriptadas
-                    setEncryptedItem("hostregioTenant", response.data.landingPage.idEmpresa)
-                    setEncryptedItem("hostregioLandingPage", response.data.landingPage)
-                    setEncryptedItem("hostregioLandingPageId", response.data.landingPage.idLandingPage)
-                    setEncryptedItem("hostregioLandingPageSettings", response.data.landingPage.settings)                    
+                .then((response) => {
+                    console.log('Reponse data:', response.data, )
+                    const landingPageData = {
+                        hostname: resolvedHostname,
+                        token: response.data.token || "",
+                        loggedIn: !!response.data.token && isTokenValid(response.data.token),
+                        menu: response.data.landingPage.menuLanding || [],
+                        landingPage: response.data.landingPage,
+                        idEmpresa: response.data.landingPage.idEmpresa,
+                    };
 
-                    // seteo el estado directo el response
-                    dispatch({ type: "landingPage", data: response.data.landingPage })
-                    dispatch({ type: "idEmpresa", data: response.data.landingPage.idEmpresa })
-                    dispatch({ type: "hostname", data: hostname })
-                    dispatch({ type: "menu", data: response.data.landingPage.menuLanding})
-                    //console.log('showLoogedIn: ', Boolean(localStorage.getItem("complexappToken")))
+                    // Guarda los datos en localStorage
+                    setEncryptedItem("hostregioLandingPage", landingPageData);
 
-                    //
-                    //console.log("appState user menu:", state.user.menu)
-                    //console.log("Menú landing:", response.data.landingPage.menuLanding)
-                    if (Array.isArray(state.user.menu) && state.user.menu.length === 0) {
-                        console.log("No hay menú en el estate")
-                        //dispatch({ type: "showLoggedIn", value: true })
-                        if (Array.isArray(response.data.landingPage.menuLanding) && response.data.landingPage.menuLanding.length > 0){
-                            console.log("Si menú en landing")
-                            setEncryptedItem("hostregioUsuarioMenu", response.data.landingPage.menuLanding)
-                        }
-                    }
-
-
-                    // if (response.data.landingPage.menuLanding.length = 0) {
-                    //     console.log("No hay menú")
-                    //     dispatch({ type: "showLoggedIn", value: true })
-                    // }
+                    // Inicializa el estado
+                    dispatch({
+                        type: "initialize",
+                        data: landingPageData,
+                    });
                 })
-                .catch(error => {
-                    console.error("There was an error fetching the data!", error)
-                    setIsLoading(true)
-                })
-        } catch (error) {
-            console.error("There was an error fetching the data!", error)
-            setIsLoading(false)
-        } finally {
-            setIsLoading(false)
+                .catch((error) => {
+                    console.error("Error al obtener los datos del landing page:", error);
+                });
         }
-    }, [dispatch])
+    }, [dispatch]);
 
-    //UseEffect para grabar en el LS
-    // useEffect(() => {
-    //     if (cart?.length === 0) return
-    //     localStorage.setItem("carrito", JSON.stringify(cart))
-    // }, [cart])
-
-    if (isLoading) {
-        //console.log("Cargando info...")
+    if (!state.landingPage) {
         return (
             <div>
                 <SpinnerDot />
             </div>
-        )
-    }
+        );
+    }    
+
+    // if (isLoading) {
+    //     //console.log("Cargando info...")
+    //     return (
+    //         <div>
+    //             <SpinnerDot />
+    //         </div>
+    //     )
+    // }
 
     return (
         <>
@@ -277,7 +196,7 @@ function App() {
                             {/* <FlashMessage messages={state.flashMessages} /> */}
                             <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
                             <Notifications show={state.notifications} />
-                            <LoggedIn show={state.showLoggedIn} />
+                            <LoggedIn show={!state.loggedIn} />
                             {/* <LoggedIn show={!isLoggedIn} /> */}
                             {/* <Header shoppingCart={state.carrito} /> */}
                             <Header2 shoppingCart={state.carrito} />

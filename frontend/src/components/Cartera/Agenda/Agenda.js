@@ -48,16 +48,22 @@ function Agenda() {
     }
 
     const id_empresa = appState.idEmpresa
-    console.log('Id Empresa ->', id_empresa)
+    // console.log('Id Empresa ->', id_empresa)
+    // console.log('token ->', appState.token)
 
     const ObtenerAgenda = async (selectedDate) => {
+        console.log('selected date', selectedDate)
+        const params = {
+            id_empresa: appState.idEmpresa,
+            //fecha: selectedDate.toISOString().split("T")[0],
+            fecha: selectedDate.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }), // Formato YYYY-MM-DD
+        }
+        console.log('params:', params)
         try {
             const response = await axiosInstance.get("/getAgendaPorDia", {
-                params: {
-                    id_empresa: appState.idEmpresa,
-                    fecha: selectedDate.toISOString().split("T")[0],
-                },
+                params 
             })
+            console.log('response agenda:', response)
             setAgenda(response.data.agenda)
         } catch (error) {
             if (axios.isCancel(error)) {
@@ -169,7 +175,7 @@ function Agenda() {
         try {
             // Hacer el PUT al endpoint
             try {
-                await axios.put(`${api_url}/putAgendaCambiaEstatus`, putData)
+                await axiosInstance.put("/putAgendaCambiaEstatus", putData)
                     .then(response => {
                         console.log("PUT response ->", response)
 
@@ -222,7 +228,7 @@ function Agenda() {
             try {
                 // Hacer el POST al endpoint
                 try {
-                    await axios.post(`${api_url}/postAgenda`, postData)
+                    await axiosInstance.post("/postAgenda", postData)
                         .then(response => {
                             console.log("POST response ->", response)
 
@@ -259,9 +265,9 @@ function Agenda() {
             try {
                 // Hacer el PUT al endpoint
                 try {
-                    await axios.put(`${api_url}/putAgenda`, putData)
+                    await axiosInstance.put("/putAgenda", putData)
                         .then(response => {
-                            console.log("POST response ->", response)
+                            console.log("PUT response ->", response)
 
                             appDispatch({
                                 type: "alertMessage",

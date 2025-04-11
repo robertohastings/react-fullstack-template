@@ -21,29 +21,6 @@ export const getAgendaPorDia = async (req, res) => {
             error: `An error ocurred: ${error}`
         })
     }
-
-    // authenticateToken, // Middleware para validar el token
-    // async (req, res) => {
-    //     console.log('here')
-    //     try {
-    //         console.log("getAgendaPorDia ->", req.query)
-    //         const { id_empresa, fecha } = req.query
-
-    //         const rows = await pool.query(`CALL getAgendaPorDia(?, ?);`, [id_empresa, fecha])
-
-    //         console.log("rows ->", rows[0][0])
-
-    //         res.status(200).json({
-    //             success: true,
-    //             agenda: rows[0][0],
-    //         })
-    //     } catch (error) {
-    //         res.status(500).json({
-    //             success: false,
-    //             error: `An error occurred: ${error}`,
-    //         })
-    //     }
-    // }
 }
 
 export const getClientePorTelefonoOCelular = async (req, res) => {
@@ -71,7 +48,7 @@ export const postAgenda = async (req, res) => {
 
     try {
         const [result] = await pool.query("CALL postAgenda(?, ?, ?, ?, ?, ?)", [id_empresa, fecha, intervalo, id_cliente, nombre_cliente, celular])
-        //console.log("result ->", result)
+        console.log("result ->", result)
 
         const folioConfirmacion = result[0][0].folio_confirmacion
         //console.log("folio_confirmacion ->", folioConfirmacion)
@@ -87,7 +64,7 @@ export const postAgenda = async (req, res) => {
             })
         }
     } catch (error) {
-        //console.log("Ocurrió un error")
+        console.log("Ocurrió un error", error)
         res.status(500).json({
             message: `Error: ${error}`
         })
@@ -102,17 +79,30 @@ export const putAgenda = async (req, res) => {
              [id_empresa, id_agenda, intervalo, id_cliente, nombre, fecha, celular])
         //console.log("result ->", result[0][0])
 
-        const cambioRelizado = result[0][0].cambio_efectuado
+        //const cambioRelizado = result[0][0].cambio_efectuado
 
-        if (!cambioRelizado) {
+        const folioConfirmacion = result[0][0].folio_confirmacion
+
+        if (!folioConfirmacion) {
             res.status(404).json({
-                message: "No se pudo actualizar la cita"
+                message: "No se pudo generar la cita"
             })
         } else {
             return res.status(200).json({
-                message: "Agenda actualizada correctamente"
+                message: "Agenda actualizada correctamente",
+                folio_confirmacion: folioConfirmacion
             })
-        }
+        }        
+
+        // if (!cambioRelizado) {
+        //     res.status(404).json({
+        //         message: "No se pudo actualizar la cita"
+        //     })
+        // } else {
+        //     return res.status(200).json({
+        //         message: "Agenda actualizada correctamente"
+        //     })
+        //}
     } catch (error) {
         res.status(500).json({
             message: `Error: ${error}`

@@ -89,18 +89,18 @@ function LoggedIn(props) {
                           });
                         console.log("Menu jerarquico:", menuJerarquico)
 
-
                         seterrorMessage("")
                         appDispatch({
                             type: "login",
                             data: {
-                                id_usuario: response.data.data.id_usuario,
+                                idUsuario: response.data.data.id_usuario,
                                 token: response.data.data.token,
-                                username: response.data.data.nombre,
-                                avatar: "no-avatar",
+                                username: `${response.data.data.nombre} ${response.data.data.apellidos}`,
+                                avatar: "",
                                 menu: menuJerarquico
                             }
                         })
+                        // appDispatch({ type: "menu", data: menuJerarquico})
                         handledClose()
                     }
                 })
