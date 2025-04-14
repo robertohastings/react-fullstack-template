@@ -53,6 +53,7 @@ export const postCategoria = async (req, res) => {
 //Productos
 export const getProductosListado = async (req, res) => {
     try {
+        console.log('getProductosListado query:', req.query)
         const { limite, pagina, id_categoria, id_proveedor, existencia } = req.query
 
         const rows = await pool.query(`CALL getProductosListing(?, ?, ?, ?, ?);`, [limite, pagina, id_categoria, id_proveedor, existencia])

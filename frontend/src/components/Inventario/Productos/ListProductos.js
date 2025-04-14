@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react"
-import Axios from "axios"
+import axiosInstance from "../../../tools/AxiosInstance"
 import { Table, Button, Pagination, Spinner, Image, Modal, Form, FloatingLabel, Row, Col, InputGroup } from "react-bootstrap"
 import { CiEdit } from "react-icons/ci"
 import { IoIosAddCircle } from "react-icons/io"
 import { TbRefresh } from "react-icons/tb"
 import * as Yup from "yup"
 import { Formik, useFormik } from "formik"
-//import { Navigate } from "react-router-dom"
 import Page from "../../Page"
 import SpinnerButton from "../../Spinner/SpinnerButton"
 import ImageEditor from "../../../tools/ImageEditor"
@@ -54,7 +53,7 @@ function ListProductos() {
         setIsLoaging(true)
 
         try {
-            const responseCategorias = await Axios.get("/api/getCategoriasListado", {
+            const responseCategorias = await axiosInstance.get("/getCategoriasListado", {
                 params: {
                     limite: 0,
                     pagina: 0
@@ -70,7 +69,7 @@ function ListProductos() {
         setIsLoaging(true)
 
         try {
-            const responseProveedores = await Axios.get("/api/compras/getProveedoresListado", {
+            const responseProveedores = await axiosInstance.get("/compras/getProveedoresListado", {
                 params: {
                     limite: 0,
                     pagina: 0
@@ -89,7 +88,7 @@ function ListProductos() {
         console.log('Proveedor seleccionado', filtroProveedor)
 
         try {
-            const response = await Axios.get("/api/inventario/getProductosListado", {
+            const response = await axiosInstance.get("/inventario/getProductosListado", {
                 params: {
                     limite: rowsPerPage,
                     pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5,
@@ -181,7 +180,7 @@ function ListProductos() {
     const postProducto = async producto => {
         console.log("Producto:", producto)
         try {
-            await Axios.post("/api/inventario/postProducto", producto)
+            await axiosInstance.post("/inventario/postProducto", producto)
                 .then(response => {
                     console.log(response)
                 })
@@ -264,7 +263,7 @@ function ListProductos() {
         formData.append("id_empresa", "1")
 
         try {
-            const response = await Axios.post("/api/upload/postCloudinary", formData, {
+            const response = await axiosInstance.post("/upload/postCloudinary", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }

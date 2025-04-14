@@ -8,6 +8,7 @@ import { useDrag, useDrop, DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 import { FaSearch } from "react-icons/fa"
 import { GrNext } from "react-icons/gr"
+import { TbRefresh } from "react-icons/tb"
 
 const ItemType = "PEDIDO"
 
@@ -255,7 +256,7 @@ function PedidoCanvas() {
                 <Row>
                     <Col>
                         <Button variant="link" className="mt-5" onClick={fetchMisPedidos}>
-                            {!isLoading && "Actualizar"}
+                            {!isLoading && <TbRefresh size={30}/>}
                             {isLoading && <SpinnerButton mensaje="Actualizando..." />}
                         </Button>
                     </Col>

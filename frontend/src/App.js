@@ -53,7 +53,7 @@ function App() {
         }
     })
     const currentHostname = window.location.hostname;
-    const esLocalHost = false; // Cambia a false si no estás en localhost
+    const esLocalHost = true; // Cambia a false si no estás en localhost
 
     useEffect(() => {
         setHostname(esLocalHost ? hostnameTesting : currentHostname);
