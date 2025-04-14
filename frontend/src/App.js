@@ -55,9 +55,9 @@ function App() {
     const currentHostname = window.location.hostname;
     const esLocalHost = false; // Cambia a false si no estás en localhost
 
-    useEffect(() => {
-        setHostname(esLocalHost ? hostnameTesting : currentHostname);
-    }, [hostnameTesting]);
+    // useEffect(() => {
+    //     setHostname(esLocalHost ? hostnameTesting : currentHostname);
+    // }, [hostnameTesting]);
  
     const initialState = {
         hostname: "",
@@ -120,11 +120,11 @@ function App() {
 
     useEffect(() => {
         //if (!hostname) return; // Espera a que hostname esté definido
-
-        const storedData = getDecryptedItem("hostregioLandingPage");
+        const resolvedHostname = esLocalHost ? hostnameTesting : currentHostname ;
+        
+        const storedData = getDecryptedItem(`${resolvedHostname}LandingPage`);
 
         //const resolvedHostname = hostname || window.location.hostname; // Usa un valor predeterminado si hostname es undefined
-        const resolvedHostname = esLocalHost ? currentHostname : hostnameTesting ;
 
         if (storedData && isTokenValid(storedData.token)) {
             // Si los datos existen y el token es válido, inicializa el estado
@@ -157,7 +157,7 @@ function App() {
                     };
 
                     // Guarda los datos en localStorage
-                    setEncryptedItem("hostregioLandingPage", landingPageData);
+                    setEncryptedItem(`${resolvedHostname}LandingPage`, landingPageData);
 
                     // Inicializa el estado
                     dispatch({

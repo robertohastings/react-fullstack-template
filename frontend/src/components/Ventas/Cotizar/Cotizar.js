@@ -183,6 +183,7 @@ function Cotizar() {
 
     // Función para aumentar la cantidad
     const increaseQuantity = id_producto => {
+        console.log('id_producto:', id_producto)
         setQuantities(prevQuantities => ({
             ...prevQuantities,
             [id_producto]: (prevQuantities[id_producto] || 1) + 1
