@@ -43,7 +43,7 @@ function App() {
     //const [data, setData] = useState({})
     const api_url = process.env.REACT_APP_API_URL
     const hostnameTesting = process.env.REACT_APP_HOSTNAME_TESTING
-    const esAmbienteDesarrollo = process.env.REACT_APP_AMBIENTE_DESARROLLO
+    const esAmbienteDesarrollo = process.env.REACT_APP_AMBIENTE_DESARROLLO === "true"
     const [hostname, setHostname] = useState()
     const [isLoading, setIsLoading] = useState(true)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
