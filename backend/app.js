@@ -25,13 +25,35 @@ import { PORT } from "./config.js"
 
 //cuando es error 404 NotFound hay que revisar las rutas que estén bien escritas
 
-const allowedOrigins = ['http://localhost:3001', 'https://api.hostregio.app', 'https://herbolaria.hostregio.app']; // Ajusta según tus dominios permitidos
+//const allowedOrigins = ['http://localhost:3001', 'https://api.hostregio.app', 'https://herbolaria.hostregio.app']; // Ajusta según tus dominios permitidos
+
+// app.use(cors({
+//     origin: allowedOrigins,
+//     methods: 'GET,POST,PUT,DELETE',
+//     credentials: true
+// }))
+
+const allowedOrigins = ['http://localhost:3001', /\.hostregio\.app$/]; // Permite localhost y cualquier subdominio de hostregio.app
 
 app.use(cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.some((allowedOrigin) => {
+            if (typeof allowedOrigin === 'string') {
+                return origin === allowedOrigin;
+            } else if (allowedOrigin instanceof RegExp) {
+                return allowedOrigin.test(origin);
+            }
+            return false;
+        })) {
+            callback(null, true); // Permite el origen
+        } else {
+            callback(new Error('No permitido por CORS')); // Bloquea el origen
+        }
+    },
     methods: 'GET,POST,PUT,DELETE',
     credentials: true
-}))
+}));
+
 app.use(express.json()) //Para pueda interpretar la recepción de JSON
 app.use(fileUpload())
 

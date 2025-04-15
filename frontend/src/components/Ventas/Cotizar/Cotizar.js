@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { Card, Col, Container, Row, Button, Table, Image, ButtonGroup, Badge, ButtonToolbar } from "react-bootstrap"
 import Axios from "axios"
 //import SpinnerButton from "../../Spinner/SpinnerButton"
 import "./cotizar.css"
 import { FaPlus, FaMinus, FaRegTrashAlt, FaShoppingCart, FaMotorcycle, FaSearch } from "react-icons/fa"
 import CustomModal from "../../../tools/CustomModal"
+import StateContext from "../../../StateContext"
 
 function Cotizar() {
     //const [isLoading, setIsLoaging] = useState(false)
@@ -15,6 +16,8 @@ function Cotizar() {
     const [quantities, setQuantities] = useState({})
     const totalPrice = detallePedido.reduce((total, item) => total + item.cantidad * item.precio, 0)
     const totalItems = detallePedido.reduce((total, item) => total + parseInt(item.cantidad), 0)
+    const appState = useContext(StateContext)
+    const id_empresa = appState.idEmpresa
 
     //Definición del Modal
     const [modalParams, setModalParams] = useState(null)
@@ -59,13 +62,15 @@ function Cotizar() {
         console.log(`Categoria: ${id_categoria}`)
         //setIsLoaging(true)
         setSelectedCategory(id_categoria)
+        const params = {
+            id_empresa,
+            id_categoria
+        }
+        console.log("params:", params)
 
         try {
             await Axios.get("/api/getProductosByCategoria", {
-                params: {
-                    id_empresa: 1,
-                    id_categoria: id_categoria
-                }
+                params
             })
                 .then(response => {
                     if ((response.status = 200)) {
