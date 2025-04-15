@@ -37,6 +37,7 @@ function Agenda() {
     const [showModal, setShowModal] = useState(false)
     const telefonoRef = useRef(null)
     const nombreRef = useRef(null)
+    const nombreAsistenteRef = useRef(null)
     const [isFetching, setIsFetching] = useState(false)
     const [isNewRecord, setIsNewRecord] = useState(false)
     const [ayudaNombre, setAyudaNombre] = useState('')
@@ -100,6 +101,7 @@ function Agenda() {
             setIsNewRecord(true)
         } else {
             setIsNewRecord(false)
+            setCelulaABuscar(cita.Celular)
         }
         setCita(cita)
         //setCita({})
@@ -113,26 +115,26 @@ function Agenda() {
         setShowPanel(false)
     }
     const handledBuscarCliente = async celular => {
-        setIsFetching(true)
-
-        // const getData = {
-        //     id_empresa: id_empresa,
-        //     telefono: celular
-        // }        
+        setIsFetching(true)  
+        
+        const params = {
+            id_empresa: id_empresa,
+            telefono: celular
+        }
+        console.log("params ->", params)
 
         try {
             const response = await axiosInstance.get("/getClientePorTelefonoOCelular", {
-                params: {
-                    id_empresa: id_empresa,
-                    telefono: celular
-                }
+                params
             })
 
             const data = response.data.cliente[0]
+            console.log("data ->", data)
 
             setCita(prevCita => ({ ...prevCita, Nombre: data.nombre_cliente }))
             setCita(prevCita => ({ ...prevCita, id_cliente: data.id_cliente }))
             setCita(prevCita => ({ ...prevCita, Celular: celular }))
+            setCita(prevCita => ({ ...prevCita, nombre_asistente: data.nombre_cliente }))
 
             if (data.id_cliente === 0){
                 setAyudaNombre('Cliente no encontrado...')
@@ -140,7 +142,7 @@ function Agenda() {
                     nombreRef.current.focus()
                 }, 100)
             } else {
-                setAyudaNombre('')
+                setAyudaNombre('')            
             }
 
         } catch (error) {
@@ -221,7 +223,8 @@ function Agenda() {
                 intervalo: cita.intervalo,
                 id_cliente: cita.id_cliente,
                 nombre_cliente: cita.Nombre,
-                celular: celularABuscar
+                celular: celularABuscar,
+                nombre_asistente: cita.nombre_asistente,
             }
             console.log('postData ->', postData)
 
@@ -259,8 +262,10 @@ function Agenda() {
                 id_cliente: cita.id_cliente,
                 nombre: cita.Nombre,
                 fecha: date.toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }),
-                celular: celularABuscar
+                celular: celularABuscar,
+                nombre_asistente: cita.nombre_asistente,
             }
+            console.log('putData ->', putData)
 
             try {
                 // Hacer el PUT al endpoint
@@ -368,7 +373,7 @@ function Agenda() {
                                 <Col xs={4} md={2} xl={1} style={{ cursor: "pointer" }} onClick={() => handledRowClick(cita)}>
                                     {cita.intervalo}
                                 </Col>
-                                <Col xs={5} md={5} xl={4}>{cita.Nombre}</Col>
+                                <Col xs={5} md={5} xl={4}>{cita.nombre_asistente}</Col>
                                 <Col md={2} xl={1} className="d-none d-sm-block">{formatPhoneNumber(cita.Celular)}</Col>
                                 <Col xs={3} md={3} xl={3} style={{ cursor: "pointer", ...getStatusCellStyle(cita.Estatus) }} 
                                     onClick={() => handledRowClick(cita)}>
@@ -446,6 +451,15 @@ function Agenda() {
                                 <Form.Label>Nombre:</Form.Label>
                                 <Form.Control ref={nombreRef} type="text" id="nombre" name="nombre" placeholder="escriba el nombre del cliente" value={cita.Nombre} autoComplete="off" onChange={e => setCita(prevCita => ({ ...prevCita, Nombre: e.target.value }))} />
                                 <Form.Text className="text-muted">{ayudaNombre}</Form.Text>
+                            </Form.Group>
+                            <Form.Group className="mb-3" id="formNombre_Asistente">
+                                <Form.Label>Nombre asistente(s):</Form.Label>
+                                <Form.Control ref={nombreAsistenteRef} type="text" id="nombre_asistente" 
+                                    name="nombreAsistente" 
+                                    placeholder="escriba el nombre de los asistentes" 
+                                    value={cita.nombre_asistente} autoComplete="off" 
+                                    onChange={e => setCita(prevCita => ({ ...prevCita, nombre_asistente: e.target.value }))} 
+                                />                            
                             </Form.Group>
                             {/* Botones */}
                             <Form.Group className="my-4">

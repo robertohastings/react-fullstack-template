@@ -43,6 +43,7 @@ function App() {
     //const [data, setData] = useState({})
     const api_url = process.env.REACT_APP_API_URL
     const hostnameTesting = process.env.REACT_APP_HOSTNAME_TESTING
+    const esAmbienteDesarrollo = process.env.REACT_APP_AMBIENTE_DESARROLLO
     const [hostname, setHostname] = useState()
     const [isLoading, setIsLoading] = useState(true)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -53,7 +54,8 @@ function App() {
         }
     })
     const currentHostname = window.location.hostname;
-    const esLocalHost = true; // Cambia a false si no estás en localhost
+    //esLocalHost indica si estoy en ambiente desarrollo
+    //const esLocalHost = true; // Cambia a false si no estás en localhost
 
     // useEffect(() => {
     //     setHostname(esLocalHost ? hostnameTesting : currentHostname);
@@ -121,7 +123,7 @@ function App() {
     useEffect(() => {
         //if (!hostname) return; // Espera a que hostname esté definido
 
-        const resolvedHostname = esLocalHost ? hostnameTesting : currentHostname ;
+        const resolvedHostname = esAmbienteDesarrollo ? hostnameTesting : currentHostname ;
         
         const storedData = getDecryptedItem(`${resolvedHostname}LandingPage`);
 

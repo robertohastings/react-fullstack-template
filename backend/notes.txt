@@ -1,53 +1,14 @@
-PORT=3000
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE='crm'
-DB_USER='appusercrmadmin'
-DB_PASSWORD='appusercrmadmin'
-CLOUDINARY_CLOUD_NAME='ddhxa9igj'
-CLOUDINARY_API_KEY='778763934991892'
-CLOUDINARY_API_SECRET='bPPu6qPoKNgRwLZmRYWjLqzXBgo'
+ALTER TABLE `crm`.`agenda` 
+ADD COLUMN `nombre_asistente` VARCHAR(300) NULL AFTER `clave_confirmacion`;
 
-
-nuevas tablas:
-    agenda
-    agenda_estatus
-    jornada_laboral
-
-nuevo sps:
-    deleteAgenda
-    postAgenda
-    getAgendaBuscarCita
-    getAgendaDisponibilidad
-
-nuevos cambios en tablas:
-    agregue el campo mostrar_productos_verMas 
-
-nuevos cambios en sps:
-    cambie el sp getLandingPage: agregué el campo: mostrar_productos_verMas
-    cambie el sp putLandingPage: agregue el cambo: mostrar_productos_verMas
-
-Pendientes:
-    Agregar en la pagina de landingPage 
-        - el botón para mostar ver mas Productos (Listo)
-        - links para redes sociales y mostrarlas en la página si estas traen contenido
-
-23/02:
-    agregue el componente en frontend: npm install react-calendar
-
-
-cambios en DB:
-    - en la tabla de clientes, quitar el Not Null en los campos: empresa, celulares y telefonos
-    - cambié el sp: postAgenda para la alta del cliente
-
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `postAgenda`(
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `postAgenda`(
 	IN prm_id_empresa INT,
 	IN prm_fecha DATE,
     IN intervalo VARCHAR(20),
     IN prm_id_cliente INT,
     IN prm_nombre_cliente VARCHAR(200),
-    IN prm_celular VARCHAR(90)
+    IN prm_celular VARCHAR(90),
+    IN prm_nombre_asistente VARCHAR(300)
 )
 BEGIN
 	DECLARE separador INT;
@@ -65,7 +26,7 @@ BEGIN
     
 	SELECT JL.id_jornada INTO _id_jornada
 	FROM jornada_laboral JL
-	WHERE JL.dia_semana = _dia_semana;  
+	WHERE JL.id_empresa = prm_id_empresa AND JL.dia_semana = _dia_semana;  
     
     -- Buscar la posición del separador "-" para obtener la fecha y hora 
 	SET separador = LOCATE('-', intervalo);    
@@ -92,23 +53,24 @@ BEGIN
         -- GENERO CLAVE DE CONFIRMACION
         SET _id_clave_confirmacion = fn_genera_clave_confirmacion(prm_id_empresa);
     
-		INSERT INTO agenda (id_empresa, fecha, hora_inicio, hora_fin, id_cliente, id_agenda_estatus, id_jornada, clave_confirmacion) 
-			VALUES (prm_id_empresa, prm_fecha, _hora_inicio, _hora_fin, prm_id_cliente, _id_agenda_estatus, _id_jornada, _id_clave_confirmacion);
+		INSERT INTO agenda (id_empresa, fecha, hora_inicio, hora_fin, id_cliente, id_agenda_estatus, id_jornada, clave_confirmacion, nombre_asistente) 
+			VALUES (prm_id_empresa, prm_fecha, _hora_inicio, _hora_fin, prm_id_cliente, _id_agenda_estatus, _id_jornada, _id_clave_confirmacion, prm_nombre_asistente);
 		SET _id_agenda = LAST_INSERT_ID();
 	END IF;
     
     SELECT _id_clave_confirmacion AS folio_confirmacion;		
 	
-END  
+END
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `putAgenda`(
-	IN prm_id_empresa INT,
-    IN prm_id_agenda INT,
-    IN prm_intervalo VARCHAR(13),
-    IN prm_id_cliente INT,
-    IN prm_nombre VARCHAR(90),
-    IN prm_fecha DATE,
-    IN prm_celular VARCHAR(90)
+CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `putAgenda`(
+	IN `prm_id_empresa` INT, 
+    IN `prm_id_agenda` INT, 
+    IN `intervalo` VARCHAR(20), 
+    IN `prm_id_cliente` INT, 
+    IN `prm_nombre_cliente` VARCHAR(200), 
+    IN `prm_fecha` DATE, 
+    IN `prm_celular` VARCHAR(90),
+    IN `prm_nombre_asistente` VARCHAR(300)
 )
 BEGIN
 	DECLARE separador INT;
@@ -117,391 +79,56 @@ BEGIN
     DECLARE _dia_semana INT;
     DECLARE _id_jornada INT;
     DECLARE _id_agenda_estatus SMALLINT;
+    DECLARE _id_agenda INT;
     DECLARE _id_clave_confirmacion VARCHAR(6) DEFAULT '';
-    DECLARE _cambio_efectuado BIT DEFAULT 1;
+    -- DECLARE _id_cliente INT;
     
     SET _dia_semana = WEEKDAY(prm_fecha);
     SET _id_agenda_estatus = 2;
     
 	SELECT JL.id_jornada INTO _id_jornada
 	FROM jornada_laboral JL
-	WHERE JL.dia_semana = _dia_semana;  
+	WHERE JL.id_empresa = prm_id_empresa AND JL.dia_semana = _dia_semana;    
     
     -- Buscar la posición del separador "-" para obtener la fecha y hora 
-	SET separador = LOCATE('-', prm_intervalo);    
-    SET _hora_inicio = TIME(SUBSTRING(prm_intervalo, 1, separador - 1));
-	SET _hora_fin = TIME(SUBSTRING(prm_intervalo, separador + 2));
-	
-	-- ACTUALIZO EL NOMBRE DEL USUARIO SI ESTE CAMBIO
-	IF EXISTS (
-			SELECT 1
-			FROM clientes C
-			WHERE C.id_empresa = prm_id_empresa AND C.id_cliente = prm_id_cliente AND C.nombre <> prm_nombre
-		)
-	THEN 
-		UPDATE clientes C SET C.nombre = prm_nombre
-        WHERE C.id_empresa = prm_id_empresa AND C.id_cliente = prm_id_cliente;
-        
-        -- SET _cambio_efectuado = 1;
-        
+	SET separador = LOCATE('-', intervalo);    
+    SET _hora_inicio = TIME(SUBSTRING(intervalo, 1, separador - 1));
+	SET _hora_fin = TIME(SUBSTRING(intervalo, separador + 2));
+    
+    -- SELECT _hora_inicio, _hora_fin;
+    
+    -- Si el cliente no existe lo doy de alta
+    IF NOT EXISTS(
+		SELECT 1 FROM clientes C WHERE C.id_empresa = prm_id_empresa AND C.celulares = prm_celular
+    ) THEN
+		INSERT INTO clientes (id_empresa, nombre, celulares) VALUES (prm_id_empresa, prm_nombre_cliente, prm_celular);
+        SET prm_id_cliente = LAST_INSERT_ID();
     END IF;
+     
+    -- Busco si no hay cita reservada
+    IF NOT EXISTS(
+		SELECT 1
+		FROM agenda A
+		WHERE A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = _hora_inicio AND A.hora_fin = _hora_fin
+    ) THEN
+		
+        -- GENERO CLAVE DE CONFIRMACION
+        SET _id_clave_confirmacion = fn_genera_clave_confirmacion(prm_id_empresa);
     
-	-- GENERO NUEVA CLAVE DE CONFIRMACION
-	SET _id_clave_confirmacion = fn_genera_clave_confirmacion(prm_id_empresa);    
-    
-    -- ACTUALIZO AGENDA
-    UPDATE agenda SET 	fecha = prm_fecha, hora_inicio = _hora_inicio, hora_fin = _hora_fin, id_cliente = prm_id_cliente,
-						id_agenda_estatus = _id_agenda_estatus, id_jornada = _id_jornada, clave_confirmacion = _id_clave_confirmacion
-    WHERE id_empresa = prm_id_empresa AND id_agenda = prm_id_agenda;
-    
-    SELECT _cambio_efectuado AS cambio_efectuado;
-    
-END
-
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `putAgendaCambiaEstatus`(
-	IN prm_id_empresa INT,
-    IN prm_id_agenda INT,
-    IN prm_id_agenda_estatus SMALLINT
-)
-BEGIN
-
-	UPDATE agenda SET id_agenda_estatus = prm_id_agenda_estatus 
-    WHERE id_empresa = prm_id_empresa and id_agenda = prm_id_agenda;
-    
-    SELECT _cambio_efectuado AS cambio_efectuado;
-
-END
-
-
-ALTER TABLE `crm`.`roles` 
-CHANGE COLUMN `id_empresa` `id_empresa` INT NOT NULL DEFAULT NULL ,
-DROP PRIMARY KEY,
-ADD PRIMARY KEY (`id_empresa`, `id_rol`);
-;
-
-ALTER TABLE `crm`.`roles` 
-DROP PRIMARY KEY,
-ADD PRIMARY KEY (`id_empresa`, `id_rol`);
-;
-
-
-
-en mariaDB no me dejó crear los indices para usuario_rol y rol_menu
-ALTER TABLE `crm`.`usuario_rol` 
-ADD INDEX `ix_usuarios` (`id_empresa` ASC) VISIBLE,
-ADD INDEX `ix_roles` (`id_empresa` ASC, `id_rol` ASC) VISIBLE;
-;
-
-ALTER TABLE `crm`.`rol_menu` 
-ADD INDEX `ix_roles` (`id_empresa` ASC, `id_rol` ASC) VISIBLE,
-ADD INDEX `ix_procMenu` (`id_empresa` ASC, `id_procMenu` ASC) VISIBLE;
-;
-
-
-update procmenu set linkTo = '/' where id_empresa = 1 and id_procMenu = 1;
-update procmenu set linkTo = 'AboutUs' where id_empresa = 1 and id_procMenu = 14;
-update procmenu set linkTo = 'Products' where id_empresa = 1 and id_procMenu = 15;
-update procmenu set linkTo = 'Services' where id_empresa = 1 and id_procMenu = 16;
-update procmenu set linkTo = 'ContactUs' where id_empresa = 1 and id_procMenu = 17;
-update procmenu set linkTo = 'Ventas/Cotizar' where id_empresa = 1 and id_procMenu = 18;
-update procmenu set linkTo = 'Compras/Proveedores/ListProveedores' where id_empresa = 1 and id_procMenu = 19;
-update procmenu set linkTo = 'Cartera/Agenda' where id_empresa = 1 and id_procMenu = 23;
-update procmenu set linkTo = 'Inventario/Productos/ListProductos' where id_empresa = 1 and id_procMenu = 26;
-update procmenu set linkTo = 'Inventario/Categorias/ListCategorias' where id_empresa = 1 and id_procMenu = 27;
-update procmenu set linkTo = 'Inventario/Canvas/PedidoCanvas' where id_empresa = 1 and id_procMenu = 28;
-update procmenu set linkTo = 'Admin/Perfil' where id_empresa = 1 and id_procMenu = 40;
-update procmenu set linkTo = 'Admin/LandingPage' where id_empresa = 1 and id_procMenu = 49;
-
-update procmenu set orden = 115
-where id_empresa = 1 and id_procMenu = 13;
-
--- insert procmenu (id_empresa, id_padre, nombre, orden, activo, linkTo, icono) VALUES (1, 11, 'Ver Notificaciones', 10, 1, '', '');
-
-insert into rol_menu (id_empresa, id_rol, id_procMenu) VALUES (1, 1, 50)
-
-ALTER TABLE `crm`.`procmenu` 
-ADD COLUMN `soloLanding` BIT(1) NULL DEFAULT 0 AFTER `icono`;
-
-update procmenu set soloLanding = 1 where id_empresa = 1 and id_procMenu in (1, 14, 15, 16, 17, 38);
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getLandingPage`(
-    IN prm_host VARCHAR(200)
-)
-BEGIN
-	
-	SELECT  quienes_somos,
-			servicios,
-            productos,
-            mostrar_quienes_somos,
-            mostrar_productos,
-            mostrar_productos_verMas,
-            mostrar_servicios,
-            mostrar_contactanos,
-            mostrar_sitioEnMantenimiento,
-            mostrar_landingPage,
-            mostrar_carritoDeCompras,
-            L.id_empresa,
-            L.id_landingPage
-    FROM hosts H 
-    INNER JOIN landingPage L ON L.id_empresa = H.id_empresa
-    WHERE H.host = prm_host ;
-	
-	SELECT 	id_categoria, nombre, 
-			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
-    FROM hosts H
-    INNER JOIN categorias C ON C.id_empresa = H.id_empresa
-    WHERE H.host = prm_host 
-    AND EXISTS(
-			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
-        );	
+		INSERT INTO agenda (id_empresa, fecha, hora_inicio, hora_fin, id_cliente, id_agenda_estatus, id_jornada, clave_confirmacion, nombre_asistente) 
+			VALUES (prm_id_empresa, prm_fecha, _hora_inicio, _hora_fin, prm_id_cliente, _id_agenda_estatus, _id_jornada, _id_clave_confirmacion, prm_nombre_asistente);
+		SET _id_agenda = LAST_INSERT_ID();
         
-	SELECT PM.id_procMenu, PM.nombre, PM.activo, PM.linkTo, PM.icono
-	FROM hosts H
-	INNER JOIN procmenu PM ON PM.id_empresa = H.id_empresa AND PM.soloLanding = 1 AND activo = 1
-	WHERE H.host = prm_host 
-	ORDER BY PM.orden;
+	ELSE 
+
+		-- GENERO CLAVE DE CONFIRMACION
+        SET _id_clave_confirmacion = fn_genera_clave_confirmacion(prm_id_empresa);
+    
+		UPDATE agenda SET id_cliente = prm_id_cliente, id_agenda_estatus = _id_agenda_estatus, nombre_asistente = prm_nombre_asistente
+        WHERE id_empresa = prm_id_empresa AND id_agenda = prm_id_agenda;
         
-    /*
-	SELECT 	id_categoria, nombre, 
-			IFNULL(imagen, 'https://fiestatijuana.mx/image-not-available.png') AS imagen
-    FROM categorias C
-    INNER JOIN hosts H ON H.host = C.host
-    WHERE h.host = prm_host 
-    AND EXISTS(
-			SELECT id_categoria FROM productos P WHERE P.id_categoria = C.id_categoria LIMIT 1
-        );
-	*/
-
+	END IF;
+    
+    SELECT _id_clave_confirmacion AS folio_confirmacion;		
+	
 END
-
--- casa
-update procMenu set activo = 1 where id_empresa = 1 and id_procMenu = 1;
-
-UPDATE `crm`.`procMenu` SET `orden` = '200' WHERE (`id_empresa` = '1') and (`id_procMenu` = '38');
-UPDATE `crm`.`procMenu` SET `orden` = '220' WHERE (`id_empresa` = '1') and (`id_procMenu` = '39');
-UPDATE `crm`.`procMenu` SET `orden` = '210' WHERE (`id_empresa` = '1') and (`id_procMenu` = '40');
-
-update procMenu set soloLanding = 0 where id_empresa = 1 and id_procMenu=38;
-
-delete from rol_menu where id_empresa = 1 and id_rol = 1 and id_procMenu = 38;
-
----
-CASA 31/03/25
-
-ALTER TABLE `crm`.`jornada_laboral` 
-ADD COLUMN `duracion_cita` SMALLINT NULL AFTER `hora_fin`;
-
-UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '1');
-UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '20' WHERE (`id_empresa` = '1') and (`id_jornada` = '2');
-UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '3');
-UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '4');
-UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '5');
-UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '6');
-UPDATE `crm`.`jornada_laboral` SET `duracion_cita` = '30' WHERE (`id_empresa` = '1') and (`id_jornada` = '7');
-
-CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getAgendaPorDia`(
-	IN prm_id_empresa INT,
-	IN prm_fecha DATE
-)
-BEGIN
-	DECLARE dia_semana INT;    
-    DECLARE duracion_cita INT;
-    	
-    DECLARE _hora_inicio TIME;
-	DECLARE _hora_fin TIME;
-	DECLARE _hora_actual TIME;
-    
-    DECLARE id_jornada INT;
-         
-    SET dia_semana = WEEKDAY(prm_fecha);
-    -- SET duracion_cita = 30;
-    
-	SELECT JL.hora_inicio, JL.hora_fin, JL.hora_inicio, JL.duracion_cita INTO _hora_inicio, _hora_fin, _hora_actual, duracion_cita 
-	FROM jornada_laboral JL
-	WHERE JL.id_empresa = prm_id_empresa AND JL.dia_semana = dia_semana;      
-    
-    CREATE TEMPORARY TABLE IF NOT EXISTS intervalos_tiempo (intervalo VARCHAR(20), hora_inicio TIME, hora_fin TIME);
-    
-    -- bucle WHILE y tabla temporal
-	WHILE _hora_actual < _hora_fin DO
-        -- Calcular la hora fin del intervalo actual sumando la duración de la cita
-        SET @hora_fin_intervalo = ADDTIME(_hora_actual, SEC_TO_TIME(duracion_cita * 60));
-
-        -- Formatear el intervalo de tiempo como una cadena
-        SET @intervalo = CONCAT(TIME_FORMAT(_hora_actual, '%H:%i'), ' - ', TIME_FORMAT(@hora_fin_intervalo, '%H:%i'));
-
-        -- Insertar el intervalo en la tabla temporal
-        INSERT INTO intervalos_tiempo (intervalo, hora_inicio, hora_fin) VALUES (@intervalo, _hora_actual, @hora_fin_intervalo);
-
-        -- Actualizar la hora actual para el siguiente intervalo
-        SET _hora_actual = @hora_fin_intervalo;
-	END WHILE;    
-    
-	-- Mostrar los registros de la tabla temporal
-	SELECT 	I.*, C.nombre AS Nombre, IFNULL(fn_solo_numeros(C.celulares), '') AS Celular, IFNULL(AE.descripcion, '') AS Estatus,
-			IFNULL(A.id_agenda, 0) AS id_agenda, A.clave_confirmacion, IFNULL(C.id_cliente, 0) AS id_cliente
-	FROM intervalos_tiempo I
-	LEFT JOIN agenda A ON A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = I.hora_inicio AND A.hora_fin = I.hora_fin
-    LEFT JOIN agenda_estatus AE ON AE.id_agenda_estatus = IFNULL(A.id_agenda_estatus, 1)
-    LEFT JOIN clientes C ON C.id_empresa = prm_id_empresa AND C.id_cliente = A.id_cliente 
-    ORDER BY I.intervalo;
-	-- WHERE A.id_agenda IS NULL;
-    
-	-- Eliminar la tabla temporal (opcional)
-	DROP TEMPORARY TABLE intervalos_tiempo;   
-END
-
--- AGRGUE NUEVO ESTATUS EN agenda_estatus = 'No asistió'
-
-ALTER TABLE `crm`.`agenda_estatus` 
-ADD COLUMN `id_empresa` INT NULL FIRST,
-CHANGE COLUMN `id_agenda_estatus` `id_agenda_estatus` SMALLINT NULL ,
-DROP PRIMARY KEY;
-;
-
-update agenda_estatus set id_empresa = 1;
-
-ALTER TABLE `crm`.`agenda_estatus` 
-CHANGE COLUMN `id_empresa` `id_empresa` INT NOT NULL ,
-CHANGE COLUMN `id_agenda_estatus` `id_agenda_estatus` SMALLINT NOT NULL AUTO_INCREMENT ,
-ADD PRIMARY KEY (`id_empresa`, `id_agenda_estatus`);
-;
-CREATE DEFINER=`appusercrmadmin`@`%` PROCEDURE `getAgendaPorDia`(
-	IN prm_id_empresa INT,
-	IN prm_fecha DATE
-)
-BEGIN
-	DECLARE dia_semana INT;    
-    DECLARE duracion_cita INT;
-    	
-    DECLARE _hora_inicio TIME;
-	DECLARE _hora_fin TIME;
-	DECLARE _hora_actual TIME;
-    
-    DECLARE id_jornada INT;
-         
-    SET dia_semana = WEEKDAY(prm_fecha);
-    -- SET duracion_cita = 30;
-    
-	SELECT JL.hora_inicio, JL.hora_fin, JL.hora_inicio, JL.duracion_cita INTO _hora_inicio, _hora_fin, _hora_actual, duracion_cita 
-	FROM jornada_laboral JL
-	WHERE JL.id_empresa = prm_id_empresa AND JL.dia_semana = dia_semana;      
-    
-    CREATE TEMPORARY TABLE IF NOT EXISTS intervalos_tiempo (intervalo VARCHAR(20), hora_inicio TIME, hora_fin TIME);
-    
-    -- bucle WHILE y tabla temporal
-	WHILE _hora_actual < _hora_fin DO
-        -- Calcular la hora fin del intervalo actual sumando la duración de la cita
-        SET @hora_fin_intervalo = ADDTIME(_hora_actual, SEC_TO_TIME(duracion_cita * 60));
-
-        -- Formatear el intervalo de tiempo como una cadena
-        SET @intervalo = CONCAT(TIME_FORMAT(_hora_actual, '%H:%i'), ' - ', TIME_FORMAT(@hora_fin_intervalo, '%H:%i'));
-
-        -- Insertar el intervalo en la tabla temporal
-        INSERT INTO intervalos_tiempo (intervalo, hora_inicio, hora_fin) VALUES (@intervalo, _hora_actual, @hora_fin_intervalo);
-
-        -- Actualizar la hora actual para el siguiente intervalo
-        SET _hora_actual = @hora_fin_intervalo;
-	END WHILE;    
-    
-	-- Mostrar los registros de la tabla temporal
-	SELECT 	I.*, C.nombre AS Nombre, IFNULL(fn_solo_numeros(C.celulares), '') AS Celular, IFNULL(AE.descripcion, '') AS Estatus,
-			IFNULL(A.id_agenda, 0) AS id_agenda, A.clave_confirmacion, IFNULL(C.id_cliente, 0) AS id_cliente
-	FROM intervalos_tiempo I
-	LEFT JOIN agenda A ON A.id_empresa = prm_id_empresa AND A.fecha = prm_fecha AND A.hora_inicio = I.hora_inicio AND A.hora_fin = I.hora_fin
-    LEFT JOIN agenda_estatus AE ON AE.id_empresa = prm_id_empresa AND AE.id_agenda_estatus = IFNULL(A.id_agenda_estatus, 1)
-    LEFT JOIN clientes C ON C.id_empresa = prm_id_empresa AND C.id_cliente = A.id_cliente 
-    ORDER BY I.intervalo;
-	-- WHERE A.id_agenda IS NULL;
-    
-	-- Eliminar la tabla temporal (opcional)
-	DROP TEMPORARY TABLE intervalos_tiempo;   
-END
-
-Es una buena práctica crear una carpeta llamada helpers o middlewares en tu backend para almacenar funciones reutilizables como la validación de tokens. En este caso, puedes crear un middleware llamado authenticateToken que valide el token antes de que se ejecute la lógica de tu controlador.
-
-Pasos para implementar authenticateToken:
-Crea la carpeta helpers o middlewares:
-
-En tu proyecto, crea una carpeta llamada middlewares (o helpers si prefieres).
-Crea el archivo authenticateToken.js:
-
-Este archivo contendrá la lógica para validar el token.
-Modifica el controlador getAgendaPorDia para usar el middleware:
-
-Usa el middleware en tu ruta para validar el token antes de ejecutar la lógica del controlador.
-
-Implementación:
-1. Crea el archivo authenticateToken.js:
-
-import jwt from "jsonwebtoken"
-
-export const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers["authorization"]
-    const token = authHeader && authHeader.split(" ")[1] // Extrae el token del encabezado
-
-    if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: "Token no proporcionado",
-        })
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({
-                success: false,
-                message: "Token inválido o expirado",
-            })
-        }
-
-        req.user = user // Agrega la información del usuario al objeto `req`
-        next() // Continúa con el siguiente middleware o controlador
-    })
-}
-
-2. Modifica el controlador getAgendaPorDia para usar el middleware:
-En el archivo agenda_controller.js, importa y usa el middleware authenticateToken.
-
-import { pool } from "../db.js"
-import { authenticateToken } from "../middlewares/authenticateToken.js"
-
-export const getAgendaPorDia = [
-    authenticateToken, // Middleware para validar el token
-    async (req, res) => {
-        try {
-            console.log("getAgendaPorDia ->", req.query)
-            const { id_empresa, fecha } = req.query
-
-            const rows = await pool.query(`CALL getAgendaPorDia(?, ?);`, [id_empresa, fecha])
-
-            console.log("rows ->", rows[0][0])
-
-            res.status(200).json({
-                success: true,
-                agenda: rows[0][0],
-            })
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                error: `An error occurred: ${error}`,
-            })
-        }
-    },
-]
-
-Explicación:
-Middleware authenticateToken:
-
-Extrae el token del encabezado Authorization.
-Usa jwt.verify para validar el token con la clave secreta (JWT_SECRET).
-Si el token es válido, agrega la información del usuario al objeto req y llama a next() para continuar con el controlador.
-Si el token no es válido o no está presente, devuelve un error 401 o 403.
-Controlador getAgendaPorDia:
-
-Ahora incluye el middleware authenticateToken como el primer argumento.
-Si el token es válido, ejecuta la lógica del controlador.
-Reutilización del middleware:
-
-Puedes usar authenticateToken en cualquier controlador que necesite validar el token antes de ejecutar su lógica.

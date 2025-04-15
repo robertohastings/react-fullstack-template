@@ -44,10 +44,10 @@ export const getClientePorTelefonoOCelular = async (req, res) => {
 }
 export const postAgenda = async (req, res) => {
     console.log("body postAgenda =>", req.body)
-    const { id_empresa, fecha, intervalo, id_cliente, nombre_cliente, celular } = req.body
+    const { id_empresa, fecha, intervalo, id_cliente, nombre_cliente, celular, nombre_asistente } = req.body
 
     try {
-        const [result] = await pool.query("CALL postAgenda(?, ?, ?, ?, ?, ?)", [id_empresa, fecha, intervalo, id_cliente, nombre_cliente, celular])
+        const [result] = await pool.query("CALL postAgenda(?, ?, ?, ?, ?, ?, ?)", [id_empresa, fecha, intervalo, id_cliente, nombre_cliente, celular, nombre_asistente])
         console.log("result ->", result)
 
         const folioConfirmacion = result[0][0].folio_confirmacion
@@ -72,11 +72,11 @@ export const postAgenda = async (req, res) => {
 }
 export const putAgenda = async (req, res) => {
     console.log("body putAgenda =>", req.body)
-    const { id_empresa, id_agenda, intervalo, id_cliente, nombre, fecha, celular } = req.body
+    const { id_empresa, id_agenda, intervalo, id_cliente, nombre, fecha, celular, nombre_asistente } = req.body
     
     try {
-        const [result] = await pool.query("CALL putAgenda(?, ?, ?, ?, ?, ?, ?)",
-             [id_empresa, id_agenda, intervalo, id_cliente, nombre, fecha, celular])
+        const [result] = await pool.query("CALL putAgenda(?, ?, ?, ?, ?, ?, ?, ?)",
+             [id_empresa, id_agenda, intervalo, id_cliente, nombre, fecha, celular, nombre_asistente])
         //console.log("result ->", result[0][0])
 
         //const cambioRelizado = result[0][0].cambio_efectuado
