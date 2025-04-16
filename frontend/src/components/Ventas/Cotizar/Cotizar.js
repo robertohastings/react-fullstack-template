@@ -9,6 +9,8 @@ import StateContext from "../../../StateContext"
 
 
 function ColocarPedidoModal({ show, onHide }) {
+    const [tipoPago, setTipoPago] = useState("efectivo"); 
+    const [pagoParcialoTotal, setPagoParcialoTotal] = useState("total"); 
     return (
       <Modal
         show={show}
@@ -30,14 +32,83 @@ function ColocarPedidoModal({ show, onHide }) {
                     <Row>
                         <Col>
                             {/* <Form.Label>Celular:</Form.Label> */}
-                            <Form.Control type="numeric" id="celular" name="celular" placeholder="Registar celular" />
+                            <Form.Control type="numeric" id="celular" name="celular" placeholder="Registar celular" autoComplete="off" />
                         </Col>
                         <Col>
-                            <Form.Control type="text" id="nombre" name="nombreCliente" placeholder="Nombre del cliente" />
+                            <Form.Control type="text" id="nombre" name="nombreCliente" placeholder="Nombre del cliente" autoComplete="off" />
                         </Col>
                     </Row>
                 </Form.Group>
+                {/* Forma de Pago */}
                 <h6 className="mt-3">Forma de Pago</h6>
+                <Form.Group>
+                    <Row>
+                        {/* Columna izquierda */}
+                        <Col>
+                            {/* Botones de tipo de pago */}
+                            <ButtonGroup className="w-100 gap-3">
+                                <Button
+                                    variant={tipoPago === "efectivo" ? "primary" : "outline-primary"}
+                                    size="sm"
+                                    className="w-50"
+                                    onClick={() => setTipoPago("efectivo")}
+                                >
+                                    Pago en Efectivo
+                                </Button>
+                                <Button
+                                    variant={tipoPago === "tarjeta" ? "primary" : "outline-primary"}
+                                    size="sm"
+                                    className="w-50"
+                                    onClick={() => setTipoPago("tarjeta")}
+                                >
+                                    Pago con Tarjeta
+                                </Button>
+                            </ButtonGroup>
+                            {/* Botones de tipo de monto */}
+                            <ButtonGroup className="w-100 gap-3 mt-3">
+                                <Button
+                                    variant={pagoParcialoTotal === "total" ? "primary" : "outline-primary"}
+                                    size="sm"
+                                    className="w-50"
+                                    onClick={() => setTipoPago("total")}
+                                >
+                                    Pago Total
+                                </Button>
+                                <Button
+                                    variant={pagoParcialoTotal === "parcial" ? "primary" : "outline-primary"}
+                                    size="sm"
+                                    className="w-50"
+                                    onClick={() => setTipoPago("parcial")}
+                                >
+                                    Pago Parcial
+                                </Button>
+                            </ButtonGroup>
+                            {/* Input para cantidad a pagar */}
+                            <div className="d-flex gap-2 mt-3">
+                                <Form.Control
+                                    type="number"
+                                    placeholder="Cantidad a pagar"
+                                    className="text-center w-100"
+                                    autoComplete="off"
+                                    // style={{ maxWidth: "150px" }}
+                                />
+                                <Button variant="outline-success" size="sm" className="w-100">
+                                    Agregar Pago
+                                </Button>
+
+
+                                {/* <div className="d-flex align-items-center gap-2">
+                                </div> */}
+                            </div>
+                        </Col>
+
+                        {/* Columna derecha (vacía por ahora) */}
+                        <Col>
+                            {/* Aquí se definirá más tarde */}
+                        </Col>
+                    </Row>                    
+                </Form.Group>
+                   
             </Form>
 
         </Modal.Body>
