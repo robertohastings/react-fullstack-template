@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Navbar, Nav, NavDropdown, Dropdown} from "react-bootstrap"
 import { Link } from "react-router-dom"
@@ -17,6 +18,7 @@ import { CartContext } from "../context/ShoppingCartContext"
 import { is } from "date-fns/locale"
 
 function Header2(props) {
+    const navigate = useNavigate()
     const [cart, setCart] = useContext(CartContext)
     const [expanded, setExpanded] = useState(false);
 
@@ -105,7 +107,7 @@ function Header2(props) {
     const handled_LoggedOut = () => {
         appDispatch({ type: "logout", value: true })
         appDispatch({ type: "showLoggedIn", value: true })
-
+        navigate("/")
     }
 
     const actions = {

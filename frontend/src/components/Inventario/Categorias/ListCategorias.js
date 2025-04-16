@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import axiosInstance from "../../../tools/AxiosInstance"
 import Axios from "axios"
 import { Table, Button, Pagination, Spinner, Image, Modal, Form, FloatingLabel } from "react-bootstrap"
 import { CiEdit } from "react-icons/ci"
@@ -35,7 +36,7 @@ function ListCategorias() {
         setIsLoaging(true)
 
         try {
-            const response = await Axios.get("/api/getCategoriasListado", {
+            const response = await axiosInstance.get("/getCategoriasListado", {
                 params: {
                     limite: rowsPerPage,
                     pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5
@@ -88,7 +89,7 @@ function ListCategorias() {
 
     const postCategoria = async categoria => {
         try {
-            await Axios.post("/api/inventario/postCategoria", categoria)
+            await axiosInstance.post("/inventario/postCategoria", categoria)
                 .then(response => {
                     console.log(response)
                 })

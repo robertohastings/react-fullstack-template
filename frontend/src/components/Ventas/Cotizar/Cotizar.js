@@ -1,14 +1,57 @@
 import React, { useState, useEffect, useContext } from "react"
-import { Card, Col, Container, Row, Button, Table, Image, ButtonGroup, Badge, ButtonToolbar } from "react-bootstrap"
-import Axios from "axios"
+import { Card, Col, Container, Row, Button, Table, Image, ButtonGroup, Badge, ButtonToolbar, Modal, Form } from "react-bootstrap"
+import axiosInstance from "../../../tools/AxiosInstance"
 //import SpinnerButton from "../../Spinner/SpinnerButton"
 import "./cotizar.css"
 import { FaPlus, FaMinus, FaRegTrashAlt, FaShoppingCart, FaMotorcycle, FaSearch } from "react-icons/fa"
 import CustomModal from "../../../tools/CustomModal"
 import StateContext from "../../../StateContext"
 
+
+function ColocarPedidoModal({ show, onHide }) {
+    return (
+      <Modal
+        show={show}
+        onHide={onHide}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        backdrop="static"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Colocar Pedido
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>            
+            <Form>
+                <h6>Datos del Cliente</h6>
+                <Form.Group>
+                    <Row>
+                        <Col>
+                            {/* <Form.Label>Celular:</Form.Label> */}
+                            <Form.Control type="numeric" id="celular" name="celular" placeholder="Registar celular" />
+                        </Col>
+                        <Col>
+                            <Form.Control type="text" id="nombre" name="nombreCliente" placeholder="Nombre del cliente" />
+                        </Col>
+                    </Row>
+                </Form.Group>
+                <h6 className="mt-3">Forma de Pago</h6>
+            </Form>
+
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={() => alert('Pedido creado correctamente')}>Close</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+}
+
+
 function Cotizar() {
     //const [isLoading, setIsLoaging] = useState(false)
+    const [showColocarPedido, setShowColocarPedido] = useState(false);
     const [dataCategories, setDataCategories] = useState([])
     const [dataProducts, setDataProducts] = useState([])
     const [selectedCategory, setSelectedCategory] = useState(null)
@@ -43,7 +86,7 @@ function Cotizar() {
         //setIsLoaging(true)
 
         try {
-            const response = await Axios.get("/api/getCategorias", {
+            const response = await axiosInstance.get("/getCategoriasListado", {
                 params: {
                     limite: 0,
                     pagina: 0
@@ -69,7 +112,7 @@ function Cotizar() {
         console.log("params:", params)
 
         try {
-            await Axios.get("/api/getProductosByCategoria", {
+            await axiosInstance.get("/getProductosByCategoria", {
                 params
             })
                 .then(response => {
@@ -227,8 +270,12 @@ function Cotizar() {
         }
     }
 
+
+
     return (
         <Container fluid>
+            
+
             <Row>
                 {/* Columna de categorías fija a la izquierda */}
                 <Col xs={1} className="categories-column">
@@ -317,7 +364,7 @@ function Cotizar() {
                                         <Button size="sm" variant="warning" style={{ width: "100px" }} title="Definir tipo de entrega: Domiclio ó Recoge" disabled={detallePedido.length === 0}>
                                             <FaMotorcycle size={30} />
                                         </Button>
-                                        <Button size="sm" variant="success" style={{ width: "100px" }} disabled={detallePedido.length === 0}>
+                                        <Button size="sm" variant="success" style={{ width: "100px" }} disabled={detallePedido.length === 0} onClick={() => setShowColocarPedido(true)}>
                                             Crear Pedido
                                         </Button>
                                         <Button size="sm" variant="info" style={{ width: "100px" }}>
@@ -372,6 +419,14 @@ function Cotizar() {
 
             {/* Se defino el modal para mostrarse, código fijo */}
             {modalParams && <CustomModal show={true} title={modalParams.title} question={modalParams.question} buttons={modalParams.buttons} onClose={modalParams.onClose} />}
+                
+            <ColocarPedidoModal 
+                show={showColocarPedido} 
+                onHide={() => setShowColocarPedido(false)}
+            />
+            
+            
+
         </Container>
     )
 }

@@ -7,7 +7,7 @@ import { getCategoriasListado, postCategoria, getProductosListado,
 const router = Router()
 //Categorias
 router.get("/getCategoriasListado", authenticateToken, getCategoriasListado)
-router.post("/inventario/postCategoria", postCategoria)
+router.post("/inventario/postCategoria", authenticateToken, postCategoria)
 //Productos
 router.get("/inventario/getProductosListado", authenticateToken, getProductosListado)
 router.post("/inventario/postProducto", authenticateToken, postProducto)
