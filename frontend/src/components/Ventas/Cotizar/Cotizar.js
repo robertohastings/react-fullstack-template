@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext, useRef, useCallback } from "react"
 import { Card, Col, Container, Row, Button, Table, Image, ButtonGroup, Badge, ButtonToolbar, Modal, Form } from "react-bootstrap"
 import axiosInstance from "../../../tools/AxiosInstance"
 //import SpinnerButton from "../../Spinner/SpinnerButton"
@@ -8,9 +8,38 @@ import CustomModal from "../../../tools/CustomModal"
 import StateContext from "../../../StateContext"
 
 
-function ColocarPedidoModal({ show, onHide }) {
+function ColocarPedidoModal({ show, onHide, onResetPagos }) {
     const [tipoPago, setTipoPago] = useState("efectivo"); 
     const [pagoParcialoTotal, setPagoParcialoTotal] = useState("total"); 
+    const cantidadAPagarRef = useRef(null)
+    const [celular, setCelular] = useState('')
+    const [nombreCliente, setNombreCliente] = useState('')
+    const [cantidadAPagar, setCantidadAPagar] = useState(0)
+    const [pagos, setPagos] = useState([]); // Estado para almacenar los pagos realizados
+
+    // Función para reiniciar los pagos
+    const resetPagos = () => {
+        setPagos([]); // Reinicia el estado de pagos
+    };
+
+    // Pasa la función de reinicio al componente padre
+    useEffect(() => {
+        if (onResetPagos) {
+            onResetPagos(resetPagos);
+        }
+    }, [onResetPagos]);    
+
+    const handleAgregarPago = () => {
+        // Agrega un nuevo pago al arreglo
+        setPagos((prevPagos) => [
+            ...prevPagos,
+            { tipoPago, pagoParcialoTotal, cantidadAPagar: Number(cantidadAPagar) },
+        ]);
+        // Limpia el campo de cantidad a pagar
+        setCantidadAPagar(0);
+        cantidadAPagarRef.current.focus();
+    };    
+
     return (
       <Modal
         show={show}
@@ -32,10 +61,14 @@ function ColocarPedidoModal({ show, onHide }) {
                     <Row>
                         <Col>
                             {/* <Form.Label>Celular:</Form.Label> */}
-                            <Form.Control type="numeric" id="celular" name="celular" placeholder="Registar celular" autoComplete="off" />
+                            <Form.Control type="numeric" id="celular" name="celular" placeholder="Registar celular" autoComplete="off"
+                                onChange={e => setCelular(e.target.value)}
+                            />
                         </Col>
                         <Col>
-                            <Form.Control type="text" id="nombre" name="nombreCliente" placeholder="Nombre del cliente" autoComplete="off" />
+                            <Form.Control type="text" id="nombre" name="nombreCliente" placeholder="Nombre del cliente" autoComplete="off" 
+                                onChange={e => setNombreCliente(e.target.value)}
+                            />
                         </Col>
                     </Row>
                 </Form.Group>
@@ -70,7 +103,7 @@ function ColocarPedidoModal({ show, onHide }) {
                                     variant={pagoParcialoTotal === "total" ? "primary" : "outline-primary"}
                                     size="sm"
                                     className="w-50"
-                                    onClick={() => setTipoPago("total")}
+                                    onClick={() => setPagoParcialoTotal("total")}
                                 >
                                     Pago Total
                                 </Button>
@@ -78,7 +111,7 @@ function ColocarPedidoModal({ show, onHide }) {
                                     variant={pagoParcialoTotal === "parcial" ? "primary" : "outline-primary"}
                                     size="sm"
                                     className="w-50"
-                                    onClick={() => setTipoPago("parcial")}
+                                    onClick={() => setPagoParcialoTotal("parcial")}
                                 >
                                     Pago Parcial
                                 </Button>
@@ -86,13 +119,22 @@ function ColocarPedidoModal({ show, onHide }) {
                             {/* Input para cantidad a pagar */}
                             <div className="d-flex gap-2 mt-3">
                                 <Form.Control
+                                    autoFocus
+                                    ref={cantidadAPagarRef}
                                     type="number"
                                     placeholder="Cantidad a pagar"
                                     className="text-center w-100"
                                     autoComplete="off"
+                                    onChange={e => setCantidadAPagar(e.target.value)}
                                     // style={{ maxWidth: "150px" }}
                                 />
-                                <Button variant="outline-success" size="sm" className="w-100">
+                                <Button 
+                                    variant="outline-success"
+                                    size="sm" 
+                                    className="w-100"
+                                    disabled={celular === ''|| nombreCliente === '' || cantidadAPagar === 0 }
+                                    onClick={handleAgregarPago}
+                                >
                                     Agregar Pago
                                 </Button>
 
@@ -104,7 +146,24 @@ function ColocarPedidoModal({ show, onHide }) {
 
                         {/* Columna derecha (vacía por ahora) */}
                         <Col>
-                            {/* Aquí se definirá más tarde */}
+                        <h6>Pagos Realizados</h6>
+                                <div className="border p-2">
+                                    {pagos.length === 0 ? (
+                                        <p className="text-muted">No hay pagos registrados.</p>
+                                    ) : (
+                                        pagos.map((pago, index) => (
+                                            <div key={index} className="mb-2">
+                                                <p className="mb-1">
+                                                    <strong>Tipo:</strong> {pago.tipoPago} - {pago.pagoParcialoTotal}
+                                                </p>
+                                                <p className="mb-1">
+                                                    <strong>Cantidad:</strong> ${pago.cantidadAPagar.toFixed(2)}
+                                                </p>
+                                                <hr className="my-1" />
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
                         </Col>
                     </Row>                    
                 </Form.Group>
@@ -123,6 +182,7 @@ function ColocarPedidoModal({ show, onHide }) {
 function Cotizar() {
     //const [isLoading, setIsLoaging] = useState(false)
     const [showColocarPedido, setShowColocarPedido] = useState(false);
+    const [resetPagos, setResetPagos] = useState(() => () => {}); // Callback para reiniciar pagos
     const [dataCategories, setDataCategories] = useState([])
     const [dataProducts, setDataProducts] = useState([])
     const [selectedCategory, setSelectedCategory] = useState(null)
@@ -132,6 +192,15 @@ function Cotizar() {
     const totalItems = detallePedido.reduce((total, item) => total + parseInt(item.cantidad), 0)
     const appState = useContext(StateContext)
     const id_empresa = appState.idEmpresa
+
+    const ColocarPedido_handled = () => {
+        resetPagos()
+        setShowColocarPedido(true)
+    }
+
+    const handleSetResetPagos = useCallback((resetFunction) => {
+        setResetPagos(() => resetFunction);
+    }, []);
 
     //Definición del Modal
     const [modalParams, setModalParams] = useState(null)
@@ -343,6 +412,7 @@ function Cotizar() {
 
 
 
+
     return (
         <Container fluid>
             
@@ -435,7 +505,7 @@ function Cotizar() {
                                         <Button size="sm" variant="warning" style={{ width: "100px" }} title="Definir tipo de entrega: Domiclio ó Recoge" disabled={detallePedido.length === 0}>
                                             <FaMotorcycle size={30} />
                                         </Button>
-                                        <Button size="sm" variant="success" style={{ width: "100px" }} disabled={detallePedido.length === 0} onClick={() => setShowColocarPedido(true)}>
+                                        <Button size="sm" variant="success" style={{ width: "100px" }} disabled={detallePedido.length === 0} onClick={ColocarPedido_handled}>
                                             Crear Pedido
                                         </Button>
                                         <Button size="sm" variant="info" style={{ width: "100px" }}>
@@ -494,6 +564,7 @@ function Cotizar() {
             <ColocarPedidoModal 
                 show={showColocarPedido} 
                 onHide={() => setShowColocarPedido(false)}
+                onResetPagos={handleSetResetPagos} // Recibe el callback para reiniciar pagos
             />
             
             
