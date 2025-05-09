@@ -284,23 +284,30 @@ export const putFormasDePago = async (req, res) => {
 }
 export const postPedido = async (req, res) => {
     console.log("body postPedido:", req.body)
-    const { id_empresa, id_usuario, id_cliente, tipo_de_entrega, identidad_tipo_de_entrega, id_forma_de_pago, partidas_pedido } = req.body
-    //console.log("id_empresa", id_empresa)
-    //console.log("formasDePago", formasDePago)
+    const { id_empresa, id_usuario, id_cliente, id_direccion, id_pedido_estatus, id_tipo_pedido, total, importe_pagado, saldo, fecha_creacion, fecha_actualizacion,
+        motivo_cancelacion,
+        pedido_detalle, pedido_formas_de_pago, pedido_domicilio } = req.body
 
     try {
-        const [result] = await pool.query("CALL postPedido(?, ?, ?, ?, ?, ?, ?)", [id_empresa, id_usuario, id_cliente, tipo_de_entrega, identidad_tipo_de_entrega, id_forma_de_pago, JSON.stringify(partidas_pedido)])
+        const [rows] = await pool.query("CALL postPedido(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+            [id_empresa, id_usuario, id_cliente, id_direccion, id_pedido_estatus, id_tipo_pedido, 
+            total, importe_pagado, saldo, fecha_creacion, fecha_actualizacion, motivo_cancelacion, JSON.stringify(pedido_detalle), 
+            JSON.stringify(pedido_formas_de_pago), JSON.stringify(pedido_domicilio)])
 
-        if (result.affectedRows == 0) {
-            res.status(404).json({
-                message: "No se realizó actualización"
-            })
-        } else {
-            return res.status(200).json({
-                message: "Pedido generado exitosamente",
-                data: res.data
-            })
-        }
+        // Extrae el id_pedido generado
+        const id_pedido = rows[0][0]?.id_pedido;
+
+        if (!id_pedido) {
+            return res.status(404).json({
+                message: "No se pudo generar el pedido"
+            });
+        }  
+        
+        return res.status(200).json({
+            message: "Pedido generado exitosamente",
+            id_pedido: id_pedido // Devuelve el ID del pedido generado
+        });        
+
     } catch (error) {
         console.log("Ocurrió un error")
         res.status(500).json({
@@ -364,6 +371,41 @@ export const putPedidoEstatus = async (req, res) => {
         console.log("Ocurrió un error")
         res.status(500).json({
             message: `Error: ${error}`
+        })
+    }
+}
+
+export const getTipoPedido = async (req, res) => {
+    console.log("getTipoPedido:", req.query)
+    try {
+        const { id_empresa } = req.query
+
+        const rows = await pool.query(`CALL getTipoPedido(?);`, [id_empresa])
+
+        res.status(200).json({
+            success: true,
+            tipoPedido: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: "An error ocurred"
+        })
+    }
+}
+export const getColoniasDelivery = async (req, res) => {
+    console.log("getColoniasDelivery:", req.query)
+    try {
+        const { id_empresa } = req.query
+
+        const rows = await pool.query(`CALL getColoniasDelivery(?);`, [id_empresa])
+
+        res.status(200).json({
+            success: true,
+            colonias: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: "An error ocurred"
         })
     }
 }

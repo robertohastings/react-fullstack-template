@@ -1,0 +1,147 @@
+nueva tabla tipo_pedido
+
+USE `crm`;
+DROP procedure IF EXISTS `getTipoPedido`;
+
+DELIMITER $$
+USE `crm`$$
+CREATE PROCEDURE `getTipoPedido` (
+	prm_id_empresa int
+)
+BEGIN
+	SELECT id_tipo_pedido, tipo_pedido FROM tipo_pedido WHERE id_empresa = prm_id_empresa;
+END$$
+
+DELIMITER ;
+
+- actualizar postPedido
+
+
+- NUEVA tabla
+
+CREATE TABLE `crm`.`pedido_formas_de_pago` (
+  `id_empresa` INT NOT NULL,
+  `id_pedido` INT NOT NULL,
+  `id_pedido_formaDePago` SMALLINT NOT NULL AUTO_INCREMENT,
+  `id_forma_de_pago` SMALLINT NULL,
+  `es_pago_total` TINYINT NULL,
+  `monto_pagado` DOUBLE NULL,
+  `saldo` DOUBLE NULL,
+  PRIMARY KEY (`id_empresa`, `id_pedido`, `id_pedido_formaDePago`))
+ENGINE = MyISAM;
+
+-- agregue esta parte a getLandingPage al final
+
+	SELECT TP.id_tipo_pedido, TP.tipo_pedido
+	FROM hosts H
+	INNER JOIN tipo_pedido TP ON TP.id_empresa = H.id_empresa
+	WHERE H.host = prm_host
+	ORDER BY TP.id_tipo_pedido;   
+
+--NUEVO Campos
+
+ALTER TABLE `crm`.`formas_de_pago` 
+ADD COLUMN `en_tienda_online` TINYINT(4) NULL AFTER `activo`,
+ADD COLUMN `en_sitio` TINYINT(4) NULL AFTER `en_tienda_online`;
+
+UPDATE `crm`.`formas_de_pago` SET `en_tienda_online` = '1', `en_sitio` = '1' WHERE (`id_empresa` = '1') and (`id_forma_de_pago` = '1');
+UPDATE `crm`.`formas_de_pago` SET `en_tienda_online` = '1', `en_sitio` = '1' WHERE (`id_empresa` = '1') and (`id_forma_de_pago` = '2');
+UPDATE `crm`.`formas_de_pago` SET `en_tienda_online` = '1', `en_sitio` = '0' WHERE (`id_empresa` = '1') and (`id_forma_de_pago` = '3');
+UPDATE `crm`.`formas_de_pago` SET `en_tienda_online` = '1', `en_sitio` = '1' WHERE (`id_empresa` = '1') and (`id_forma_de_pago` = '4');
+UPDATE `crm`.`formas_de_pago` SET `en_tienda_online` = '1', `en_sitio` = '0' WHERE (`id_empresa` = '1') and (`id_forma_de_pago` = '5');
+UPDATE `crm`.`formas_de_pago` SET `en_tienda_online` = '1', `en_sitio` = '0' WHERE (`id_empresa` = '1') and (`id_forma_de_pago` = '6');
+
+-- agregue en getLandingPage las formas de pago al final:
+
+    /*Obtengo las formas de pago*/
+	SELECT FP.id_forma_de_pago, FP.descripcion, FP.informacion_adicional, FP.en_tienda_online, FP.en_sitio
+	FROM hosts H
+	INNER JOIN formas_de_pago FP ON FP.id_empresa = H.id_empresa
+	WHERE H.host = prm_host AND FP.activo = 1
+	ORDER BY FP.id_forma_de_pago;     
+
+-- agregue nuevas formas de pago para en_sitio
+
+
+insert into formas_de_pago (id_empresa, descripcion, informacion_adicional, activo, en_tienda_online, en_sitio) values (1, 'rappid', '', 1, 0, 1);
+insert into formas_de_pago (id_empresa, descripcion, informacion_adicional, activo, en_tienda_online, en_sitio) values (1, 'didi', '', 1, 0, 1);
+insert into formas_de_pago (id_empresa, descripcion, informacion_adicional, activo, en_tienda_online, en_sitio) values (1, 'ubber eats', '', 1, 0, 1);	
+
+UPDATE `crm`.`formas_de_pago` SET `descripcion` = 'Efectivo' WHERE (`id_empresa` = '1') and (`id_forma_de_pago` = '1');
+UPDATE `crm`.`formas_de_pago` SET `descripcion` = 'Tarjeta Débito/Crédito' WHERE (`id_empresa` = '1') and (`id_forma_de_pago` = '2');
+
+-- agregue las formas de pago en sql en postPedido
+    WHILE idx < JSON_LENGTH(p_formas_de_pago) DO
+        SET partida = JSON_EXTRACT(p_formas_de_pago, CONCAT('$[', idx, ']'));
+        
+        -- Extraer los campos individuales
+        SET @id_forma_de_pago = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.id_forma_de_pago'));
+        SET @es_pago_total = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.es_pago_total'));
+        SET @monto_pagado = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.monto_pagado'));
+        SET @saldo = JSON_UNQUOTE(JSON_EXTRACT(partida, '$.saldo'));
+                
+		INSERT INTO pedidos_detalle (id_empresa, id_pedido, id_forma_de_pago, es_pago_total, monto_pagado, saldo)    
+			VALUES (p_id_empresa, p_id_pedido, @id_forma_de_pago, @es_pago_total, @monto_pagado, saldo);
+
+        SET idx = idx + 1;
+    END WHILE;   
+
+	-- AGREGO EL CAMPO: id_tipo_pedido en la tabla de Pedidos
+
+	-- NUEVA TABLA DE colonias_delivery
+
+		CREATE TABLE `crm`.`colonias_delivery` (
+		`id_empresa` INT NOT NULL,
+		`id_colonia` INT NOT NULL AUTO_INCREMENT,
+		`nombre` VARCHAR(100) NULL,
+		`activa` TINYINT(4) NULL,
+		PRIMARY KEY (`id_empresa`, `id_colonia`))
+		ENGINE = MyISAM;
+
+-- NUEVO SP:
+
+		USE `crm`;
+		DROP procedure IF EXISTS `getColoniasDelivery`;
+
+		DELIMITER $$
+		USE `crm`$$
+		CREATE PROCEDURE `getColoniasDelivery` (
+			IN p_id_empresa int
+		)
+		BEGIN
+			
+			SELECT id_empresa, id_colonia, nombre, activa
+			FROM colonias_delivery
+			WHERE id_empresa = p_id_empresa AND activa = 1;
+
+		END$$
+
+		DELIMITER ;
+
+	-- nueva tabla pedido_domicilio
+
+		CREATE TABLE `crm`.`pedido_domicilio` (
+		`id_empresa` INT NOT NULL,
+		`id_pedido` INT NOT NULL,
+		`id_direccion` INT NULL,
+		PRIMARY KEY (`id_empresa`, `id_pedido`))
+		ENGINE = MyISAM;
+
+	-- agregué los siguientes campos a la tabla direcciones:
+		- id_colonia
+		- entre_calles
+		- referencia
+
+	-- cambie postPedido en SQL
+
+	-- camie getClientePorTelefonoOCelular
+
+	-- agregue un nuevo estatus en la tabla de pedido_status
+		insert into pedido_estatus ( id_empresa, descripcion, orden) values (1, 'Cancelado', 5);
+
+	-- agrague un campos nuevo en la tabla de pedidos:
+		ALTER TABLE `crm`.`pedidos` 
+		ADD COLUMN `motivo_cancelacion` VARCHAR(150) NULL AFTER `fecha_actualizacion`;
+		
+
+	-- agregue el parametro motivo_cancelacion y en el insert

@@ -2,16 +2,17 @@
 import React, { useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import axios from "axios"
+import AxiosConfig from "./tools/AxiosConfig"
 import { useImmerReducer } from "use-immer"
 import StateContext from "./StateContext"
 import DispatchContext from "./DispatchContext"
 import ShoppingCartProvider from "./context/ShoppingCartContext"
 import { setEncryptedItem, getDecryptedItem } from "./tools/Utils"
 import { isTokenValid } from "./tools/Utils"
-import { setTokenGetter } from "./tools/AxiosInstance"
+import { setTokenGetter} from "./tools/AxiosInstance"
 
 //My Components
-import Header from "./components/Header"
+//import Header from "./components/Header"
 import Header2 from "./components/Header2"
 import Footer from "./components/Footer"
 import Home from "./components/Home"
@@ -38,9 +39,6 @@ import LandingPagePreview from "./components/LandingPagePreview"
 import Agenda from "./components/Cartera/Agenda/Agenda"
 
 function App() {
-    //.log("Aquí")
-    //const [cart, setCart] = useContext(CartContext)
-    //const [data, setData] = useState({})
     const api_url = process.env.REACT_APP_API_URL
     const hostnameTesting = process.env.REACT_APP_HOSTNAME_TESTING
     const esAmbienteDesarrollo = process.env.REACT_APP_AMBIENTE_DESARROLLO === "true"
@@ -89,6 +87,8 @@ function App() {
                 draft.token = action.data.token;
                 draft.loggedIn = action.data.loggedIn;
                 draft.menu = action.data.menu;
+                draft.tipoPedido = action.data.tipoPedido;
+                draft.formasDePago = action.data.formasDePago;
                 draft.landingPage = action.data.landingPage;
                 draft.idEmpresa = action.data.idEmpresa;
                 break;
@@ -120,6 +120,7 @@ function App() {
 
     const [state, dispatch] = useImmerReducer(ourReducer, initialState)
 
+
     useEffect(() => {
         //if (!hostname) return; // Espera a que hostname esté definido
 
@@ -138,6 +139,8 @@ function App() {
                     token: storedData.token,
                     loggedIn: true,
                     menu: storedData.menu,
+                    tipoPedido: storedData.tipoPedido,
+                    formasDePago: storedData.formasDePago,
                     landingPage: storedData.landingPage,
                     idEmpresa: storedData.idEmpresa,
                 },
@@ -155,6 +158,8 @@ function App() {
                         token: response.data.token || "",
                         loggedIn: !!response.data.token && isTokenValid(response.data.token),
                         menu: response.data.landingPage.menuLanding || [],
+                        tipoPedido: response.data.landingPage.tipoPedido || [],
+                        formasDePago: response.data.landingPage.formasDePago || [],
                         landingPage: response.data.landingPage,
                         idEmpresa: response.data.landingPage.idEmpresa,
                     };
@@ -196,6 +201,7 @@ function App() {
             <StateContext.Provider value={state}>
                 <DispatchContext.Provider value={dispatch}>
                     <BrowserRouter>
+                        <AxiosConfig />
                         <ShoppingCartProvider>
                             {/* <FlashMessage messages={state.flashMessages} /> */}
                             <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />

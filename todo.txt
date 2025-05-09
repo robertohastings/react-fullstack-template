@@ -24,3 +24,73 @@
                     - identidad, id_empresa, fuente, imagen, orden
             - Crear sp: postGaleria
             - Crear sp: putGeleria
+
+
+Terminado:
+- Cambiar buscar cliente de agenda a modelo y probar
+- Replicar buscar cliente por celular de Agenta a Cotizar
+- Crear getTipoPedido en SQL
+- Crear controlador getTipoPedido
+- Crear modelo TipoPedido            
+- Crear modelo funcion getTipoPedido
+- Llamar funcion getTipoPedido en Cotizar
+- Agregar botones agrupados para seleccionar el TipoPedido
+- Agregar TipoPedido en el modelo de Pedido
+- Asignar en CrearPedido el TipoPedido
+- Crear postCrearpedido, regresar el IdPedido en SQL
+- Nueva entidad pedido_formas_de_pago
+- Crear al model pedido pedido_formasDePago
+- Agregar en sql el proc que obtiene la landingPage para agregar las formas de pago y los tipos de pedido para cargarlos al inicio
+- Adecuar la función getTipoPedido del modelo para que obtenga el data de la landingPage
+- Crear modelo formas_de_pago
+- Crear funcion getFormasDePago para que los tome de la data de la landingPage
+- Crear dos funciones una para obtener las formas de pago del carrito y otra para obtener las formas de pago en sitio
+- Cambiar las formas de pago estáticas por dinámicas con la nueva identidad
+- Agregar a crear_pedido en ColocarPedidoRestaurante las formas de pago
+- Modificar postPedido para recibir pedido_formasDePago
+- Revisar controlador postPedido
+- En la tabla formas_de_pago agregar los campos boleanos: es_pago_en_linea y es_pago_en_sitio
+- Agregar en StateUtils obtener idUsuario del state
+- Hacer pruebas Revisar que se haya generado el pedido. 
+- Revisar porque no se agregaron las formas de pago del pedido
+- Revisar porque no mostró el número del pedido
+- En el catálago de formas de pago agregar los campos: en_sitio y en_tienda_online
+- Crear tabla colonias_delivery
+- Crear sp getColoniasDelivery
+- Crear controlador getColoniasDelivery
+- Crear ruta getColoniasDelivery
+- Crear modelo getColoniasDelivery
+- Agregar la opción de otros en el setColonias como: 0 - Otros
+- Al seleccionar la opción de Otros capturar la nueva colonia
+- Agregar el modelo postPedido los datos del domicilio
+- Agregar en la alta del pedido los datos del domicilio
+- Agregar el domicilio a postPedido en SQL
+- Agregar la nueva colonia en el postPedido en el catalago de colonias_delivery
+- Enviar el nombre de la nueva colonia en los datos del post
+- Asignar el domicilio del cliente cuando se seleccione entrega a domicilio
+- Guardar la colonia seleccionada en un nuevo setState
+- En handleCrearPedido en colonia agregar el nombre de la colonia seleccionada si id_colonia no es null
+- Asignar la constante pedido_domicilio en un nuevo useState domicilioTicket
+- Pasar domicilioTicket a Cotizar
+- Pasar domicilioTicket a ticket
+- Mostar los datos del domicilio en ticket si estos traen datos.
+- Mostar los datos de la dirección de envio para la impresión del ticket
+- Al crear un nuevo pedido que el tabulador inicie en Cliente
+- Al teclear el celular del cliente obtener el domicilio (Opcional)
+- Validad que no se pueda crear el pedido si el tipo de pedido es Domicilio y la colonia es null, numero es null o si la colonia es 0 and nombre is null
+- Al presionar regresar para agregar un producto y al volver a colocar el pedido no limpiar los datos capturados como: celular, nombre y tipo de pedido
+
+Pendiente:
+- Agregar botón cancelar en ColocarPedidoRestaurante el cual se activa al momento de getClientePorTelefonoOCelular
+    pagos capturados
+- Al presionar cancelar se debe guardar el pedido pero con el estatus cancelado
+- Vaidar botón regresar para que no se pueda regresar cuando tenga pagos capturados
+- Arreglar los botones de formas de pagos para que sea responive a 6, 4 y 2 columnas
+- Si se registró una nueva colonia, volver a cargar el getColoniasDelivery
+- Validar que la colonia capturada no exista
+- Autenticar ruta getTipoPedido en Admin.routes
+- Agregar TipoPedido en postHost (Alta de un nuevo host)
+- Validar que la forma de pago acepte cantidades mayores o no
+- Ver la parte del cargo por envío
+- Ver la parte del cargo por cobro con tarjeta
+- Agregar campo de costo por envio al seleccionar la columna

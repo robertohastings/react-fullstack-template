@@ -16,6 +16,7 @@ import { GiConfirmed } from "react-icons/gi";
 import { FaUserTag } from "react-icons/fa";
 import DispatchContext from "../../../DispatchContext"
 import StateContext from "../../../StateContext"
+import { getClientePorTelefonoOCelular } from "../../../models/Cliente/Cliente"
 
 // Registra la localización en español
 registerLocale("es", es)
@@ -72,7 +73,7 @@ function Agenda() {
             } else if (error.response && error.response.status === 401) {
                 // Si el token es inválido, redirige al usuario al componente LoggedIn
                 appDispatch({ type: "logout" }) // Limpia el estado global
-                navigate("/") // Redirige al inicio de sesión
+                 // Redirige al inicio de sesión
             } else if (error.response.status === 403) {
                 // Si el token es válido pero no tiene permisos, redirige o muestra un mensaje
                 //console.error("Acceso denegado: No tienes permisos para esta acción.");
@@ -117,51 +118,81 @@ function Agenda() {
     const handledBuscarCliente = async celular => {
         setIsFetching(true)  
         
-        const params = {
-            id_empresa: id_empresa,
-            telefono: celular
-        }
-        console.log("params ->", params)
+        // const params = {
+        //     id_empresa: id_empresa,
+        //     telefono: celular
+        // }
+        // console.log("params ->", params)
 
         try {
-            const response = await axiosInstance.get("/getClientePorTelefonoOCelular", {
-                params
-            })
+            
+            const clienteData = await getClientePorTelefonoOCelular(id_empresa, celular)
 
-            const data = response.data.cliente[0]
-            console.log("data ->", data)
+            //const data = response.data.cliente[0]
+            console.log("data ->", clienteData)
 
-            setCita(prevCita => ({ ...prevCita, Nombre: data.nombre_cliente }))
-            setCita(prevCita => ({ ...prevCita, id_cliente: data.id_cliente }))
+            setCita(prevCita => ({ ...prevCita, Nombre: clienteData.nombre_cliente }))
+            setCita(prevCita => ({ ...prevCita, id_cliente: clienteData.id_cliente }))
             setCita(prevCita => ({ ...prevCita, Celular: celular }))
-            setCita(prevCita => ({ ...prevCita, nombre_asistente: data.nombre_cliente }))
+            setCita(prevCita => ({ ...prevCita, nombre_asistente: clienteData.nombre_cliente }))
 
-            if (data.id_cliente === 0){
+            if (clienteData.id_cliente === 0){
                 setAyudaNombre('Cliente no encontrado...')
                 setTimeout(() => {
                     nombreRef.current.focus()
                 }, 100)
             } else {
                 setAyudaNombre('')            
-            }
+            }            
 
         } catch (error) {
-            if (axios.isCancel(error)) {
-                console.error("Solicitud cancelada:", error.message)
-            } else if (error.response && error.response.status === 401) { // Si el token es inválido, redirige al usuario al componente LoggedIn                
-                appDispatch({ type: "logout" }) // Limpia el estado global
-                navigate("/") // Redirige al inicio de sesión
-            } else if (error.response.status === 403) { //// Si el token es válido pero no tiene permisos
-                appDispatch({
-                    type: "alertMessage",
-                    value: "Acceso denegado: No tienes permisos para esta acción.",
-                    typeAlert: "danger",
-                });
-                navigate("/"); // Opcional: Redirige al inicio de sesión o a otra página                
-            } else {
-                console.error("Error al obtener buscar cliente:", error)
-            }
+            console.error("Error al obtener buscar cliente:", error)
+            appDispatch({
+                type: "alertMessage",
+                value: error.message,
+                typeAlert: "danger",
+            });
         }
+
+        // try {
+        //     const response = await axiosInstance.get("/getClientePorTelefonoOCelular", {
+        //         params
+        //     })
+
+        //     const data = response.data.cliente[0]
+        //     console.log("data ->", data)
+
+        //     setCita(prevCita => ({ ...prevCita, Nombre: data.nombre_cliente }))
+        //     setCita(prevCita => ({ ...prevCita, id_cliente: data.id_cliente }))
+        //     setCita(prevCita => ({ ...prevCita, Celular: celular }))
+        //     setCita(prevCita => ({ ...prevCita, nombre_asistente: data.nombre_cliente }))
+
+        //     if (data.id_cliente === 0){
+        //         setAyudaNombre('Cliente no encontrado...')
+        //         setTimeout(() => {
+        //             nombreRef.current.focus()
+        //         }, 100)
+        //     } else {
+        //         setAyudaNombre('')            
+        //     }
+
+        // } catch (error) {
+        //     if (axios.isCancel(error)) {
+        //         console.error("Solicitud cancelada:", error.message)
+        //     } else if (error.response && error.response.status === 401) { // Si el token es inválido, redirige al usuario al componente LoggedIn                
+        //         appDispatch({ type: "logout" }) // Limpia el estado global
+        //         navigate("/") // Redirige al inicio de sesión
+        //     } else if (error.response.status === 403) { //// Si el token es válido pero no tiene permisos
+        //         appDispatch({
+        //             type: "alertMessage",
+        //             value: "Acceso denegado: No tienes permisos para esta acción.",
+        //             typeAlert: "danger",
+        //         });
+        //         navigate("/"); // Opcional: Redirige al inicio de sesión o a otra página                
+        //     } else {
+        //         console.error("Error al obtener buscar cliente:", error)
+        //     }
+        // }
 
         setIsFetching(false)
     }

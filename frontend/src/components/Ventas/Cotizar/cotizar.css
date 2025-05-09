@@ -48,7 +48,7 @@
 
 .product-card {
     border-radius: 10px; /* Bordes redondeados */
-    height: 350px; /* Altura fija para que todas las Cards sean del mismo tamaño */
+    height: 290px; /* Altura fija para que todas las Cards sean del mismo tamaño */
 }
 
 .product-card .card-title {
