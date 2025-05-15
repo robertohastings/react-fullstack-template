@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { Modal, Row, Col, Form, Button, ButtonGroup, Badge, Table, Tab, Tabs } from "react-bootstrap";
-import { crearPedido } from '../../../models/Pedido/Pedido';
+import { crearPedido, getTipoCliente } from '../../../models/Pedido/Pedido';
 import StateContext from '../../../StateContext';
 import DispatchContext from '../../../DispatchContext';
 import { BsSearch } from "react-icons/bs"
 import { getClientePorTelefonoOCelular } from "../../../models/Cliente/Cliente"
 import { useTipoPedido, useFormasDePagoEnSitio, useUsuarioID, useEmpresaID } from '../../../tools/StateUtils';
+import './colocarPedidoRestaurante.css'
 
 export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, totalPrice, 
     totalPriceCurrency, currencyFormat, onGuardarDetalleDelPago, detallePedido, onSetIdPedido, colonias, setDomicilioTicket,
@@ -22,6 +23,7 @@ export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, t
     const [nombreCliente, setNombreCliente] = useState('')
     const [id_cliente, setId_cliente] = useState(0)
     const [tipoPedidoSeleccionado, setTipoPedidoSeleccionado] = useState(1);
+    //const [tipoPedidoDescripcion, setTipoPedidoDescripcion] = useState('')
     const [id_direccion, setId_direccion] = useState(0);
     const [formaDePagoSeleccionada, setFormaDePagoSeleccionada] = useState(1);
     const [colonia, setColonia] = useState('');
@@ -32,6 +34,8 @@ export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, t
     const [entreCalles, setEntreCalles] = useState('');
     const [referencia, setReferencia] = useState('');
     const [cantidadAPagar, setCantidadAPagar] = useState(0)
+    const [cargoColonia, setCargoColonia] = useState(0)
+    const [cargoDelivery, setCargoDelivery] = useState(0)
     const [pagos, setPagos] = useState([]); // Estado para almacenar los pagos realizados
     const totalPagos = pagos.reduce((total, item) => total + item.cantidadAPagar, 0)
     const [saldo, setSaldo] = useState(0)
@@ -46,6 +50,9 @@ export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, t
     const [showCancelarPedido, setShowCancelarPedido] = useState(false)
     const [motivoCancelacion, setMotivoCancelacion] = useState('')
     const [pedidoCancelado, setPedidoCancelado] = useState(false)
+    const [tipoCliente, setTipoCliente] = useState(getTipoCliente());
+    const [tipoClienteSeleccionado, setTipoClienteSeleccionado] = useState(0)
+
 
 const handledBuscarCliente = async celular => {
         setIsFetching(true)  
@@ -66,6 +73,7 @@ const handledBuscarCliente = async celular => {
     
                 if (clienteData.id_cliente === 0){
                     setAyudaNombre('Cliente no encontrado...')
+                    setCargoColonia(0)
                     setTimeout(() => {
                         setEntreCalles(clienteData.entre_calles)
                         setReferencia(clienteData.referencia)
@@ -82,6 +90,7 @@ const handledBuscarCliente = async celular => {
                     setColoniaNombreSeleccionada(clienteData.colonia)
                     setEntreCalles(clienteData.entre_calles)
                     setReferencia(clienteData.referencia)
+                    setCargoColonia(Number(clienteData.cargo_delivery))
                 }            
     
             } catch (error) {
@@ -112,9 +121,11 @@ const handledBuscarCliente = async celular => {
             setPagoParcialoTotal("total")
             setTipoPago("efectivo")
             setNombreCliente('')
+            setPagos([])
             //celularRef.current.focus()
         }
     }, [onResetPagos, totalPrice]);   
+
     useEffect(() => {
         if (showCancelarPedido && motivoCancelacionRef.current) {
             motivoCancelacionRef.current.focus();
@@ -123,17 +134,20 @@ const handledBuscarCliente = async celular => {
 
     // Establece el foco en el campo de celular al cargar el modal
     useEffect(() => {
+        console.log('tipo cliente ->', tipoCliente)
         if (show) {
             setTimeout(() => {
                 if (celularRef.current) {
                     celularRef.current.focus();
                 }
-            }, 0); // Retrasa la ejecución al siguiente ciclo del evento
+                setPagos([])
+            }, 100); // Retrasa la ejecución al siguiente ciclo del evento
         }
         setPagoParcialoTotal("total")
         setKey('cliente')
         setTipoPedidoSeleccionado(1)
         setFormaDePagoSeleccionada(1)
+        setTipoClienteSeleccionado(0)
         console.log('Pedido preview', pedidoPreview)
         // Asigno los datos del pedidoPreview
         if (pedidoPreview){
@@ -146,6 +160,7 @@ const handledBuscarCliente = async celular => {
                 setId_cliente(pedidoPreview.id_cliente)
                 setId_direccion(pedidoPreview.id_direccion)
                 setTipoPedidoSeleccionado(pedidoPreview.id_tipo_pedido)
+                setTipoClienteSeleccionado(pedidoPreview.id_tipo_cliente)
                 setSaldo(pedidoPreview.saldo)
                 setCantidadAPagar(pedidoPreview.total)            
             }
@@ -157,18 +172,24 @@ const handledBuscarCliente = async celular => {
             }
         else {
             setCelular(0)
-            setNombreCliente('')
+            setNombreCliente('Cliente Mostrador')
             setPagos([])
             setId_cliente(0)
             setId_direccion(0)
             setTipoPedidoSeleccionado(1)
+            setTipoClienteSeleccionado(0)
             setCalle('')
             setColonia('')
             setNumero('')
             setReferencia('')}
             setPedidoCancelado(false)
             setMotivoCancelacion('')
+            setShowCancelarPedido(false)
         }
+    
+        // setTipoPedidoDescripcion(tipoPedido.find(tipo => tipo.id_tipo_pedido === tipoPedidoSeleccionado).nombre || '') 
+        // console.log('tipo pedido:', tipoPedido)
+        // console.log('tipo pedido seleccionado', tipoPedidoSeleccionado)
 
     }, [show]);   
 
@@ -226,6 +247,7 @@ const handledBuscarCliente = async celular => {
             id_direccion, // Cambia esto según tu lógica
             id_pedido_estatus: 1, // Cambia esto según tu lógica
             id_tipo_pedido: tipoPedidoSeleccionado, // Cambia esto según tu lógica
+            id_tipo_cliente: tipoClienteSeleccionado,
             total: totalPrice,
             importe_pagado: totalPagos,
             saldo: totalPrice - totalPagos,
@@ -253,7 +275,7 @@ const handledBuscarCliente = async celular => {
             celular,
             nombre: nombreCliente,
             pagos,
-            pedidoCancelado,
+            pedidoCancelado: motivoCancelacion !== '' ? true : false,
             motivoCancelacion
         };
 
@@ -269,6 +291,7 @@ const handledBuscarCliente = async celular => {
 
         setDomicilioTicket(tipoPedidoSeleccionado === 2 ? [pedido_domicilio] : [])
         console.log("Pedido Domicilio:", pedido_domicilio)
+        console.log("pedido cancelado:", pedidoCancelado)
 
         const nuevoPedido = {
             id_empresa: appState.idEmpresa, // Cambia esto según tu lógica
@@ -276,8 +299,9 @@ const handledBuscarCliente = async celular => {
             id_usuario,
             id_cliente: id_cliente,
             id_direccion: 0, // Cambia esto según tu lógica
-            id_pedido_estatus: 1, // Cambia esto según tu lógica
-            id_tipo_pedido: pedidoCancelado ? 6 : tipoPedidoSeleccionado, // Cambia esto según tu lógica
+            id_pedido_estatus: motivoCancelacion !== '' ? 6 : 1, // Cambia esto según tu lógica
+            //id_tipo_cliente: tipoCliente,
+            id_tipo_pedido: tipoPedidoSeleccionado, // Cambia esto según tu lógica
             total: totalPrice,
             importe_pagado: totalPagos,
             saldo: totalPrice - totalPagos,
@@ -313,16 +337,19 @@ const handledBuscarCliente = async celular => {
                 onSetIdPedido(response.id_pedido); // Llama a la función para pasar el ID a Cotizar
             }            
     
-            // Realiza cualquier acción adicional con el id_pedido
+            
             onGuardarDetalleDelPago(detalle); // Guarda los datos y cierra el modal
-            //setCelular('');
-            setNombreCliente('');
+
+            // Limpia los pagos después de crear el pedido
             setPagos([]);
-            appDispatch({
-                type: "alertMessage",
-                value: response.message + " No. " + response.id_pedido,
-                typeAlert: "success",
-            }); 
+            setNombreCliente('');
+            setCelular('');
+        
+            // appDispatch({
+            //     type: "alertMessage",
+            //     value: response.message + " No. " + response.id_pedido,
+            //     typeAlert: "success",
+            // }); 
         } catch (error) {
             console.error("Error al crear el pedido:", error);
             appDispatch({
@@ -338,6 +365,15 @@ const handledBuscarCliente = async celular => {
         // setPagos([]);
     };    
 
+    const resetPedido = () => {
+        setPagos([]);
+        setCantidadAPagar(0);
+        setSaldo(0);
+        setNombreCliente('');
+        setCelular(0);
+        setMotivoCancelacion('');
+        setShowCancelarPedido(false);
+    };
   
     return (
       <Modal
@@ -352,9 +388,11 @@ const handledBuscarCliente = async celular => {
           <Modal.Title id="contained-modal-title-vcenter">
             {!showCancelarPedido && (
                 <Row className="justify-content-between align-items-center text-start">
-                    <Col xs={6} sm={6} md={2}>Total:<Badge>{totalPriceCurrency}</Badge></Col>
-                    <Col xs={6} sm={6} md={2}>Pagado:<Badge bg="warning">{currencyFormat(totalPagos)}</Badge></Col>          
-                    <Col xs={6} sm={6} md={2}>{totalPrice - totalPagos > 0 ? 'Saldo' : 'Cambio'}:<Badge bg={totalPrice - totalPagos === 0 ? "success" : "danger"}>{currencyFormat(totalPrice - totalPagos)}</Badge></Col>
+                    <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Sub Total:<Badge>{totalPriceCurrency}</Badge></Col>
+                    <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Envío:<Badge>{currencyFormat(cargoDelivery)}</Badge></Col>
+                    <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Total:<Badge>{currencyFormat(totalPrice + cargoDelivery)}</Badge></Col>
+                    <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Pagado:<Badge bg="warning">{currencyFormat(totalPagos)}</Badge></Col>          
+                    {/* <Col xs={12} sm={4} md={4} lg={4} className="mb-2">{totalPrice - totalPagos > 0 ? 'Saldo' : 'Cambio'}:<Badge bg={totalPrice - totalPagos === 0 ? "success" : "danger"}>{currencyFormat(totalPrice - totalPagos)}</Badge></Col> */}
                 </Row> 
             )}
             {showCancelarPedido && (
@@ -380,6 +418,37 @@ const handledBuscarCliente = async celular => {
                         <Form.Group>
                             <Row>
                                 <Col>
+                                    <ButtonGroup className="w-100 gap-2 mt-3 mb-5">
+                                        {tipoCliente.map((tipo, index) => (
+                                            <Button
+                                                key={index}
+                                                variant={tipoClienteSeleccionado === tipo.idTipoCliente ? "primary" : "outline-primary"}
+                                                size="sm"
+                                                className="w-100"
+                                                onClick={() => {
+                                                    //console.log('Tipo Cliente presionado =>', tipo.idTipoCliente)
+                                                    //console.log('Tipo Cliente seleccionado =>', tipoClienteSeleccionado)
+                                                    setTipoClienteSeleccionado(tipo.idTipoCliente)
+                                                    if (tipo.idTipoCliente === 0){
+                                                        setCelular(0)
+                                                        setNombreCliente('Cliente Mostrador')
+                                                    } else {
+                                                        setCelular('')
+                                                        setNombreCliente('')
+                                                        setTimeout(() => {
+                                                            celularRef.current.focus()
+                                                        }, 100)
+                                                    }
+                                                }}  
+                                            >
+                                                {tipo.tipoCliente}
+                                            </Button>
+                                        ))}
+                                    </ButtonGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
                                     <Row>
                                         <Col xs={9}>
                                             {/* <Form.Label>Celular:</Form.Label> */}
@@ -395,6 +464,7 @@ const handledBuscarCliente = async celular => {
                                                     if (e.target.value === '0') {setNombreCliente('Cliente Mostrador')}
                                                     setCelular(e.target.value)
                                                 }}
+                                                disabled={tipoClienteSeleccionado === 0}
                                             />                                
                                         </Col>
                                         <Col xs={3}>
@@ -402,7 +472,7 @@ const handledBuscarCliente = async celular => {
                                                 size="sm" className="w-100"
                                                 onClick={() => handledBuscarCliente(celular)} 
                                                 title="Presione aquí para buscar el cliente por número de teléfono" 
-                                                disabled={isFetching}
+                                                disabled={isFetching || tipoClienteSeleccionado === 0}
                                             >
                                                 <BsSearch />
                                             </Button>                                                            
@@ -419,6 +489,7 @@ const handledBuscarCliente = async celular => {
                                         autoComplete="off" 
                                         value={nombreCliente}
                                         onChange={e => setNombreCliente(e.target.value.toUpperCase())}
+                                        disabled={tipoClienteSeleccionado === 0}
                                     />
                                 </Col>
                             </Row>
@@ -426,7 +497,7 @@ const handledBuscarCliente = async celular => {
                     </Tab>
                 
                     {/* Tipo de Pedido */}
-                    <Tab eventKey="pedido" title={`Tipo de Pedido ${tipoPedido.find(col => col.id_tipo_pedido === tipoPedidoSeleccionado)?.nombre || ''}`} className="p-3">
+                    <Tab eventKey="pedido" title={`Tipo de Pedido: ${tipoPedido.find(col => col.id_tipo_pedido === tipoPedidoSeleccionado)?.tipo_pedido || ''}`} className="p-3">
                         {/* <h6 className='my-3'>Tipo de Pedido</h6> */}
                         
                         <Form.Group>
@@ -440,9 +511,13 @@ const handledBuscarCliente = async celular => {
                                                 size="sm"
                                                 className="w-100"
                                                 onClick={() => {
-                                                    console.log("Tipo de pedido seleccionado:", tipo.id_tipo_pedido)
+                                                    // console.log("Tipo de pedido seleccionado:", tipo.id_tipo_pedido)
+                                                    // console.log("celular:", celular)
+                                                    // console.log("condicion:", tipo.id_tipo_pedido === 2)
                                                     setTipoPedidoSeleccionado(tipo.id_tipo_pedido)
+                                                    if (tipo.id_tipo_pedido === 2){setCargoDelivery(cargoColonia)}
                                                 }}
+                                                disabled={tipo.id_tipo_pedido === 2 && celular === 0}
                                             >
                                                 {tipo.tipo_pedido}
                                             </Button>
@@ -540,25 +615,30 @@ const handledBuscarCliente = async celular => {
                     {/* Formas de Pago */}
                      <Tab eventKey="pago" title="Forma de Pago" className="p-3">
                         <Form.Group>
-                            <Row>
-                                <Col>
-                                    <ButtonGroup className="w-100 gap-2 my-2">
-                                        {formasDePago.map((formaDePago, index) => (
-                                            <Button
-                                                key={index}
-                                                variant={formaDePagoSeleccionada === formaDePago.id_forma_de_pago ? "primary" : "outline-primary"}
-                                                size="sm"
-                                                className="w-100"
-                                                onClick={() => {
-                                                    setFormaDePagoSeleccionada(formaDePago.id_forma_de_pago)
-                                                    setTipoPago(formaDePago.descripcion)
-                                                }}
-                                            >
-                                                {formaDePago.descripcion}
-                                            </Button>
-                                        ))}
-                                    </ButtonGroup>
-                                </Col>
+                            <Row className="mt-3 d-flex align-items-stretch">
+                                {formasDePago.map((formaDePago, index) => (
+                                    <Col 
+                                        key={index} 
+                                        xs={6}  // 2 botones por fila en pantallas muy pequeñas
+                                        sm={3}  // 4 botones por fila en pantallas pequeñas
+                                        md={3}  // 4 botones por fila en pantallas medianas
+                                        lg={2}  // 6 botones por fila en pantallas grandes
+                                        className="mb-2"
+                                    >
+                                        <Button
+                                            variant={formaDePagoSeleccionada === formaDePago.id_forma_de_pago ? "primary" : "outline-primary"}
+                                            size="sm"
+                                            className="w-100 h-100 responsive-button"
+                                            onClick={() => {
+                                                setFormaDePagoSeleccionada(formaDePago.id_forma_de_pago);
+                                                setTipoPago(formaDePago.descripcion);
+                                            }}
+                                            placeholder={formaDePago.descripcion}
+                                        >
+                                            {formaDePago.descripcion}
+                                        </Button>
+                                    </Col>
+                                ))}
                             </Row>
                         </Form.Group>
 
@@ -657,33 +737,39 @@ const handledBuscarCliente = async celular => {
 
                                 {/* Columna derecha (vacía por ahora) */}
                                 <Col>
-                                <h6>Pagos Realizados:</h6>
-                                        <div className="border p-2">
-                                            {pagos.length === 0 ? (
-                                                <p className="text-muted">No hay pagos registrados.</p>
-                                            ) : (
+                                    <h6>Pagos Realizados:</h6>
+                                    <div className="border p-2">
+                                        {pagos.length === 0 ? (
+                                            <p className="text-muted">No hay pagos registrados.</p>
+                                        ) : (
+                                            <>
                                                 <Table striped bordered hover size="sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th className="text-center">#</th>
-                                                        <th>Forma Pago</th>
-                                                        <th className="text-end">Pagado</th>
-                                                        <th className="text-end">Saldo</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {pagos.map((pago, index) => (
-                                                        <tr key={index}>
-                                                            <td className="text-center">{index + 1}</td>
-                                                            <td>{pago.tipoPago}</td>
-                                                            <td className="text-end">${pago.cantidadAPagar.toFixed(2)}</td>
-                                                            <td className="text-end">${pago.saldo.toFixed(2)}</td>
+                                                    <thead>
+                                                        <tr>
+                                                            <th className="text-center">#</th>
+                                                            <th>Forma Pago</th>
+                                                            <th className="text-end">Pagado</th>
+                                                            <th className="text-end">Saldo</th>
                                                         </tr>
-                                                    ))}
-                                                </tbody>
-                                            </Table>
-                                            )}
-                                        </div>
+                                                    </thead>
+                                                    <tbody>
+                                                        {pagos.map((pago, index) => (
+                                                            <tr key={index}>
+                                                                <td className="text-center">{index + 1}</td>
+                                                                <td>{pago.tipoPago}</td>
+                                                                <td className="text-end">${pago.cantidadAPagar.toFixed(2)}</td>
+                                                                <td className="text-end">${pago.saldo.toFixed(2)}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </Table>
+                                                <h5>
+                                                    {totalPrice + cargoDelivery - totalPagos > 0 ? 'Saldo' : 'Cambio'}: <Badge bg={totalPrice + cargoDelivery - totalPagos === 0 ? "success" : "danger"}>{currencyFormat(totalPrice + cargoDelivery - totalPagos)}</Badge>        
+                                                </h5>
+                                            </>
+                                            
+                                        )}
+                                    </div>
                                 </Col>
                             </Row>                    
                         </Form.Group>
@@ -736,7 +822,11 @@ const handledBuscarCliente = async celular => {
                     {/* Botón Crear Pedido */}
                     <Button 
                         variant="primary"
-                        onClick={handleCrearPedido}
+                        onClick={() => {
+                            setMotivoCancelacion('')
+                            handleCrearPedido()
+                        }
+                        }
                         disabled={((totalPrice - totalPagos) > 0) ||
                             String(celular).trim() === '' ||
                             nombreCliente.trim() === '' || 
@@ -751,10 +841,11 @@ const handledBuscarCliente = async celular => {
                     {/* Botón Cancelar */}
                     {pagos.length > 0 && (
                         <Button variant="danger"                
-                            onClick={() => {
-                            handleSetPedidoPreview()
+                        onClick={() => {
                             setShowCancelarPedido(true)
-                            //onHide()                
+                            //setPagos([])
+                            //handleSetPedidoPreview()
+                                        
                         }}>
                             Cancelar
                         </Button>                
@@ -777,7 +868,9 @@ const handledBuscarCliente = async celular => {
                         variant="danger"
                         disabled={!motivoCancelacion}
                         onClick={() => {
-                            setPedidoCancelado(true)
+                            resetPedido()
+                            //setShowCancelarPedido(false)
+                            //setPedidoCancelado(true)
                             handleCrearPedido()
                         }}
                         >Cancelar pedido

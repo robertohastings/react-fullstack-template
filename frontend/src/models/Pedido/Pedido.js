@@ -10,6 +10,7 @@ import axiosInstance from "../../tools/AxiosInstance";
  * @property {number} [id_pedido_estatus] - ID del estatus del pedido
  * @property {number} [id_tipo_pedido] - ID del tipo de pedido
  * @property {number} [id_forma_de_pago] - ID de la forma de pago
+ * @property {number} [id_tipo_cliente]
  * @property {number} total - Total del pedido
  * @property {number} importe_pagado - Total pagado
  * @property {number} saldo - Deuda pendiente
@@ -112,4 +113,18 @@ export async function getColoniasDelivery(id_empresa) {
         console.error("Error al cargar colonias:", error);
         throw new Error("Error al cargar colonias:");
     }
+}
+export function getTipoCliente() {
+    const tipoCliente = [
+        {
+            idTipoCliente: 0,
+            tipoCliente: 'Cliente Mostrador'
+        },
+        {
+            idTipoCliente: 1,
+            tipoCliente: 'Registrar Cliente'
+        }
+    ]
+    return tipoCliente
+    
 }

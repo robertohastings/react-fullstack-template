@@ -1,0 +1,6 @@
+.responsive-button {
+    font-size: 0.85rem; /* Reduce el tamaño del texto */
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    overflow: hidden; /* Oculta el texto que se desborde */
+    text-overflow: ellipsis; /* Agrega puntos suspensivos si el texto es demasiado largo */
+}

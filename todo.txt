@@ -79,18 +79,27 @@ Terminado:
 - Al teclear el celular del cliente obtener el domicilio (Opcional)
 - Validad que no se pueda crear el pedido si el tipo de pedido es Domicilio y la colonia es null, numero es null o si la colonia es 0 and nombre is null
 - Al presionar regresar para agregar un producto y al volver a colocar el pedido no limpiar los datos capturados como: celular, nombre y tipo de pedido
-
-Pendiente:
 - Agregar botón cancelar en ColocarPedidoRestaurante el cual se activa al momento de getClientePorTelefonoOCelular
     pagos capturados
 - Al presionar cancelar se debe guardar el pedido pero con el estatus cancelado
 - Vaidar botón regresar para que no se pueda regresar cuando tenga pagos capturados
+-- Revisar porque no se están cancelando los pedido
+-- Revisar porque después de crear un pedido se quedan pegados los pagos aplicados
 - Arreglar los botones de formas de pagos para que sea responive a 6, 4 y 2 columnas
+- Desabilitar Tipo de Pedido: Domicilio si el cliente celular = 0
+- Pasar el cambio para el final de los pagos realizados
+
+Pendiente:
+- Ver la parte del cargo por envío
+- Agregar el cargo por envio en la tabla colonias_delivery
+- Modificar el sp buscar cliente para que se obtenga el cargo por delivery
+- Adecuar el Header de color pedido como: Subtotal, Envio, Cargo, Total y Subtotal
+
+
+- Agregar campo de costo por envio al seleccionar la columna
 - Si se registró una nueva colonia, volver a cargar el getColoniasDelivery
 - Validar que la colonia capturada no exista
 - Autenticar ruta getTipoPedido en Admin.routes
 - Agregar TipoPedido en postHost (Alta de un nuevo host)
 - Validar que la forma de pago acepte cantidades mayores o no
-- Ver la parte del cargo por envío
 - Ver la parte del cargo por cobro con tarjeta
-- Agregar campo de costo por envio al seleccionar la columna

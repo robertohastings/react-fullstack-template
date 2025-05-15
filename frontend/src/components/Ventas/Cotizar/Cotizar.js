@@ -11,7 +11,7 @@ import { useReactToPrint } from "react-to-print"
 import Ticket from "./Ticket"
 import ColocarPedidoRestaurante from "./ColocarPedidoRestaurante"
 import { getTipoPedido, getColoniasDelivery } from "../../../models/Pedido/Pedido"
-//import { useTipoPedido } from "../../../tools/StateUtils"
+import { useTipoPedido } from "../../../tools/StateUtils"
 
 function Cotizar() {
     const [showColocarPedido, setShowColocarPedido] = useState(false);
@@ -27,7 +27,7 @@ function Cotizar() {
     const [detallePedido, setDetallePedido] = useState([])
     const [quantities, setQuantities] = useState({})
     const [idPedido, setIdPedido] = useState(null); // Estado para almacenar el ID del pedido
-    const [tipoPedido, setTipoPedido] = useState({}); // Estado para almacenar el tipo de pedido
+    const [tipoPedido, setTipoPedido] = useState([]); // Estado para almacenar el tipo de pedido
     const [pedidoPreview, setPedidoPreview] = useState([])
     const totalPrice = detallePedido.reduce((total, item) => total + item.cantidad * item.precio, 0)
     const totalItems = detallePedido.reduce((total, item) => total + parseInt(item.cantidad), 0)
@@ -37,6 +37,7 @@ function Cotizar() {
     const contentRef  = useRef();
     const reactToPrintFn = useReactToPrint({contentRef})
     //const tipoPedidoState = useTipoPedido()
+
 
     const handleSetIdPedido = (id) => {
         setIdPedido(id); // Actualiza el estado con el ID del pedido
@@ -118,6 +119,7 @@ function Cotizar() {
         };        
         fetchCategorias()
         fetchColonias()
+        setTipoPedido(useTipoPedido)
 
     }, [])
 
@@ -293,6 +295,7 @@ function Cotizar() {
                 pedidoPreview={pedidoPreview}
                 setPedidoPreview={setPedidoPreview}
             />
+            
             {/* Segundo modal para mostrar detalle del pedido */}
             <Modal
                 show={showDetalleModal}
@@ -313,8 +316,7 @@ function Cotizar() {
                                 detallePedido={detallePedido}
                                 totalPrice={totalPrice} 
                                 domicilioTicket={domicilioTicket}
-                            />
-                      
+                            />                      
                         </div>
                     ) : (
                         <p>No hay detalles disponibles.</p>
@@ -331,8 +333,8 @@ function Cotizar() {
                     <Button 
                         variant="secondary" 
                         onClick={() => {  
-                                setShowDetalleModal(false)  
                                 setDetallePedido([]) 
+                                setShowDetalleModal(false)  
                             }                    
                     }>
                         Cerrar
@@ -423,21 +425,22 @@ function Cotizar() {
                             <Col>
                                 <ButtonToolbar className="justify-content-around">
                                     <ButtonGroup size="">
-                                        {/* Boton Limpiar */}
-                                        <Button size="sm" variant="danger" style={{ width: "60px" }} title="Lipiar captura e iniciar de nuevo" onClick={LimpiarCaptura_handleOpenModal} disabled={detallePedido.length === 0}>
-                                            <FaRegTrashAlt size={25} />
-                                        </Button>
+
                                         {/* Boton Domicilio */}
-                                        <Button size="sm" variant="warning" style={{ width: "100px" }} title="Definir tipo de entrega: Domiclio ó Recoge" disabled={detallePedido.length === 0}>
+                                        {/* <Button size="sm" variant="warning" style={{ width: "100px" }} title="Definir tipo de entrega: Domiclio ó Recoge" disabled={detallePedido.length === 0}>
                                             <FaMotorcycle size={30} />
-                                        </Button>
+                                        </Button> */}
                                         {/* Boton Colocar Pedido */}
                                         <Button size="sm" variant="success" style={{ width: "100px" }} disabled={detallePedido.length === 0} onClick={ColocarPedido_handled}>
                                             <IoFastFoodOutline size={30} />
                                         </Button>
                                         <Button size="sm" variant="info" style={{ width: "100px" }}>
-                                            <FaSearch size={22} /> Pedido
+                                            <FaSearch size={30} /> Pedido
                                         </Button>
+                                        {/* Boton Limpiar */}
+                                        <Button size="sm" variant="danger" style={{ width: "100px" }} title="Lipiar captura e iniciar de nuevo" onClick={LimpiarCaptura_handleOpenModal} disabled={detallePedido.length === 0}>
+                                            <FaRegTrashAlt size={30} />
+                                        </Button>                                        
                                     </ButtonGroup>
                                 </ButtonToolbar>
                             </Col>

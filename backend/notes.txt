@@ -145,3 +145,12 @@ UPDATE `crm`.`formas_de_pago` SET `descripcion` = 'Tarjeta Débito/Crédito' WHE
 		
 
 	-- agregue el parametro motivo_cancelacion y en el insert
+
+	-- agregue nuevo campo de cargos en colonias_delivery
+		ALTER TABLE `crm`.`colonias_delivery` 
+		ADD COLUMN `cargo` DECIMAL NULL AFTER `nombre`;
+
+		UPDATE `crm`.`colonias_delivery` SET `cargo` = '25' WHERE (`id_empresa` = '1') and (`id_colonia` = '1');
+
+		actualizar: getClientePorTelefonoOCelular
+
