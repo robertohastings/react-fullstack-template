@@ -154,3 +154,5 @@ UPDATE `crm`.`formas_de_pago` SET `descripcion` = 'Tarjeta Débito/Crédito' WHE
 
 		actualizar: getClientePorTelefonoOCelular
 
+	-- actualice postPedido, agregué el cargo de envio para una nueva colonia
+

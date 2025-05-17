@@ -36,6 +36,7 @@ function Cotizar() {
     const id_empresa = appState.idEmpresa
     const contentRef  = useRef();
     const reactToPrintFn = useReactToPrint({contentRef})
+    const [cargoDelivery, setCargoDelivery] = useState(0) // Lo asigno cuando se selecciona envio a domicilio y es con el que se calcula el total a pagar
     //const tipoPedidoState = useTipoPedido()
 
 
@@ -53,11 +54,15 @@ function Cotizar() {
         setResetPagos(() => resetFunction);
     }, []);
 
-    const handleGuardarDetalleDelPago = (detalle) => {
+    const handleGuardarDetalleDelPago = async (detalle) => {
         console.log('detalle =>', detalle)
         setDetalleDelPago(detalle); // Guarda los datos del pedido
         setShowColocarPedido(false); // Cierra el modal
         setShowDetalleModal(true); // Abre el segundo modal
+        //Si se dió de alta una nueva colonia las vuelvo a cargar:
+        if(detalle.cargarColonias) {
+            await fetchColonias()
+        }
     };
 
     //Definición del Modal
@@ -75,6 +80,29 @@ function Cotizar() {
             })
         })
     }
+
+    const fetchColonias = async () => {
+        try {
+            const coloniasData = await getColoniasDelivery(appState.idEmpresa);
+            // Agregar el registro adicional
+            const registroAdicional = {
+                id_empresa: appState.idEmpresa,
+                id_colonia: 0,
+                nombre: "Otro(a)",
+                activa: 1,
+            };
+            const coloniasDataAdicional = [...coloniasData, registroAdicional]
+            console.log('colonias: ', coloniasData)
+            setColonias(coloniasDataAdicional); // Guarda las colonias en el estado
+        } catch (error) {
+            console.error("Error al cargar las colonias:", error);
+            appDispatch({
+                type: "alertMessage",
+                value: "Error al cargar las colonias",
+                typeAlert: "danger",
+            });
+        }
+    };      
 
     useEffect(() => {
         const fetchCategorias = async () => {
@@ -95,28 +123,7 @@ function Cotizar() {
             }
         }
 
-        const fetchColonias = async () => {
-            try {
-                const coloniasData = await getColoniasDelivery(appState.idEmpresa);
-                // Agregar el registro adicional
-                const registroAdicional = {
-                    id_empresa: appState.idEmpresa,
-                    id_colonia: 0,
-                    nombre: "Otro(a)",
-                    activa: 1,
-                };
-                const coloniasDataAdicional = [...coloniasData, registroAdicional]
-                console.log('colonias: ', coloniasData)
-                setColonias(coloniasDataAdicional); // Guarda las colonias en el estado
-            } catch (error) {
-                console.error("Error al cargar las colonias:", error);
-                appDispatch({
-                    type: "alertMessage",
-                    value: "Error al cargar las colonias",
-                    typeAlert: "danger",
-                });
-            }
-        };        
+      
         fetchCategorias()
         fetchColonias()
         setTipoPedido(useTipoPedido)
@@ -246,7 +253,16 @@ function Cotizar() {
         }))
     }
     function currencyFormat(num) {
-        return "$" + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+        try {
+            if (num !== undefined){
+    
+                return "$" + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+            } else {
+                return "$0"
+            }            
+        } catch (error) {
+            console.log('currency format error->', error)
+        }
     }
 
     const LimpiarCaptura_handled = async () => {
@@ -284,7 +300,7 @@ function Cotizar() {
                 onHide={() => setShowColocarPedido(false)}
                 onResetPagos={handleSetResetPagos} // Recibe el callback para reiniciar pagos
                 totalPrice={totalPrice}
-                totalPriceCurrency={currencyFormat(totalPrice)}
+                //totalPriceCurrency={currencyFormat(totalPrice)}
                 currencyFormat={currencyFormat} // Pasa la función de formateo de moneda
                 onGuardarDetalleDelPago={handleGuardarDetalleDelPago} // Pasa la función al modal
                 detallePedido={detallePedido} // Pasa el detalle del pedido al modal
@@ -294,6 +310,8 @@ function Cotizar() {
                 setDomicilioTicket={setDomicilioTicket} // Pasa el domicilioTicket al modal
                 pedidoPreview={pedidoPreview}
                 setPedidoPreview={setPedidoPreview}
+                cargoDelivery={cargoDelivery}
+                setCargoDelivery={setCargoDelivery} // Pasa el cargoDelivery al modal   
             />
             
             {/* Segundo modal para mostrar detalle del pedido */}
@@ -316,6 +334,7 @@ function Cotizar() {
                                 detallePedido={detallePedido}
                                 totalPrice={totalPrice} 
                                 domicilioTicket={domicilioTicket}
+                                cargoDelivery={cargoDelivery}
                             />                      
                         </div>
                     ) : (
@@ -324,7 +343,7 @@ function Cotizar() {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={() => {
-                            console.log("Ref:", contentRef.current)
+                            //console.log("Ref:", contentRef.current)
                             reactToPrintFn()
                          }}>
                             Imprimir Ticket

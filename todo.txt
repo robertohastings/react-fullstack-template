@@ -88,16 +88,15 @@ Terminado:
 - Arreglar los botones de formas de pagos para que sea responive a 6, 4 y 2 columnas
 - Desabilitar Tipo de Pedido: Domicilio si el cliente celular = 0
 - Pasar el cambio para el final de los pagos realizados
-
-Pendiente:
 - Ver la parte del cargo por envío
 - Agregar el cargo por envio en la tabla colonias_delivery
 - Modificar el sp buscar cliente para que se obtenga el cargo por delivery
 - Adecuar el Header de color pedido como: Subtotal, Envio, Cargo, Total y Subtotal
-
-
 - Agregar campo de costo por envio al seleccionar la columna
+
+Pendiente:
 - Si se registró una nueva colonia, volver a cargar el getColoniasDelivery
+
 - Validar que la colonia capturada no exista
 - Autenticar ruta getTipoPedido en Admin.routes
 - Agregar TipoPedido en postHost (Alta de un nuevo host)

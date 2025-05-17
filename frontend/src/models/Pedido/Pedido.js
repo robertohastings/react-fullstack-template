@@ -49,6 +49,7 @@ import axiosInstance from "../../tools/AxiosInstance";
  * @property {string} numero_exterior - Número exterior de la dirección 
  * @property {string} entre_calles - entre calles de la dirección
  * @property {string} referencia - Referencia de la dirección
+ * @property {number} cargo_nueva_colonia - Referencia de la dirección
  */
 
 /**

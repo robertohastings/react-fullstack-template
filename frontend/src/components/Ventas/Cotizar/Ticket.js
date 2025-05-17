@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Table } from 'react-bootstrap';
 
-const Ticket = ({ detalleDelPago, detallePedido, totalPrice, domicilioTicket }) => {
+const Ticket = ({ detalleDelPago, detallePedido, totalPrice, domicilioTicket, cargoDelivery }) => {
+
+    useEffect(() => {
+        console.log("cargoDelivery:", cargoDelivery);
+        console.log("domicilioTicket:", domicilioTicket);
+    }, []);
+
     return (
         <div>
             <p><strong>Celular:</strong> {detalleDelPago.celular}</p>
             <p><strong>Nombre:</strong> {detalleDelPago.nombre}</p>
             {domicilioTicket.length > 0 && 
                 <p><strong>Domicilio:</strong>
-                    {` ${domicilioTicket.calle} No. ${domicilioTicket.numero_exterior}, ${domicilioTicket.colonia} ${domicilioTicket.entre_calles ? `entre ${domicilioTicket.entre_calles}` : ''} ${domicilioTicket.referencia ? `(${domicilioTicket.referencia})` : ''}`}  
+                    {` ${domicilioTicket[0].calle} No. ${domicilioTicket[0].numero_exterior}, ${domicilioTicket[0].colonia} ${domicilioTicket[0].entre_calles ? `entre ${domicilioTicket[0].entre_calles}` : ''} ${domicilioTicket[0].referencia ? `(${domicilioTicket[0].referencia})` : ''}`}  
                 </p>
             }
 
@@ -29,11 +35,26 @@ const Ticket = ({ detalleDelPago, detallePedido, totalPrice, domicilioTicket }) 
                             <td className="text-end px-3">${(producto.cantidad * producto.precio).toFixed(2)}</td>
                         </tr>
                     ))}
-                    <tr>
-                        <td colSpan={2} className="text-end">Total:</td>
-                        <td className="text-end px-3">${totalPrice.toFixed(2)}</td>
-                    </tr>
-                </tbody>
+
+                    {cargoDelivery > 0 ? (
+                        <>
+                            <tr>
+                                <td className="text-center">1</td>
+                                <td>Envio</td>
+                                <td className="text-end px-3">${cargoDelivery.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan={2} className="text-end">Total:</td>
+                                <td className="text-end px-3">${(totalPrice + cargoDelivery).toFixed(2)}</td>
+                            </tr>                                                
+                        </>
+                    ) : (
+                        <tr>
+                            <td colSpan={2} className="text-end">Total:</td>
+                            <td className="text-end px-3">${totalPrice.toFixed(2)}</td>
+                        </tr>
+                    )}
+                </tbody>                
             </Table>
 
             <h6>Pagos:</h6>

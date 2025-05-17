@@ -9,8 +9,8 @@ import { useTipoPedido, useFormasDePagoEnSitio, useUsuarioID, useEmpresaID } fro
 import './colocarPedidoRestaurante.css'
 
 export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, totalPrice, 
-    totalPriceCurrency, currencyFormat, onGuardarDetalleDelPago, detallePedido, onSetIdPedido, colonias, setDomicilioTicket,
-    pedidoPreview, setPedidoPreview }) {
+    currencyFormat, onGuardarDetalleDelPago, detallePedido, onSetIdPedido, colonias, setDomicilioTicket,
+    pedidoPreview, setPedidoPreview, cargoDelivery, setCargoDelivery }) {
   
     const [tipoPago, setTipoPago] = useState("efectivo"); 
     const [pagoParcialoTotal, setPagoParcialoTotal] = useState("total"); 
@@ -18,6 +18,7 @@ export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, t
     const celularRef = useRef(null)
     const nombreRef = useRef(null)
     const motivoCancelacionRef = useRef(null)
+    const coloniaNuevaRef = useRef(null)
     const [idPedido, setIdPedido] = useState(0)
     const [celular, setCelular] = useState(0)
     const [nombreCliente, setNombreCliente] = useState('')
@@ -28,14 +29,15 @@ export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, t
     const [formaDePagoSeleccionada, setFormaDePagoSeleccionada] = useState(1);
     const [colonia, setColonia] = useState('');
     const [coloniaNueva, setColoniaNueva] = useState('');
+    const [coloniaNuevaCargoEnvio, setColoniaNuevaCargoEnvio] = useState(0);
     const [coloniaNombreSeleccionada, setColoniaNombreSeleccionada] = useState('');
     const [calle, setCalle] = useState('');
     const [numero, setNumero] = useState('');
     const [entreCalles, setEntreCalles] = useState('');
     const [referencia, setReferencia] = useState('');
     const [cantidadAPagar, setCantidadAPagar] = useState(0)
-    const [cargoColonia, setCargoColonia] = useState(0)
-    const [cargoDelivery, setCargoDelivery] = useState(0)
+    const [cargoColonia, setCargoColonia] = useState(0) // Cargo de la colonia, lo obtengo de buscar cliente
+    //const [cargoDelivery, setCargoDelivery] = useState(0) // Lo asigno cuando se selecciona envio a domicilio y es con el que se calcula el total a pagar
     const [pagos, setPagos] = useState([]); // Estado para almacenar los pagos realizados
     const totalPagos = pagos.reduce((total, item) => total + item.cantidadAPagar, 0)
     const [saldo, setSaldo] = useState(0)
@@ -52,6 +54,7 @@ export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, t
     const [pedidoCancelado, setPedidoCancelado] = useState(false)
     const [tipoCliente, setTipoCliente] = useState(getTipoCliente());
     const [tipoClienteSeleccionado, setTipoClienteSeleccionado] = useState(0)
+    const [subtotal, setSubTotal] = useState(0)
 
 
 const handledBuscarCliente = async celular => {
@@ -117,11 +120,13 @@ const handledBuscarCliente = async celular => {
     useEffect(() => {
         if (onResetPagos) {
             onResetPagos(resetPagos);
-            setCantidadAPagar(totalPrice)
+            setCantidadAPagar(subtotal)
             setPagoParcialoTotal("total")
             setTipoPago("efectivo")
             setNombreCliente('')
             setPagos([])
+            setSubTotal(totalPrice)
+            setCargoDelivery(0)
             //celularRef.current.focus()
         }
     }, [onResetPagos, totalPrice]);   
@@ -162,7 +167,8 @@ const handledBuscarCliente = async celular => {
                 setTipoPedidoSeleccionado(pedidoPreview.id_tipo_pedido)
                 setTipoClienteSeleccionado(pedidoPreview.id_tipo_cliente)
                 setSaldo(pedidoPreview.saldo)
-                setCantidadAPagar(pedidoPreview.total)            
+                setCantidadAPagar(pedidoPreview.total) 
+                setCargoDelivery(pedidoPreview.detalle.cargo_delivery)           
             }
             if (pedidoPreview.pedido_domicilio){
                 setCalle(pedidoPreview.pedido_domicilio.calle)
@@ -196,7 +202,7 @@ const handledBuscarCliente = async celular => {
     const handleAgregarPago = (cantidadAPagar) => {
         const cantidad = Number(cantidadAPagar);
         const totalPagos = pagos.reduce((total, item) => total + item.cantidadAPagar, 0);
-        const saldoCalculado = Number(totalPrice) - totalPagos - cantidad;
+        const saldoCalculado = Number(subtotal) + cargoDelivery - totalPagos - cantidad;
 
         // Agrega un nuevo pago al arreglo
         setPagos((prevPagos) => {
@@ -211,8 +217,8 @@ const handledBuscarCliente = async celular => {
             const totalPagosActualizado = updatedPagos.reduce((total, item) => total + item.cantidadAPagar, 0);
     
             // Actualiza cantidadAPagar basado en el nuevo totalPagos
-            setCantidadAPagar(Number(totalPrice) - totalPagosActualizado);
-            setSaldo(Number(totalPrice) - totalPagosActualizado)
+            setCantidadAPagar(Number(subtotal) + cargoDelivery - totalPagosActualizado);
+            setSaldo(Number(subtotal) + cargoDelivery - totalPagosActualizado)
     
             return updatedPagos;
         });
@@ -227,7 +233,8 @@ const handledBuscarCliente = async celular => {
             nombre: nombreCliente,
             pagos,
             pedidoCancelado: false,
-            motivoCancelacion: ''            
+            motivoCancelacion: '',
+            cargo_delivery: Number(cargoDelivery) || 0           
         };
         const pedido_domicilio = {
             id_direccion,
@@ -265,9 +272,10 @@ const handledBuscarCliente = async celular => {
                 saldo
             })),
             pedido_domicilio, // Solo si es a domicilio
-            detalle
+            detalle            
         }
-        setPedidoPreview(Pedido)                          
+        setPedidoPreview(Pedido)
+        onHide()                          
     }
 
     const handleCrearPedido = async () => {
@@ -276,22 +284,25 @@ const handledBuscarCliente = async celular => {
             nombre: nombreCliente,
             pagos,
             pedidoCancelado: motivoCancelacion !== '' ? true : false,
-            motivoCancelacion
+            motivoCancelacion,
+            cargarColonias: coloniaNueva ? true : false
         };
 
         const pedido_domicilio = {
             id_direccion,
             id_colonia: colonia,
-            colonia: colonia === 0 ? coloniaNueva : coloniaNombreSeleccionada,
+            colonia: colonia === "0" ? coloniaNueva : coloniaNombreSeleccionada,
             calle,
             numero_exterior: numero,
             entre_calles: entreCalles,
-            referencia
+            referencia,
+            cargo_nueva_colonia: coloniaNuevaCargoEnvio
         }
 
         setDomicilioTicket(tipoPedidoSeleccionado === 2 ? [pedido_domicilio] : [])
         console.log("Pedido Domicilio:", pedido_domicilio)
         console.log("pedido cancelado:", pedidoCancelado)
+        console.log("tipoPedidoSeleccionado:", tipoPedidoSeleccionado)
 
         const nuevoPedido = {
             id_empresa: appState.idEmpresa, // Cambia esto según tu lógica
@@ -387,13 +398,35 @@ const handledBuscarCliente = async celular => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {!showCancelarPedido && (
-                <Row className="justify-content-between align-items-center text-start">
-                    <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Sub Total:<Badge>{totalPriceCurrency}</Badge></Col>
-                    <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Envío:<Badge>{currencyFormat(cargoDelivery)}</Badge></Col>
-                    <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Total:<Badge>{currencyFormat(totalPrice + cargoDelivery)}</Badge></Col>
-                    <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Pagado:<Badge bg="warning">{currencyFormat(totalPagos)}</Badge></Col>          
-                    {/* <Col xs={12} sm={4} md={4} lg={4} className="mb-2">{totalPrice - totalPagos > 0 ? 'Saldo' : 'Cambio'}:<Badge bg={totalPrice - totalPagos === 0 ? "success" : "danger"}>{currencyFormat(totalPrice - totalPagos)}</Badge></Col> */}
-                </Row> 
+                <>
+                    {/* <Row className="justify-content-between align-items-center text-start">
+                        <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Sub Total:<Badge>{totalPriceCurrency}</Badge></Col>
+                        <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Envío:<Badge>{currencyFormat(cargoDelivery)}</Badge></Col>
+                        <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Total:<Badge>{currencyFormat(totalPrice + cargoDelivery)}</Badge></Col>
+                        <Col xs={12} sm={4} md={4} lg={4} className="mb-2">Pagado:<Badge bg="warning">{currencyFormat(totalPagos)}</Badge></Col>                                  
+                    </Row>  */}
+                    <div>
+                        <Table id='totales_header' responsive bordered striped hover size="sm" className="text-center mt-3 mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Subtotal</th>
+                                    <th>Envío</th>
+                                    <th>Total</th>
+                                    <th>Pagado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><Badge>{currencyFormat(subtotal)}</Badge></td>
+                                    <td><Badge>{currencyFormat(cargoDelivery)}</Badge></td>
+                                    <td><Badge>{currencyFormat(subtotal + cargoDelivery)}</Badge></td>
+                                    <td><Badge>{currencyFormat(totalPagos)}</Badge></td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </div>
+
+                </>
             )}
             {showCancelarPedido && (
                 <h4>Cancelación del pedido</h4>
@@ -436,7 +469,9 @@ const handledBuscarCliente = async celular => {
                                                         setCelular('')
                                                         setNombreCliente('')
                                                         setTimeout(() => {
-                                                            celularRef.current.focus()
+                                                            if (celularRef.current){
+                                                                celularRef.current.focus()
+                                                            }
                                                         }, 100)
                                                     }
                                                 }}  
@@ -515,7 +550,13 @@ const handledBuscarCliente = async celular => {
                                                     // console.log("celular:", celular)
                                                     // console.log("condicion:", tipo.id_tipo_pedido === 2)
                                                     setTipoPedidoSeleccionado(tipo.id_tipo_pedido)
-                                                    if (tipo.id_tipo_pedido === 2){setCargoDelivery(cargoColonia)}
+                                                    if (tipo.id_tipo_pedido === 2){
+                                                        console.log('cargo colonia', cargoColonia) 
+                                                        setCargoDelivery(cargoColonia)
+                                                        setCantidadAPagar(subtotal + cargoColonia)
+                                                    } else {
+                                                        setCargoDelivery(0)
+                                                    }
                                                 }}
                                                 disabled={tipo.id_tipo_pedido === 2 && celular === 0}
                                             >
@@ -540,6 +581,19 @@ const handledBuscarCliente = async celular => {
 
                                             const selectedColonia = colonias.find(col => col.id_colonia === e.target.value);
                                             setColoniaNombreSeleccionada(selectedColonia ? selectedColonia.nombre : '');
+                                            if (e.target.value === "0"){ 
+                                                setCargoDelivery(0)
+                                                setColoniaNuevaCargoEnvio(0)
+                                                setColoniaNueva('')
+                                            } else {
+                                                setCargoDelivery(cargoColonia)
+                                            }
+                                            
+                                            setTimeout(() => {
+                                                if (coloniaNuevaRef.current){
+                                                    coloniaNuevaRef.current.focus()
+                                                }
+                                            }, 100)
                                         }}
                                     >
                                         <option value="">Seleccione una colonia</option>
@@ -552,13 +606,27 @@ const handledBuscarCliente = async celular => {
                                 </Col>
                                 <Col md={6}>
                                         {colonia === "0" && (
-                                            <Form.Control
-                                                type="text"
-                                                placeholder="Ingrese la colonia"
-                                                value={coloniaNueva}
-                                                autoComplete='off'
-                                                onChange={(e) => setColoniaNueva(e.target.value)}
-                                            />
+                                            <>
+                                                <Form.Control
+                                                    ref={coloniaNuevaRef}
+                                                    type="text"
+                                                    placeholder="Ingrese la colonia"
+                                                    value={coloniaNueva}
+                                                    autoComplete='off'
+                                                    onChange={(e) => setColoniaNueva(e.target.value)}
+                                                />
+                                                <Form.Control
+                                                    type='number'
+                                                    id="cargo_nueva_colonia"
+                                                    value={coloniaNuevaCargoEnvio}
+                                                    placeholder='cargo extra'
+                                                    autoComplete='off'
+                                                    onChange={(e) => {
+                                                        setColoniaNuevaCargoEnvio(e.target.value)
+                                                        setCargoDelivery(Number(e.target.value))
+                                                    }}
+                                                />
+                                            </>
                                         )}
                                 </Col>
                             </Row>
@@ -655,7 +723,6 @@ const handledBuscarCliente = async celular => {
                                             className="w-50"
                                             onClick={() => {
                                                 setPagoParcialoTotal("total")
-                                                //setCantidadAPagar(totalPrice)
                                                 setCantidadAPagar(0)
                                             } }
                                             disabled={pagoParcialoTotal === "parcial"}
@@ -678,7 +745,7 @@ const handledBuscarCliente = async celular => {
                                     {/* Input para cantidad a pagar */}
                                     <div className="d-flex gap-2 mt-3">
                                         <Form.Control
-                                            value={cantidadAPagar}
+                                            value={cantidadAPagar + cargoDelivery}
                                             autoFocus
                                             ref={cantidadAPagarRef}
                                             type="number"
@@ -717,7 +784,7 @@ const handledBuscarCliente = async celular => {
                                                         (cantidadAPagar < totalPrice && pagoParcialoTotal === 'total') ||
                                                         (cantidadAPagar > saldo && tipoPago === 'tarjeta')
                                                 });                                        
-                                                handleAgregarPago(cantidadAPagar)
+                                                handleAgregarPago(cantidadAPagar + cargoDelivery)
                                                 //setTipoPago("efectivo")
                                                 //setPagoParcialoTotal("total")
                                                 //alert(totalPrice - totalPagos)
@@ -813,7 +880,7 @@ const handledBuscarCliente = async celular => {
                             disabled={pagos.length > 0}
                             onClick={() => {
                             handleSetPedidoPreview()
-                            onHide()                
+                            //onHide()                
                         }}>
                             Regresar
                         </Button>            
@@ -827,13 +894,13 @@ const handledBuscarCliente = async celular => {
                             handleCrearPedido()
                         }
                         }
-                        disabled={((totalPrice - totalPagos) > 0) ||
+                        disabled={((totalPrice + cargoDelivery - totalPagos) > 0) ||
                             String(celular).trim() === '' ||
                             nombreCliente.trim() === '' || 
                             
                             // Nuevas validaciones para tipoPedidoSeleccionado === 2
-                            (tipoPedidoSeleccionado === 2 && (!colonia || (colonia === "0" && coloniaNueva.trim() === ''))) || 
-                            (tipoPedidoSeleccionado === 2 && numero.trim() === '')
+                            (tipoPedidoSeleccionado === 2 && (!colonia || (colonia === "0" && ( coloniaNueva.trim() === '' || !coloniaNuevaCargoEnvio > 0) ) )) || 
+                            (tipoPedidoSeleccionado === 2 && numero.trim() === '') 
                         }
                         >Crear pedido
                     </Button>   
