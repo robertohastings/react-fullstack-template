@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef, useCallback } from "rea
 import { Card, Col, Container, Row, Button, Table, Image, ButtonGroup, Badge, ButtonToolbar, Modal } from "react-bootstrap"
 import axiosInstance from "../../../tools/AxiosInstance"
 import "./cotizar.css"
-import { FaPlus, FaMinus, FaRegTrashAlt, FaShoppingCart, FaMotorcycle, FaSearch } from "react-icons/fa"
+import { FaPlus, FaMinus, FaRegTrashAlt, FaShoppingCart, FaMotorcycle, FaSearch, FaCashRegister  } from "react-icons/fa"
 import { IoFastFoodOutline } from "react-icons/io5"
 import CustomModal from "../../../tools/CustomModal"
 import StateContext from "../../../StateContext"
@@ -10,7 +10,7 @@ import DispatchContext from "../../../DispatchContext"
 import { useReactToPrint } from "react-to-print"
 import Ticket from "./Ticket"
 import ColocarPedidoRestaurante from "./ColocarPedidoRestaurante"
-import { getTipoPedido, getColoniasDelivery } from "../../../models/Pedido/Pedido"
+import { getTipoPedido, getColoniasDelivery, getCajeros, getCaja } from "../../../models/Pedido/Pedido"
 import { useTipoPedido } from "../../../tools/StateUtils"
 
 function Cotizar() {
@@ -38,7 +38,8 @@ function Cotizar() {
     const reactToPrintFn = useReactToPrint({contentRef})
     const [cargoDelivery, setCargoDelivery] = useState(0) // Lo asigno cuando se selecciona envio a domicilio y es con el que se calcula el total a pagar
     //const tipoPedidoState = useTipoPedido()
-
+    const [cajeros, setCajeros] = useState([])
+    const [cajeroSeleccionado, setCajeroSeleccionado] = useState(0)
 
     const handleSetIdPedido = (id) => {
         setIdPedido(id); // Actualiza el estado con el ID del pedido
@@ -103,6 +104,37 @@ function Cotizar() {
             });
         }
     };      
+    const fetchCajeros = async () => {
+        try {
+            const cajerosData = await getCajeros(appState.idEmpresa);
+
+            console.log('cajeros: ', cajerosData)
+            setCajeros(cajerosData); 
+        } catch (error) {
+            console.error("Error al cargar los cajeros:", error);
+            appDispatch({
+                type: "alertMessage",
+                value: "Error al cargar los cajeros",
+                typeAlert: "danger",
+            });
+        }
+    };      
+    const fetchCaja = async () => {
+        try {
+  
+            const cajaData = await getCaja(appState.idEmpresa);
+
+            console.log('caja: ', cajaData)
+            setCajeros(cajaData); 
+        } catch (error) {
+            console.error("Error al cargar los cajaData:", error);
+            appDispatch({
+                type: "alertMessage",
+                value: "Error al cargar cajaData",
+                typeAlert: "danger",
+            });
+        }
+    };      
 
     useEffect(() => {
         const fetchCategorias = async () => {
@@ -126,6 +158,8 @@ function Cotizar() {
       
         fetchCategorias()
         fetchColonias()
+        fetchCajeros()
+        fetchCaja()
         setTipoPedido(useTipoPedido)
 
     }, [])
@@ -311,7 +345,10 @@ function Cotizar() {
                 pedidoPreview={pedidoPreview}
                 setPedidoPreview={setPedidoPreview}
                 cargoDelivery={cargoDelivery}
-                setCargoDelivery={setCargoDelivery} // Pasa el cargoDelivery al modal   
+                setCargoDelivery={setCargoDelivery} // Pasa el cargoDelivery al modal
+                cajeros={cajeros}
+                cajeroSeleccionado={cajeroSeleccionado}
+                setCajeroSeleccionado={setCajeroSeleccionado}
             />
             
             {/* Segundo modal para mostrar detalle del pedido */}
@@ -330,11 +367,13 @@ function Cotizar() {
                         <div ref={contentRef} className="m-3">
                             <Ticket
                                  // Referencia para imprimir
+                                idPedido={idPedido}
                                 detalleDelPago={detalleDelPago}
                                 detallePedido={detallePedido}
                                 totalPrice={totalPrice} 
                                 domicilioTicket={domicilioTicket}
                                 cargoDelivery={cargoDelivery}
+                                nombreCajero={cajeros.find(cajero => cajero.id_cajero === cajeroSeleccionado)?.nombre || 'No asignado'}
                             />                      
                         </div>
                     ) : (
@@ -459,6 +498,10 @@ function Cotizar() {
                                         {/* Boton Limpiar */}
                                         <Button size="sm" variant="danger" style={{ width: "100px" }} title="Lipiar captura e iniciar de nuevo" onClick={LimpiarCaptura_handleOpenModal} disabled={detallePedido.length === 0}>
                                             <FaRegTrashAlt size={30} />
+                                        </Button>                                        
+                                        {/* Boton Caja */}
+                                        <Button size="sm" variant="warning" style={{ width: "100px" }} title="Movimientos de caja" onClick={()=>{}}>
+                                            <FaCashRegister size={30} />
                                         </Button>                                        
                                     </ButtonGroup>
                                 </ButtonToolbar>

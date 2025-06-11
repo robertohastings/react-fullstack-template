@@ -156,3 +156,46 @@ UPDATE `crm`.`formas_de_pago` SET `descripcion` = 'Tarjeta Débito/Crédito' WHE
 
 	-- actualice postPedido, agregué el cargo de envio para una nueva colonia
 
+	-- Nueva tabla: cajero
+	-- Nuevo getCajeros:
+
+			USE `crm`;
+			DROP procedure IF EXISTS `getCajeros`;
+
+			DELIMITER $$
+			USE `crm`$$
+			CREATE PROCEDURE `getCajeros` (
+				prm_id_empresa INT
+			)
+			BEGIN
+				SELECT id_cajero, nombre, password FROM cajero;
+			END$$
+
+			DELIMITER ;
+
+	-- Nuevo campo en tabla de pedidos
+		ALTER TABLE `crm`.`pedidos` 
+		ADD COLUMN `id_cajero` INT NULL AFTER `motivo_cancelacion`;
+
+	-- Agregué id_cajero en postPedido:
+		INSERT INTO pedidos (id_empresa, id_usuario, id_cliente, id_direccion, id_pedido_estatus, 
+						 id_tipo_pedido, total, importe_pagado, saldo,
+                         fecha_creacion, fecha_actualizacion, motivo_cancelacion, id_cajero)	
+		VALUES (p_id_empresa, p_id_usuario, p_id_cliente, P_id_direccion, P_id_pedido_estatus,
+				P_id_tipo_pedido, P_total, P_importe_pagado, P_saldo,
+                P_fecha_creacion, P_fecha_actualizacion, P_motivo_cancelacion, p_id_cajero);
+
+ -- NUEVA TABLA: caja_tipo_movimientos
+
+		insert into caja_tipo_movimientos (id_empresa, descripcion, abre_caja, cierra_caja, suma) values (1, 'Apertura de Caja', 1, 0, 0);
+		insert into caja_tipo_movimientos (id_empresa, descripcion, abre_caja, cierra_caja, suma) values (1, 'Cierre de Caja', 0, 1, 0);
+		insert into caja_tipo_movimientos (id_empresa, descripcion, abre_caja, cierra_caja, suma) values (1, 'Ingreso de Efectivo', 0, 0, 1);
+		insert into caja_tipo_movimientos (id_empresa, descripcion, abre_caja, cierra_caja, suma) values (1, 'Retiro de Efectivo', 0, 0, 0);	
+
+-- NUEVA TABLA: caja
+-- NUEVA TABLA: caja_movimientos
+-- NUEVA TABLA: caja_formasdepago
+-- NUEVO SP: getCaja
+
+-- nuevo package: axios en backend, npm install request-ip
+

@@ -20,6 +20,7 @@ import axiosInstance from "../../tools/AxiosInstance";
  * @property {PedidoDetalle[]} [pedido_detalle] - Detalle del pedido
  * @property {PedidoFormasDePago[]} [pedido_formas_de_pago] - Detalle de las formas de pago
  * @property {PedidoDomicilio} [pedido_domicilio] - Detalle de la dirección
+ * @property {number} id_cajero - Número de cajero
  */
 
 /**
@@ -58,6 +59,15 @@ import axiosInstance from "../../tools/AxiosInstance";
  * @returns {Promise<Object>} - Respuesta del servidor.
  * @throws {Error} - Si ocurre un error al crear el pedido.
  */
+
+/**
+ * @typedef {Object} Cajero 
+ * @param {number} id_empresa
+ * @param {number} id_cajero
+ * @param {string} nombre
+ * @param {string} password  
+ */
+
 export async function crearPedido(pedido) {
     // Validaciones básicas
     // if (!pedido.id_empresa) {
@@ -128,4 +138,43 @@ export function getTipoCliente() {
     ]
     return tipoCliente
     
+}
+export async function getCajeros(id_empresa) {
+    console.log("getCajeros -> id_empresa", id_empresa)
+    const params = {
+        id_empresa
+    }
+
+    try {
+        // Enviar el pedido al servidor
+        const response = await axiosInstance.get("/getCajeros", {params});
+        console.log("getCajeros encontrados:", response.data.cajeros);
+        return response.data.cajeros; // Devuelve la respuesta del servidor
+    } catch (error) {
+        console.error("Error al cargar cajeros:", error);
+        throw new Error("Error al cargar cajeros:");
+    }
+}
+export async function getCaja(id_empresa, ip) {
+    //console.log("getCaja -> id_empresa", id_empresa)
+
+
+    try {
+        // Enviar el pedido al servidor
+
+        const ipResponse = await axiosInstance.get("/getIP");
+        const ipAddress = ipResponse.data.ip;
+
+        const params = {
+            id_empresa,
+            ip: ipAddress
+        }
+
+        const response = await axiosInstance.get("/getCaja", {params});
+        console.log("getCaja encontrados:", response.data.caja);
+        return response.data.caja; // Devuelve la respuesta del servidor
+    } catch (error) {
+        console.error("Error al cargar caja:", error);
+        throw new Error("Error al cargar caja:");
+    }
 }

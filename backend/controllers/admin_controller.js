@@ -1,4 +1,7 @@
 import { pool } from "../db.js"
+import axios from "axios"
+import requestIp from 'request-ip'
+
 
 export const putLandingPage = async (req, res) => {
     const { id_empresa, id_landingPage } = req.params
@@ -286,13 +289,13 @@ export const postPedido = async (req, res) => {
     console.log("body postPedido:", req.body)
     const { id_empresa, id_usuario, id_cliente, id_direccion, id_pedido_estatus, id_tipo_pedido, total, importe_pagado, saldo, fecha_creacion, fecha_actualizacion,
         motivo_cancelacion,
-        pedido_detalle, pedido_formas_de_pago, pedido_domicilio } = req.body
+        pedido_detalle, pedido_formas_de_pago, pedido_domicilio, id_cajero } = req.body
 
     try {
-        const [rows] = await pool.query("CALL postPedido(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+        const [rows] = await pool.query("CALL postPedido(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
             [id_empresa, id_usuario, id_cliente, id_direccion, id_pedido_estatus, id_tipo_pedido, 
             total, importe_pagado, saldo, fecha_creacion, fecha_actualizacion, motivo_cancelacion, JSON.stringify(pedido_detalle), 
-            JSON.stringify(pedido_formas_de_pago), JSON.stringify(pedido_domicilio)])
+            JSON.stringify(pedido_formas_de_pago), JSON.stringify(pedido_domicilio), id_cajero])
 
         // Extrae el id_pedido generado
         const id_pedido = rows[0][0]?.id_pedido;
@@ -409,4 +412,57 @@ export const getColoniasDelivery = async (req, res) => {
         })
     }
 }
+export const getCajeros = async (req, res) => {
+    console.log("getCajeros:", req.query)
+    try {
+        const { id_empresa } = req.query
+
+        const rows = await pool.query(`CALL getCajeros(?);`, [id_empresa])
+
+        res.status(200).json({
+            success: true,
+            cajeros: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: "An error ocurred"
+        })
+    }
+}
+export const getCaja = async (req, res) => {
+    console.log("getCaja:", req.query)
+    try {
+        const { id_empresa, ip } = req.query
+
+        const rows = await pool.query(`CALL getCaja(?, ?);`, [id_empresa, ip])
+
+        res.status(200).json({
+            success: true,
+            caja: rows[0][0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: "An error ocurred"
+        })
+    }
+}
+export const getIP = async (req, res) => {
+    try {
+        const response = await axios.get("https://api.ipify.org?format=json");
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: `Error al obtener la IP: ${error}` });
+    }
+}
+export const getIPLocal = async (req, res) => {
+    try {
+        const clientIp = requestIp.getClientIp(req); // Obtiene la IP del cliente
+        const ip = clientIp.startsWith("::ffff:") ? clientIp.replace("::ffff:", "") : clientIp;
+        console.log("IP del cliente:", ip);
+        res.json({ ip: ip });
+    } catch (error) {
+        res.status(500).json({ error: `Error al obtener la IP: ${error}` });
+    }
+}
+
 

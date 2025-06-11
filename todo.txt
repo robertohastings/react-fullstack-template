@@ -94,9 +94,59 @@ Terminado:
 - Adecuar el Header de color pedido como: Subtotal, Envio, Cargo, Total y Subtotal
 - Agregar campo de costo por envio al seleccionar la columna
 
-Pendiente:
-- Si se registró una nueva colonia, volver a cargar el getColoniasDelivery
 
+
+Pendiente:
+
+OK- Crear tabla cajero: id_empresa, id_cajero, nombre, contraseña
+    OK- Crear getCajeros
+    OK- Crear controlador y ruta getCajero
+    OK- Crear modelo getCajero
+    OK- Agregar la captura del número de cajero en ColocarPedidoRestaurante en el tab de cliente en forma de selector para que seleccione el cajero
+    OK- Validar que no se active el botón de "Crear pedido" si no se a seleccionado un cajero
+    OK- Agregar cajero al modelo de Pedido
+    OK- Agregar al pedidoPreview el cajero
+    OK- Agregar el cajero al crear el pedido
+    OK- Agregar campo cajero en la tabla Pedido
+    OK- Actualizar controlador postPedido para enviar el parámetro cajero
+    OK- Actualizar postPedido para recibir cajero y guardarlo en pedido
+    OK- Hacer una prueba de un nuevo pedido
+    OK- Agregar en el ticket el nombre del cajero
+
+OK- Tipos Movimientos caja_tipo_movimientos: id_empresa, id_tipo_movimiento_caja, descripcion, abre_caja, cierra_caja, sumaoresta
+    Descripción de tipos de movimiento: Abrir, Cerrar, Ingresar Efectivo, Retirar Efectivo
+OK- Caja: id_empresa, id_caja, ip, fecha, fecha_cierre, esta_abierta,
+        importe_inicial, importe_otros_ingresos, importe_retiros, importe_soloEfectivo, importe_formasDePago 
+        importe_diferencia, 
+        id_cajero_abre_caja, id_cajero_cierra_caja
+OK- caja_movimientos: id_empresa, id_caja, id_tipo_movimiento_caja, importe
+OK- caja_formasDePago: id_empresa, id_caja, id_forma_de_pago, importes_formaDePago
+
+ok- Agregar botón: Caja
+ok- Crear getCaja: Obtener el estado de la caja si esta abierto o cerrado enviando la ip y que nos regrese el id_caja, estado_abierta
+ok- Crear controlador y ruta getCaja
+- Obtener el estado de la caja en useState del componente Cotizar
+- Validar si el estado_abierta es true habilitar los botones de agregar y eliminar
+
+- Crear postCaja: Parametros: id_empresa, ip, fecha, id_cajero_abre_caja,
+
+- Crear componente Caja
+    - Agregar una forma con los campos de captura: 
+        cajero (selector), tipo_importe (Ingreso/Retiro), motivo, 
+        importe, contraseña, ¿Cerrar caja? si se seleccionó tipo_importe = retiro
+    - Generar un ticket por cada movimiento que se haga.
+    - Si cerrar_caja = true:
+        - mostrar las formas de pago existentes para capturar los ingresos por forma de pago 
+        - guardar en un json los importes de las formas de pago {id_forma_de_pago, importe}
+
+- Crear putCaja: Valida que no se pueda crear una caja nueva si hay una caja pendiente de la misma ip
+    - Los parametros son: id_empresa, id_caja, tipo_importe, importe, motivo, id_cajero, contraseña, ip, cerrar_caja, importes_formaDePago
+    - Si cerrar_caja = true entonces crear un registro nuevo en la tabla:
+        - los importes_formaDePago se guardan en la tabla de caja
+        - cortecaja: Campos: id_empresa, id_corteCaja, id_caja, fecha, cajero
+        - Desabilitar los botones de agregar y eliminar
+
+- Si se registró una nueva colonia, volver a cargar el getColoniasDelivery
 - Validar que la colonia capturada no exista
 - Autenticar ruta getTipoPedido en Admin.routes
 - Agregar TipoPedido en postHost (Alta de un nuevo host)

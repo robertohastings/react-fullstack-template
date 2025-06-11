@@ -4,7 +4,7 @@ import { putLandingPage, putLandingPage_QuienesSomos, putLandingPage_Productos,
         putLandingPage_Servicios, putLandingPage_Settings, postPuntosDeEntrega, 
         putUsuario, getUsuario, postDireccion, getDirecciones, getPuntosDeEntregaCarrito, 
         getFormasDePago, putFormasDePago, postPedido, getPedidoDetalle, getPedidoCanvas, 
-        putPedidoEstatus, getTipoPedido, getColoniasDelivery } from "../controllers/admin_controller.js"
+        putPedidoEstatus, getTipoPedido, getColoniasDelivery, getCajeros, getCaja, getIP, getIPLocal} from "../controllers/admin_controller.js"
 
 const router = Router()
 
@@ -27,5 +27,9 @@ router.put("/putPedidoEstatus", putPedidoEstatus)
 router.post("/postPedido", postPedido)
 router.get("/getTipoPedido", getTipoPedido)
 router.get("/getColoniasDelivery", getColoniasDelivery)
+router.get("/getCajeros", getCajeros)
+router.get("/getCaja", getCaja)
+router.get("/getIP", getIP)
+router.get("/getIPLocal", getIPLocal)
 export default router
 

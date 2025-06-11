@@ -10,7 +10,7 @@ import './colocarPedidoRestaurante.css'
 
 export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, totalPrice, 
     currencyFormat, onGuardarDetalleDelPago, detallePedido, onSetIdPedido, colonias, setDomicilioTicket,
-    pedidoPreview, setPedidoPreview, cargoDelivery, setCargoDelivery }) {
+    pedidoPreview, setPedidoPreview, cargoDelivery, setCargoDelivery, cajeros, cajeroSeleccionado, setCajeroSeleccionado }) {
   
     const [tipoPago, setTipoPago] = useState("efectivo"); 
     const [pagoParcialoTotal, setPagoParcialoTotal] = useState("total"); 
@@ -55,6 +55,7 @@ export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, t
     const [tipoCliente, setTipoCliente] = useState(getTipoCliente());
     const [tipoClienteSeleccionado, setTipoClienteSeleccionado] = useState(0)
     const [subtotal, setSubTotal] = useState(0)
+    
 
 
 const handledBuscarCliente = async celular => {
@@ -197,7 +198,14 @@ const handledBuscarCliente = async celular => {
         // console.log('tipo pedido:', tipoPedido)
         // console.log('tipo pedido seleccionado', tipoPedidoSeleccionado)
 
-    }, [show]);   
+    }, [show]); 
+    
+    // const handle_CalcularSaldo = () => {
+    //     const totalPagos = pagos.reduce((total, item) => total + item.cantidadAPagar, 0)
+    //     //setSaldo(Number(subtotal) + cargoDelivery - totalPagos)
+    //     //console.log("saldo", Number(subtotal) + cargoDelivery - totalPagos)
+    //     return Number(subtotal) + cargoDelivery - totalPagos
+    // }
 
     const handleAgregarPago = (cantidadAPagar) => {
         const cantidad = Number(cantidadAPagar);
@@ -218,10 +226,16 @@ const handledBuscarCliente = async celular => {
     
             // Actualiza cantidadAPagar basado en el nuevo totalPagos
             setCantidadAPagar(Number(subtotal) + cargoDelivery - totalPagosActualizado);
-            setSaldo(Number(subtotal) + cargoDelivery - totalPagosActualizado)
+            
+            ////setSaldo(Number(subtotal) + cargoDelivery - totalPagosActualizado)
     
             return updatedPagos;
         });
+
+        // Actualiza el saldo en cantidadAPagar
+        // const obtieneSaldo = handle_CalcularSaldo()
+        // console.log("obtieneSaldo", obtieneSaldo)
+        // setCantidadAPagar(obtieneSaldo);  
 
         // Limpia el campo de cantidad a pagar
         cantidadAPagarRef.current.focus();        
@@ -272,7 +286,8 @@ const handledBuscarCliente = async celular => {
                 saldo
             })),
             pedido_domicilio, // Solo si es a domicilio
-            detalle            
+            detalle,
+            id_cajero: cajeroSeleccionado            
         }
         setPedidoPreview(Pedido)
         onHide()                          
@@ -296,7 +311,7 @@ const handledBuscarCliente = async celular => {
             numero_exterior: numero,
             entre_calles: entreCalles,
             referencia,
-            cargo_nueva_colonia: coloniaNuevaCargoEnvio
+            cargo_nueva_colonia: colonia === "0" ? coloniaNuevaCargoEnvio : cargoDelivery
         }
 
         setDomicilioTicket(tipoPedidoSeleccionado === 2 ? [pedido_domicilio] : [])
@@ -331,6 +346,7 @@ const handledBuscarCliente = async celular => {
                 saldo
             })),
             pedido_domicilio: tipoPedidoSeleccionado === 2 ? [pedido_domicilio] : [], // Solo si es a domicilio
+            id_cajero: cajeroSeleccionado
         }
 
         console.log("Nuevo Pedido:", nuevoPedido);
@@ -441,13 +457,41 @@ const handledBuscarCliente = async celular => {
                 <Tabs
                     id="controlled-tab"
                     activeKey={key}
-                    onSelect={(k) => setKey(k)}
                     className='mb-3'
+                    onSelect={(k) => {
+                        setKey(k);
+                        if (k === "pago") {
+                            // const saldoCalculado = handle_CalcularSaldo();
+                            // console.log("saldo calculado", saldoCalculado);
+                            // setSaldo(saldoCalculado);
+                            setCantidadAPagar(subtotal + cargoDelivery - totalPagos);
+                        }
+                    }}
                 >
 
                     {/* Datos del Cliente */}
                     <Tab eventKey="cliente" title="Cliente" className="p-3">
                         {/* <h6>Datos del Cliente</h6> */}
+                        {/* Selector de Cajero */}
+                        <Form.Group className='my-3'>
+                            <Row>
+                                <Col>
+                                    {/* <Form.Label>Cajero</Form.Label> */}
+                                    <Form.Select
+                                        value={cajeroSeleccionado}
+                                        onChange={(e) => setCajeroSeleccionado(Number(e.target.value))}
+                                    >
+                                        <option value="">Seleccione un cajero</option>
+                                        {cajeros.map((cajero) => (
+                                            <option key={cajero.id_cajero} value={cajero.id_cajero}>
+                                                {cajero.nombre}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                </Col>
+                            </Row>
+                        </Form.Group>
+                        {/* Selector de Tipo de Cliente */}                        
                         <Form.Group>
                             <Row>
                                 <Col>
@@ -605,7 +649,7 @@ const handledBuscarCliente = async celular => {
                                     </Form.Select>
                                 </Col>
                                 <Col md={6}>
-                                        {colonia === "0" && (
+                                        {colonia === "0" ? (
                                             <>
                                                 <Form.Control
                                                     ref={coloniaNuevaRef}
@@ -627,6 +671,17 @@ const handledBuscarCliente = async celular => {
                                                     }}
                                                 />
                                             </>
+                                        ) : (
+                                            <Form.Control
+                                                type='number'
+                                                id="cargo_colonia_delivery"
+                                                defaultValue={cargoColonia}
+                                                placeholder='cargo extra'
+                                                autoComplete='off'
+                                                onChange={(e) => {                                                    
+                                                    setCargoDelivery(Number(e.target.value))
+                                                }}
+                                            />                                            
                                         )}
                                 </Col>
                             </Row>
@@ -721,11 +776,11 @@ const handledBuscarCliente = async celular => {
                                             variant={pagoParcialoTotal === "total" ? "primary" : "outline-primary"}
                                             size="sm"
                                             className="w-50"
-                                            onClick={() => {
+                                            onClick={() => {                                                
                                                 setPagoParcialoTotal("total")
-                                                setCantidadAPagar(0)
+                                                //setCantidadAPagar(handle_CalcularSaldo())
                                             } }
-                                            disabled={pagoParcialoTotal === "parcial"}
+                                            disabled={pagoParcialoTotal === "parcial" && totalPagos > 0}
                                         >
                                             Pago Total
                                         </Button>
@@ -735,7 +790,7 @@ const handledBuscarCliente = async celular => {
                                             className="w-50"
                                             onClick={() => {
                                                 setPagoParcialoTotal("parcial")
-                                                setCantidadAPagar(0)
+                                                //setCantidadAPagar(handle_CalcularSaldo())
                                                 cantidadAPagarRef.current.focus()
                                             }}
                                         >
@@ -745,7 +800,7 @@ const handledBuscarCliente = async celular => {
                                     {/* Input para cantidad a pagar */}
                                     <div className="d-flex gap-2 mt-3">
                                         <Form.Control
-                                            value={cantidadAPagar + cargoDelivery}
+                                            value={cantidadAPagar}
                                             autoFocus
                                             ref={cantidadAPagarRef}
                                             type="number"
@@ -762,33 +817,34 @@ const handledBuscarCliente = async celular => {
                                             disabled={
                                                 nombreCliente.trim() === '' || 
                                                 cantidadAPagar === 0 || 
-                                                (cantidadAPagar < totalPrice && pagoParcialoTotal === 'total') ||
-                                                (cantidadAPagar > saldo && tipoPago === 'tarjeta') ||
+                                                ( cantidadAPagar < ( subtotal + cargoDelivery ) && pagoParcialoTotal === 'total') ||
+                                                ( cantidadAPagar > saldo && tipoPago === 'tarjeta') ||
                                                 // Nuevas validaciones para tipoPedidoSeleccionado === 2
                                                 (tipoPedidoSeleccionado === 2 && (!colonia || (colonia === "0" && coloniaNueva.trim() === ''))) || 
                                                 (tipoPedidoSeleccionado === 2 && numero.trim() === '')
                                             }
                                             onClick={() => {
-                                                console.log({
-                                                    celular,
-                                                    nombreCliente,
-                                                    cantidadAPagar,
-                                                    totalPrice,
-                                                    pagoParcialoTotal,
-                                                    saldo,
-                                                    tipoPago,
-                                                    isDisabled:
+                                                // console.log({
+                                                //     celular,
+                                                //     nombreCliente,
+                                                //     cantidadAPagar,
+                                                //     totalPrice,
+                                                //     pagoParcialoTotal,
+                                                //     saldo,
+                                                //     tipoPago,
+                                                //     isDisabled:
                                                         
-                                                        nombreCliente.trim() === '' || 
-                                                        cantidadAPagar === 0 || 
-                                                        (cantidadAPagar < totalPrice && pagoParcialoTotal === 'total') ||
-                                                        (cantidadAPagar > saldo && tipoPago === 'tarjeta')
-                                                });                                        
-                                                handleAgregarPago(cantidadAPagar + cargoDelivery)
-                                                //setTipoPago("efectivo")
-                                                //setPagoParcialoTotal("total")
-                                                //alert(totalPrice - totalPagos)
-                                                console.log("totalPagos:", totalPagos)
+                                                //         nombreCliente.trim() === '' || 
+                                                //         cantidadAPagar === 0 || 
+                                                //         (cantidadAPagar < totalPrice && pagoParcialoTotal === 'total') ||
+                                                //         (cantidadAPagar > saldo && tipoPago === 'tarjeta')
+                                                // });                                        
+                                                handleAgregarPago( cantidadAPagar )
+                                                // setTimeout(() => {
+                                                //     console.log("totalPagos:", totalPagos)
+                                                //     setCantidadAPagar(subtotal + cargoDelivery - totalPagos)
+
+                                                // }, 100)
                                                 
                                                 cantidadAPagarRef.current.focus()
                                             }}
@@ -831,7 +887,7 @@ const handledBuscarCliente = async celular => {
                                                     </tbody>
                                                 </Table>
                                                 <h5>
-                                                    {totalPrice + cargoDelivery - totalPagos > 0 ? 'Saldo' : 'Cambio'}: <Badge bg={totalPrice + cargoDelivery - totalPagos === 0 ? "success" : "danger"}>{currencyFormat(totalPrice + cargoDelivery - totalPagos)}</Badge>        
+                                                    {subtotal + cargoDelivery - totalPagos > 0 ? 'Saldo' : 'Cambio'}: <Badge bg={subtotal + cargoDelivery - totalPagos === 0 ? "success" : "danger"}>{currencyFormat(subtotal + cargoDelivery - totalPagos)}</Badge>        
                                                 </h5>
                                             </>
                                             
@@ -894,10 +950,11 @@ const handledBuscarCliente = async celular => {
                             handleCrearPedido()
                         }
                         }
-                        disabled={((totalPrice + cargoDelivery - totalPagos) > 0) ||
-                            String(celular).trim() === '' ||
-                            nombreCliente.trim() === '' || 
-                            
+                        disabled={
+                            ((totalPrice + cargoDelivery - totalPagos) > 0) || // Validación de saldo
+                            String(celular).trim() === '' || // Validación de celular
+                            nombreCliente.trim() === '' ||  // Validación de nombre del cliente
+                            cajeroSeleccionado === 0 || // Validación de cajero seleccionado
                             // Nuevas validaciones para tipoPedidoSeleccionado === 2
                             (tipoPedidoSeleccionado === 2 && (!colonia || (colonia === "0" && ( coloniaNueva.trim() === '' || !coloniaNuevaCargoEnvio > 0) ) )) || 
                             (tipoPedidoSeleccionado === 2 && numero.trim() === '') 

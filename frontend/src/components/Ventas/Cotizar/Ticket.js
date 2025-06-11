@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Table } from 'react-bootstrap';
 
-const Ticket = ({ detalleDelPago, detallePedido, totalPrice, domicilioTicket, cargoDelivery }) => {
+const Ticket = ({ idPedido, detalleDelPago, detallePedido, totalPrice, domicilioTicket, cargoDelivery, nombreCajero }) => {
 
     useEffect(() => {
         console.log("cargoDelivery:", cargoDelivery);
@@ -10,8 +10,10 @@ const Ticket = ({ detalleDelPago, detallePedido, totalPrice, domicilioTicket, ca
 
     return (
         <div>
+            <h5>Pedido: {idPedido}</h5>
             <p><strong>Celular:</strong> {detalleDelPago.celular}</p>
             <p><strong>Nombre:</strong> {detalleDelPago.nombre}</p>
+            <p><strong>Cajero:</strong> {nombreCajero}</p>
             {domicilioTicket.length > 0 && 
                 <p><strong>Domicilio:</strong>
                     {` ${domicilioTicket[0].calle} No. ${domicilioTicket[0].numero_exterior}, ${domicilioTicket[0].colonia} ${domicilioTicket[0].entre_calles ? `entre ${domicilioTicket[0].entre_calles}` : ''} ${domicilioTicket[0].referencia ? `(${domicilioTicket[0].referencia})` : ''}`}  
