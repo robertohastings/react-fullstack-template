@@ -71,10 +71,15 @@ export const getProductosListado = async (req, res) => {
 }
 export const postProducto = async (req, res) => {
     console.log("Body:", req.body)
-    const { id_empresa, id_producto, nombre, descripcion, id_proveedor, id_categoria, precio, precio_promocion, costo, image1, image2, image3, existencia, activo, sku } = req.body
+    const { id_empresa, id_producto, nombre, descripcion, id_proveedor, id_categoria, precio, precio_promocion, 
+            costo, image1, image2, image3, existencia, activo, sku, combo } = req.body
+    console.log('backend combo:', JSON.stringify(combo))
 
     try {
-        const [result] = await pool.query("CALL postProducto(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [id_empresa, id_producto, nombre, descripcion, id_proveedor, id_categoria, precio, precio_promocion, costo, image1, image2, image3, existencia, activo, sku])
+        const [result] = await pool.query("CALL postProducto(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+            [id_empresa, id_producto, nombre, descripcion, id_proveedor, id_categoria, precio, 
+                precio_promocion, costo, image1, 
+                image2, image3, existencia, activo, sku, combo])
 
         if (result.affectedRows == 0) {
             res.status(404).json({
@@ -222,6 +227,49 @@ export const postGeoLocalizacion = async (req, res) => {
         console.log("Ocurrió un error")
         res.status(500).json({
             message: `Error: ${error}`
+        })
+    }
+}
+//Combos
+export const getProductosCombo = async (req, res) => {
+    try {
+        const { id_empresa, id_producto } = req.query
+
+        const rows = await pool.query(`CALL getProductosCombo(?, ?);`, [id_empresa, id_producto])
+        console.log('productos:', rows[0][0])
+        console.log('combos:', rows[0][1])
+
+        res.json({
+            success: true,
+            productos: rows[0][0],
+            combo: rows[0][1]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+//Kardes
+export const getKardex = async (req, res) => {
+    try {
+        console.log("getKardex params:", req.query)
+        const { id_empresa, sku, fecha, tipoMovimiento, currentPage, rowsPerPage } = req.query
+
+        const rows = await pool.query(`CALL getKardex(?, ?, ?, ?, ?, ?);`, [id_empresa, sku, fecha, tipoMovimiento, currentPage, rowsPerPage])
+        console.log('producto:', rows[0][0])
+        console.log('movimientos:', rows[0][1])
+        console.log('totalRecords:', rows[0][2])
+
+        res.json({
+            success: true,
+            producto: rows[0][0][0],
+            movimientos: rows[0][1],
+            totalRecords: rows[0][2]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: `An error ocurred: ${error.message}`
         })
     }
 }

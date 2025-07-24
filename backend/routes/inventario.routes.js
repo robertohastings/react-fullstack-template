@@ -2,7 +2,8 @@ import { Router } from "express"
 import { authenticateToken } from "../middlewares/authenticateToken.js"
 import { getCategoriasListado, postCategoria, getProductosListado, 
         postProducto, postVisita, getVisitasByIdUsuario,
-        getJornadaLaboral, postJornadaLaboral, postGeoLocalizacion } from "../controllers/inventario.controller.js"
+        getJornadaLaboral, postJornadaLaboral, postGeoLocalizacion,
+        getProductosCombo, getKardex } from "../controllers/inventario.controller.js"
 
 const router = Router()
 //Categorias
@@ -19,4 +20,8 @@ router.get("/geolocator/getJornadaLaboral", getJornadaLaboral)
 router.post("/geolocator/postJornadaLaboral", postJornadaLaboral)
 //Localizacion
 router.post("/geolocator/postGeoLocalizacion", postGeoLocalizacion)
+//Combos
+router.get("/getProductosCombo", getProductosCombo)
+//Kardex
+router.get("/getKardex", authenticateToken, getKardex)
 export default router

@@ -162,19 +162,103 @@ export async function getCaja(id_empresa, ip) {
     try {
         // Enviar el pedido al servidor
 
-        const ipResponse = await axiosInstance.get("/getIP");
+        const ipResponse = await axiosInstance.get("/getIPLocal");
         const ipAddress = ipResponse.data.ip;
 
         const params = {
-            id_empresa,
+            id_empresa: Number(id_empresa),
             ip: ipAddress
         }
 
         const response = await axiosInstance.get("/getCaja", {params});
-        console.log("getCaja encontrados:", response.data.caja);
-        return response.data.caja; // Devuelve la respuesta del servidor
+
+        //Agrego el ipAddress al data
+        const cajaData = {
+            ...response.data.caja,
+            ipAddress
+        }
+
+        console.log("getCaja encontrados:", cajaData);
+        return cajaData; // Devuelve la respuesta del servidor
     } catch (error) {
         console.error("Error al cargar caja:", error);
         throw new Error("Error al cargar caja:");
     }
+}
+export async function abrirCaja(caja) {
+
+    try {
+        // Enviar el pedido al servidor
+        const response = await axiosInstance.post("/postCajaAbrir", caja);
+        console.log("Caja creada exitosamente:", response.data);
+        return response.data; // Devuelve la respuesta del servidor
+    } catch (error) {
+        console.error("Error al crear caja:", error);
+        throw new Error(error.response?.data?.message ||"No se pudo crear la caja. Inténtalo de nuevo.");
+    }
+
+}
+export async function movimientosCaja(caja) {
+
+    try {
+        // Enviar el pedido al servidor
+        const response = await axiosInstance.post("/postCajaMovimientos", caja);
+        console.log("Caja movimiento:", response.data);
+        return response.data; // Devuelve la respuesta del servidor
+    } catch (error) {
+        console.error("Error al crear caja:", error);
+       // throw new Error("No se pudo crear movimiento en caja. Inténtalo de nuevo.");
+        throw new Error(error.response?.data?.message || "No se pudo crear movimiento en caja. Inténtalo de nuevo.");
+    }
+
+}
+export async function CerrarCaja(caja) {
+
+    try {
+        const response = await axiosInstance.post("/postCajaCerrar", caja);
+        console.log("Caja movimiento:", response.data);
+        return response.data; // Devuelve la respuesta del servidor
+    } catch (error) {
+        console.error("Error al cerrar caja:", error);
+       // throw new Error("No se pudo crear movimiento en caja. Inténtalo de nuevo.");
+        throw new Error(error.response?.data?.message || "No se pudo cerrar caja. Inténtalo de nuevo.");
+    }
+
+}
+export async function getMovimientosDeCaja(id_empresa, fecha_inicial, fecha_final) {
+
+    const params = {
+        id_empresa: Number(id_empresa),
+        fecha_inicial,
+        fecha_final
+    }
+
+    try {
+        const response = await axiosInstance.get("/getMovimientosDeCaja", {params});
+        console.log("Caja movimientos:", response.data.movimientosCaja);
+        return response.data.movimientosCaja; // Devuelve la respuesta del servidor
+    } catch (error) {
+        console.error("Error al obtener los movimientos de caja:", error);
+       // throw new Error("No se pudo crear movimiento en caja. Inténtalo de nuevo.");
+        throw new Error(error.response?.data?.message || "No se pudo obtener movimientos de caja. Inténtalo de nuevo.");
+    }
+
+}
+export async function getPedidosPorIdCaja(id_empresa, id_caja) {
+
+    const params = {
+        id_empresa: Number(id_empresa),
+        id_caja
+    }
+
+    try {
+        const response = await axiosInstance.get("/getPedidosPorIdCaja", {params});
+        console.log("Caja pedidos:", response.data.pedidoCaja);
+        return response.data.pedidoCaja; // Devuelve la respuesta del servidor
+    } catch (error) {
+        console.error("Error al obtener los movimientos de caja:", error);
+       // throw new Error("No se pudo crear movimiento en caja. Inténtalo de nuevo.");
+        throw new Error(error.response?.data?.message || "No se pudo obtener movimientos de caja. Inténtalo de nuevo.");
+    }
+
 }

@@ -37,6 +37,8 @@ import PedidoCanvas from "./components/Inventario/Canvas/PedidoCanvas"
 import Cotizar from "./components/Ventas/Cotizar/Cotizar"
 import LandingPagePreview from "./components/LandingPagePreview"
 import Agenda from "./components/Cartera/Agenda/Agenda"
+import MovimientosCaja from "./components/Ventas/Cotizar/MovimientosCaja"
+import Kardex from "./components/Inventario/Kardex/Kardex"
 
 function App() {
     const api_url = process.env.REACT_APP_API_URL
@@ -225,10 +227,12 @@ function App() {
                                     <Route path="/Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
                                     <Route path="/Inventario/Productos/ListProductos" element={<ListProductos />} />
                                     <Route path="/Inventario/Canvas/PedidoCanvas" element={<PedidoCanvas />} />
+                                    <Route path="/Inventario/Kardex/Kardex" element={<Kardex />} />
                                     <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
                                     <Route path="/Carrito" element={<Carrito />} />
                                     <Route path="/Admin/Perfil" element={<Perfil />} />
                                     <Route path="/Ventas/Cotizar" element={<Cotizar />} />
+                                    <Route path="/Ventas/MovimientosCaja" element={<MovimientosCaja />} />
                                     <Route path="/LandingPagePreview" element={<LandingPagePreview />} />
                                     <Route path="/Cartera/Agenda" element={<Agenda />} />
                                 </Routes>

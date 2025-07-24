@@ -289,13 +289,13 @@ export const postPedido = async (req, res) => {
     console.log("body postPedido:", req.body)
     const { id_empresa, id_usuario, id_cliente, id_direccion, id_pedido_estatus, id_tipo_pedido, total, importe_pagado, saldo, fecha_creacion, fecha_actualizacion,
         motivo_cancelacion,
-        pedido_detalle, pedido_formas_de_pago, pedido_domicilio, id_cajero } = req.body
+        pedido_detalle, pedido_formas_de_pago, pedido_domicilio, id_cajero, id_caja } = req.body
 
     try {
-        const [rows] = await pool.query("CALL postPedido(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+        const [rows] = await pool.query("CALL postPedido(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
             [id_empresa, id_usuario, id_cliente, id_direccion, id_pedido_estatus, id_tipo_pedido, 
             total, importe_pagado, saldo, fecha_creacion, fecha_actualizacion, motivo_cancelacion, JSON.stringify(pedido_detalle), 
-            JSON.stringify(pedido_formas_de_pago), JSON.stringify(pedido_domicilio), id_cajero])
+            JSON.stringify(pedido_formas_de_pago), JSON.stringify(pedido_domicilio), id_cajero, id_caja])
 
         // Extrae el id_pedido generado
         const id_pedido = rows[0][0]?.id_pedido;
@@ -464,5 +464,180 @@ export const getIPLocal = async (req, res) => {
         res.status(500).json({ error: `Error al obtener la IP: ${error}` });
     }
 }
+export const postCajaAbrir = async (req, res) => {
+    console.log("body postCajaAbrir:", req.body)
+    const { id_empresa, ip,  id_cajero, password, importe, motivo } = req.body
 
+    try {
+        const [rows] = await pool.query("CALL postCajaAbrir(?, ?, ?, ?, ?, ?)", 
+            [id_empresa, ip, id_cajero, password, importe, motivo])
 
+        // Extrae el id_pedido generado
+        console.log(`rows: ${rows[0][0]}`)
+        // const id_caja = rows[0]?.[0]?.id_caja;
+        // console.log(`id_caja: ${id_caja}`)
+
+        // Verificar si se devolvió algún registro
+        if (!rows[0] || rows[0].length === 0) {
+            return res.status(404).json({
+                mensaje: "No se pudo abrir la caja",
+            });
+        }
+
+        // Extraer el registro devuelto
+        const { error, mensaje, id_caja } = rows[0][0];
+        console.log(`id_caja: ${id_caja}, error: ${error}, mensaje: ${mensaje}`)
+
+        // Si hay un error por validación (error === 0), devolver el mensaje
+        if (error === 0) {
+            return res.status(400).json({
+                mensaje
+            });
+        }
+
+        // Si no hay error, devolver el ID de la caja
+        return res.status(200).json({
+            mensaje,
+            id_caja
+        });
+             
+
+    } catch (error) {
+        console.log("Ocurrió un error en postCajaAbrir")
+        res.status(500).json({
+            mensaje: `Error: ${error.message}`
+        })
+    }
+}
+export const postCajaMovimientos = async (req, res) => {
+    console.log("body postCajaMovimientos:", req.body)
+    const { id_empresa, id_caja, id_cajero, password, ingesoOEgreso, importe, motivo } = req.body
+
+    try {
+        const [rows] = await pool.query("CALL postCajaMovimientos(?, ?, ?, ?, ?, ?, ?)", 
+            [id_empresa, id_caja, id_cajero, password, ingesoOEgreso, importe, motivo])
+
+        console.log(`rows: ${JSON.stringify(rows[0][0])}`)
+
+        // Verificar si se devolvió algún registro
+        if (!rows[0] || rows[0].length === 0) {
+            return res.status(404).json({
+                mensaje: "No se pudo generar el movimiento en caja",
+            });
+        }
+
+        // Extraer el registro devuelto
+        const { error, mensaje, id_caja: cajaId, partida, nombre_cajero } = rows[0][0];
+        console.log(`id_caja: ${cajaId}, error: ${error}, mensaje: ${mensaje}, partida: ${partida}, nombre_cajero: ${nombre_cajero}`)
+
+        // Si hay un error por validación (error === 0), devolver el mensaje
+        if (error === 1) {
+            return res.status(400).json({
+                message: mensaje
+            });
+        }
+
+        // Si no hay error, devolver el ID de la caja
+        return res.status(200).json({
+            mensaje,
+            id_caja: cajaId,
+            partida,
+            nombre_cajero
+        });
+             
+
+    } catch (error) {
+        console.log("Ocurrió un error en postCajaMovimientos")
+        res.status(500).json({
+            mensaje: `Error: ${error.message}`
+        })
+    }
+}
+export const postCajaCerrar = async (req, res) => {
+    console.log("body postCajaCerrar:", req.body)
+    const { id_empresa, id_caja, id_cajero, password, importe, motivo, formasDePago, sumaImportesFormaDePago, efectivoEnCaja} = req.body
+
+    console.log("formasDePago:", JSON.stringify(formasDePago))
+
+    try {
+        const [rows] = await pool.query("CALL postCajaCerrar(?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+            [id_empresa, id_caja, id_cajero, password, importe, motivo, e, sumaImportesFormaDePago, efectivoEnCaja])
+
+        console.log(`rows: ${JSON.stringify(rows[0][0])}`)
+
+        // Verificar si se devolvió algún registro
+        if (!rows[0] || rows[0].length === 0) {
+            return res.status(404).json({
+                mensaje: "No se pudo generar el movimiento en caja",
+            });
+        }
+
+        // Extraer el registro devuelto
+        const { error, mensaje, id_caja: cajaId, partida, nombre_cajero, cajaAbierta } = rows[0][0];
+        console.log(`
+            id_caja: ${cajaId}, 
+            error: ${error}, 
+            mensaje: ${mensaje}, 
+            partida: ${partida}, 
+            nombre_cajero: ${nombre_cajero}
+            cajaAbierta: ${cajaAbierta}
+        `)
+
+        // Si hay un error por validación (error === 0), devolver el mensaje
+        if (error === 1) {
+            return res.status(400).json({
+                message: mensaje
+            });
+        }
+
+        // Si no hay error, devolver el ID de la caja
+        return res.status(200).json({
+            mensaje,
+            id_caja: cajaId,
+            partida,
+            nombre_cajero,
+            cajaAbierta
+        });
+             
+
+    } catch (error) {
+        console.log("Ocurrió un error en postCajaMovimientos")
+        res.status(500).json({
+            mensaje: `Error: ${error.message}`
+        })
+    }
+}
+export const getMovimientosDeCaja = async (req, res) => {
+    try {
+        const { id_empresa, fecha_inicial, fecha_final } = req.query
+
+        const rows = await pool.query(`CALL getMovimientosDeCaja(?, ?, ?);`, [id_empresa, fecha_inicial, fecha_final])
+        console.log(rows[0][0])
+
+        res.json({
+            success: true,
+            movimientosCaja: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const getPedidosPorIdCaja = async (req, res) => {
+    try {
+        const { id_empresa, id_caja } = req.query
+
+        const rows = await pool.query(`CALL getPedidosPorIdCaja(?, ?);`, [id_empresa, id_caja])
+        console.log(rows[0][0])
+
+        res.json({
+            success: true,
+            pedidoCaja: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}

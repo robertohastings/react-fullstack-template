@@ -199,3 +199,53 @@ UPDATE `crm`.`formas_de_pago` SET `descripcion` = 'Tarjeta Débito/Crédito' WHE
 
 -- nuevo package: axios en backend, npm install request-ip
 
+-- nuevas tablas:
+	Existencias, tipos_movimiento_inventario
+	insert into tipo_movimiento_inventario (id_empresa, descripcion, tipo_operacion) 
+	VALUES (1, 'Entrada por Compra', 'E'), (1, 'Salida por Venta', 'S'), (1, 'Ajuste positivo', 'E'),  (1, 'Ajuste negativo', 'S');
+	agregar la alta de tipos movimiento inventario en la alta de un nuevo host
+
+	insert into caja_tipo_movimientos (id_empresa, descripcion, abre_caja, cierra_caja, suma) values (1, 'Apertura de Caja', 1, 0, 0);
+	insert into caja_tipo_movimientos (id_empresa, descripcion, abre_caja, cierra_caja, suma) values (1, 'Cierre de Caja', 0, 1, 0);
+	insert into caja_tipo_movimientos (id_empresa, descripcion, abre_caja, cierra_caja, suma) values (1, 'Ingreso de Efectivo', 0, 0, 1);
+	insert into caja_tipo_movimientos (id_empresa, descripcion, abre_caja, cierra_caja, suma) values (1, 'Retiro de Efectivo', 0, 0, 0);
+
+	INSERT INTO tipo_pedido (id_empresa, tipo_pedido) VALUES (1, 'En sitio');
+	INSERT INTO tipo_pedido (id_empresa, tipo_pedido) VALUES (1, 'Domicilio');
+	INSERT INTO tipo_pedido (id_empresa, tipo_pedido) VALUES (1, 'Recoge');	
+
+	INSERT INTO existencias (id_empresa, id_producto, cantidad)
+	SELECT id_empresa, id_producto, 100 FROM productos;
+
+	combos
+	kardex
+
+-- cambios en proc
+	postProducto
+	postHost
+	postPedido
+
+-- actualizar sku de productos
+UPDATE `crm`.`productos` SET `sku` = 'CJFT1' WHERE (`id_empresa` = '1') and (`id_producto` = '1');
+UPDATE `crm`.`productos` SET `sku` = 'CJFT2' WHERE (`id_empresa` = '1') and (`id_producto` = '2');
+UPDATE `crm`.`productos` SET `sku` = 'CMRCMP' WHERE (`id_empresa` = '1') and (`id_producto` = '3');
+UPDATE `crm`.`productos` SET `sku` = 'BNL' WHERE (`id_empresa` = '1') and (`id_producto` = '4');
+UPDATE `crm`.`productos` SET `sku` = 'PCHAGR' WHERE (`id_empresa` = '1') and (`id_producto` = '5');
+UPDATE `crm`.`productos` SET `sku` = 'MLNCB' WHERE (`id_empresa` = '1') and (`id_producto` = '6');
+UPDATE `crm`.`productos` SET `sku` = 'PPKC' WHERE (`id_empresa` = '1') and (`id_producto` = '7');
+UPDATE `crm`.`productos` SET `sku` = 'ARSCBL' WHERE (`id_empresa` = '1') and (`id_producto` = '8');
+UPDATE `crm`.`productos` SET `sku` = 'PAPFRN' WHERE (`id_empresa` = '1') and (`id_producto` = '9');
+UPDATE `crm`.`productos` SET `sku` = 'TCN' WHERE (`id_empresa` = '1') and (`id_producto` = '10');
+
+
+ALTER TABLE `crm`.`productos` 
+CHANGE COLUMN `sku` `sku` VARCHAR(20) NOT NULL ;
+
+ALTER TABLE `crm`.`productos` 
+ADD UNIQUE INDEX `id_empresa_3` (`id_empresa` ASC, `sku` ASC);
+;
+
+ALTER TABLE `crm`.`kardex` 
+ADD COLUMN `id_proveedor` INT NULL AFTER `id_usuario`;
+
+UPDATE `crm`.`procmenu` SET `linkTo` = 'Inventario/Kardex/Kardex' WHERE (`id_empresa` = '1') and (`id_procMenu` = '29');

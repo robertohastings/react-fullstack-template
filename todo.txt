@@ -125,26 +125,110 @@ OK- caja_formasDePago: id_empresa, id_caja, id_forma_de_pago, importes_formaDePa
 ok- Agregar botón: Caja
 ok- Crear getCaja: Obtener el estado de la caja si esta abierto o cerrado enviando la ip y que nos regrese el id_caja, estado_abierta
 ok- Crear controlador y ruta getCaja
-- Obtener el estado de la caja en useState del componente Cotizar
-- Validar si el estado_abierta es true habilitar los botones de agregar y eliminar
+ok- Obtener el estado de la caja en useState del componente Cotizar
+ok- Validar si el estado_abierta es true habilitar los botones de agregar
 
-- Crear postCaja: Parametros: id_empresa, ip, fecha, id_cajero_abre_caja,
 
-- Crear componente Caja
-    - Agregar una forma con los campos de captura: 
+ok- Crear componente Caja
+    ok- Agregar una forma con los campos de captura: 
         cajero (selector), tipo_importe (Ingreso/Retiro), motivo, 
         importe, contraseña, ¿Cerrar caja? si se seleccionó tipo_importe = retiro
-    - Generar un ticket por cada movimiento que se haga.
-    - Si cerrar_caja = true:
-        - mostrar las formas de pago existentes para capturar los ingresos por forma de pago 
-        - guardar en un json los importes de las formas de pago {id_forma_de_pago, importe}
+    ok- Si cerrar_caja = true:
+        ok- mostrar las formas de pago existentes para capturar los ingresos por forma de pago 
+        ok- guardar en un json los importes de las formas de pago {id_forma_de_pago, importe}
+    ok- Validar que nos e pueda seleccionar Cerrar Caja si la caja esta cerrada.
 
-- Crear putCaja: Valida que no se pueda crear una caja nueva si hay una caja pendiente de la misma ip
+ok- Crear postCajaaAbrir si la caja esta cerrada: Parametros: id_empresa, ip, fecha, id_cajero_abre_caja
+ok- Llamar el endpoint postCajaaAbrir en el componente Caja cuando la caja este cerrada.
+ok- Generar un ticket por cada movimiento que se haga.
+ok- Crear putCaja: Valida que no se pueda crear una caja nueva si hay una caja pendiente de la misma ip
     - Los parametros son: id_empresa, id_caja, tipo_importe, importe, motivo, id_cajero, contraseña, ip, cerrar_caja, importes_formaDePago
     - Si cerrar_caja = true entonces crear un registro nuevo en la tabla:
         - los importes_formaDePago se guardan en la tabla de caja
         - cortecaja: Campos: id_empresa, id_corteCaja, id_caja, fecha, cajero
         - Desabilitar los botones de agregar y eliminar
+- Hacer pruebas con varias compras e movimientos de caja para revisar las diferencias.
+
+- ok Crear nuevo componente para la consulta de movimientos de caja.
+    ok- Crear en mysql getMovimientosCaja
+    ok- Crear ruta y controlador
+    ok- Agregar en postPedido el id_caja
+    ok- Agregar botón para mostrar los pedidos
+    OK- Crear proc para obtener los pedidos por id_caja con su detalle en JSON_EXTRACT
+    ok- Crear controlador y ruta
+    ok- Agregar el id_ticket en boton para mostar el pedido
+    ok- Agregar la opción para imprimir el ticket
+    OK- Agregar campo nuevo en pedido "importe_envio"
+    OK- Guardar el cargo por envio en postPedido
+
+- Inventarios
+    ok- Crear tabla de Existencias con los campos:
+        ok- id_empresa, id_producto, cantidad
+    OK- Crear tabla tipos_movimiento_inventario con los campos:
+        OK- id_empresa, id_tipo_movimiento, descripcion, tipo_operacion ENUM('E', 'S')
+        OK- Crear los registros: 
+            1 = Entrada por Compra, E
+            2 = Salida por Venta, S
+            3 = Ajuste positivo, E
+            4 = Ajuste negativo, E
+    - 
+    OK- Modificar postProducto.
+        OK- Crear registro en existencia igual a cero al crear producto 
+        OK- Crear la existencia del producto manualmente.
+
+    - postPedido si el producto vendido 
+        OK- existe en la tabla de combos, decrementar la existencia de cada uno de los id_producto_combo si maneja existencia
+        OK- si no es combo entonces decrementar solo la existencia de id_producto
+        ok- crear movimiento en la tabla de kadex haciendo referencia al id_tipo_movimiento = 2 y referencia_documento = id_pedido
+
+- Kardex
+    - Crear tabla kardex con los campos:
+        OK-     id_empresa, id_kardex, id_producto, fecha_movimiento, id_tipo_movimiento, cantidad, costo_unitario, 
+                referencia_documento, saldo_anterior, saldo_actual, observaciones, id_usuario
+        - Crear postKardex (Pendiente)
+        - Crear ruta y controlador (Pendiente)
+    - Crear la consulta de kardex
+        - Crear getKardex
+        - Crear ruta y controlador
+
+- Nueva pantallas de Combos
+    OK- Crear tabla combos con los campos:
+    ok- id_empresa, id_producto, id_producto_combo, cantidad
+    ok- crear getProductosCombo, postCombo
+    ok- crear controlador y ruta
+    ok- Crear la pantalla para la alta de combos de productos, adicionarla a la actual
+
+- Nueva pantalla de Proveedores
+
+- Nueva pantalla de Ordenes de compra
+    - Crear tabla ordencompra_estado
+        - Campos: id_empresa, id_estado_ordencompra, descripción
+        - Crear registros: Pendiente, Recibida, Cancelada, Cuando el estatus sea recibida se afecta el inventario.
+        - crear getOrdeDeCompra
+        - Crear ruta y controladores
+
+    - Crear nueva tabla ordencompra
+        - Campos: id_empresa, id_ordencompra, fecha, id_proveedor, total_orden, id_estado_ordencompra
+
+    - Crear nueva tabla detalle_ordencompra
+        - Campos: id_empresa, id_ordencompra, partida, id_producto, cantidad, costo_unitario, subtotal
+
+    - Crear getOrdenDeCompra, postOrdenDeCompra, putOrdenDeCompra
+
+    - crear controladores y rutas
+        - Al crear la orden se debe de incrementar la existencia de cada uno de los productos.
+        - También se debe crear un registro en el kardex, la referencia_documento = orden de compra y el id_tipo_movimiento
+    - crear pantalla  
+
+- Nueva pantalla de ajustes de Inventario
+    - Crear tabla ajustes_inventario
+        Campos: id_empresa, id_ajuste, fecha, id_producto, cantidad_ajustada, id_tipo_movimiento, id_usuario, razon_ajuste
+    - Crear pantalla de ajustes
+    - Crear postAjusteInventario
+        - Se debe de incrementar o decrementar la existencia dependiendo si es entrada o salida sgún el id_tipo_movimiento.
+        - Se debe de generar un movimiento de kardex con razon_ajuste = "Auditoria de Inventario"
+    - Crear ruta y controlador    
+
 
 - Si se registró una nueva colonia, volver a cargar el getColoniasDelivery
 - Validar que la colonia capturada no exista
@@ -152,3 +236,4 @@ ok- Crear controlador y ruta getCaja
 - Agregar TipoPedido en postHost (Alta de un nuevo host)
 - Validar que la forma de pago acepte cantidades mayores o no
 - Ver la parte del cargo por cobro con tarjeta
+- Validar que en la alta de productos que el SKU no se repita que sea único, y también en la pantalla.

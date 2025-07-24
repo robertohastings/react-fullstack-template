@@ -10,7 +10,7 @@ import './colocarPedidoRestaurante.css'
 
 export default function ColocarPedidoRestaurante({ show, onHide, onResetPagos, totalPrice, 
     currencyFormat, onGuardarDetalleDelPago, detallePedido, onSetIdPedido, colonias, setDomicilioTicket,
-    pedidoPreview, setPedidoPreview, cargoDelivery, setCargoDelivery, cajeros, cajeroSeleccionado, setCajeroSeleccionado }) {
+    pedidoPreview, setPedidoPreview, cargoDelivery, setCargoDelivery, cajeros, cajeroSeleccionado, setCajeroSeleccionado, caja }) {
   
     const [tipoPago, setTipoPago] = useState("efectivo"); 
     const [pagoParcialoTotal, setPagoParcialoTotal] = useState("total"); 
@@ -346,7 +346,8 @@ const handledBuscarCliente = async celular => {
                 saldo
             })),
             pedido_domicilio: tipoPedidoSeleccionado === 2 ? [pedido_domicilio] : [], // Solo si es a domicilio
-            id_cajero: cajeroSeleccionado
+            id_cajero: cajeroSeleccionado,
+            id_caja: caja.id_caja
         }
 
         console.log("Nuevo Pedido:", nuevoPedido);

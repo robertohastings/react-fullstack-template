@@ -10,6 +10,7 @@ import DispatchContext from "../../../DispatchContext"
 import { useReactToPrint } from "react-to-print"
 import Ticket from "./Ticket"
 import ColocarPedidoRestaurante from "./ColocarPedidoRestaurante"
+import Caja from "./Caja"
 import { getTipoPedido, getColoniasDelivery, getCajeros, getCaja } from "../../../models/Pedido/Pedido"
 import { useTipoPedido } from "../../../tools/StateUtils"
 
@@ -19,6 +20,7 @@ function Cotizar() {
     const [detalleDelPago, setDetalleDelPago] = useState(null); // 
     // Estado para guardar los datos del pedido // Callback para reiniciar pagos
     const [showDetalleModal, setShowDetalleModal] = useState(false); // Estado para mostrar el segundo modal
+    const [showCaja, setShowCaja] = useState(false)
     const [dataCategories, setDataCategories] = useState([])
     const [dataProducts, setDataProducts] = useState([])
     const [colonias, setColonias] = useState([]);
@@ -40,6 +42,8 @@ function Cotizar() {
     //const tipoPedidoState = useTipoPedido()
     const [cajeros, setCajeros] = useState([])
     const [cajeroSeleccionado, setCajeroSeleccionado] = useState(0)
+    const [caja, setCaja] = useState([])
+    const [ipAddress, setIpAddress] = useState([])
 
     const handleSetIdPedido = (id) => {
         setIdPedido(id); // Actualiza el estado con el ID del pedido
@@ -125,7 +129,8 @@ function Cotizar() {
             const cajaData = await getCaja(appState.idEmpresa);
 
             console.log('caja: ', cajaData)
-            setCajeros(cajaData); 
+            setCaja(cajaData); 
+            setIpAddress(cajaData.ipAddress)
         } catch (error) {
             console.error("Error al cargar los cajaData:", error);
             appDispatch({
@@ -349,8 +354,11 @@ function Cotizar() {
                 cajeros={cajeros}
                 cajeroSeleccionado={cajeroSeleccionado}
                 setCajeroSeleccionado={setCajeroSeleccionado}
+                caja={caja}
             />
-            
+
+            <Caja show={showCaja} onHide={() => setShowCaja(false)} cajeros={cajeros} caja={caja} ip={ipAddress} setCaja={setCaja}/>
+
             {/* Segundo modal para mostrar detalle del pedido */}
             <Modal
                 show={showDetalleModal}
@@ -489,18 +497,34 @@ function Cotizar() {
                                             <FaMotorcycle size={30} />
                                         </Button> */}
                                         {/* Boton Colocar Pedido */}
-                                        <Button size="sm" variant="success" style={{ width: "100px" }} disabled={detallePedido.length === 0} onClick={ColocarPedido_handled}>
+                                        <Button 
+                                            size="sm" 
+                                            variant="success" 
+                                            style={{ width: "100px" }} 
+                                            disabled={detallePedido.length === 0 || caja.cajaAbierta === 0} 
+                                            onClick={ColocarPedido_handled}>
                                             <IoFastFoodOutline size={30} />
                                         </Button>
                                         <Button size="sm" variant="info" style={{ width: "100px" }}>
                                             <FaSearch size={30} /> Pedido
                                         </Button>
                                         {/* Boton Limpiar */}
-                                        <Button size="sm" variant="danger" style={{ width: "100px" }} title="Lipiar captura e iniciar de nuevo" onClick={LimpiarCaptura_handleOpenModal} disabled={detallePedido.length === 0}>
+                                        <Button 
+                                            size="sm" 
+                                            variant="danger" 
+                                            style={{ width: "100px" }} 
+                                            title="Lipiar captura e iniciar de nuevo" 
+                                            onClick={LimpiarCaptura_handleOpenModal} 
+                                            disabled={detallePedido.length === 0}>
                                             <FaRegTrashAlt size={30} />
                                         </Button>                                        
                                         {/* Boton Caja */}
-                                        <Button size="sm" variant="warning" style={{ width: "100px" }} title="Movimientos de caja" onClick={()=>{}}>
+                                        <Button 
+                                            size="sm" 
+                                            variant="warning" 
+                                            style={{ width: "100px" }} 
+                                            title="Movimientos de caja" onClick={()=>{setShowCaja(true)}}                                            
+                                        >                                            
                                             <FaCashRegister size={30} />
                                         </Button>                                        
                                     </ButtonGroup>
