@@ -1,0 +1,1276 @@
+/* --- VISIBILIDAD DEL BOTÓN HAMBURGUESA DE REACT-BOOTSTRAP --- */
+.navbar-toggler {
+    display: block !important;
+    z-index: 1100;
+}
+@media (min-width: 768px) {
+    .navbar-toggler {
+        display: none !important;
+    }
+}
+/* --- FORZAR COLOR DEL ICONO HAMBURGUESA DE REACT-BOOTSTRAP --- */
+.navbar-toggler {
+    border: none;
+}
+/* --- RAÍZ Y VARIABLES GLOBALES --- */
+:root {
+    --color-primario: #6a5acd; /* Un morado profesional */
+    --color-secundario: #f0f0f0;
+    --color-fondo: #ffffff;
+    --color-texto: #333333;
+    --color-texto-claro: #ffffff;
+    --font-principal: 'Poppins', sans-serif;
+    --header-height: 80px;
+}
+
+/* --- RESETEO BÁSICO Y ESTILOS GENERALES --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-principal);
+    color: var(--color-texto);
+    background-color: var(--color-fondo);
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* --- CABECERA (SITE-HEADER) --- */
+.site-header {
+    background-color: var(--color-fondo);
+    height: var(--header-height);
+    padding: 0 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+.logo {
+    text-decoration: none;
+    color: var(--color-texto);
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.logo strong {
+    font-weight: 600;
+    color: var(--color-primario);
+}
+
+/* --- MENÚ DE NAVEGACIÓN (VISTA MÓVIL) --- */
+.main-nav .navbar-collapse {
+    position: fixed;
+    top: var(--header-height); /* Se alinea debajo del header */
+    right: 0;
+    width: 100%;
+    height: auto;
+    background-color: var(--color-fondo);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+    z-index: 1000;
+}
+
+.main-nav.is-active .navbar-collapse {
+    display: block;
+}
+
+.nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nav-list li {
+    width: 100%;
+    text-align: center;
+}
+
+.nav-list a {
+    display: block;
+    padding: 1.2rem 0;
+    text-decoration: none;
+    color: var(--color-texto);
+    font-size: 1.2rem;
+    font-weight: 500;
+    transition: color 0.3s, background-color 0.3s;
+}
+
+.nav-list a:hover {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+}
+
+.btn-contact {
+    background-color: var(--color-primario);
+    color: var(--color-texto-claro) !important;
+    border-radius: 50px;
+    padding: 0.8rem 1.5rem !important;
+    margin: 1rem auto;
+    display: inline-block !important;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-contact:hover {
+    background-color: #443c7c;
+    transform: translateY(-2px);
+}
+
+/* --- BOTÓN HAMBURGUESA --- */
+.menu-toggle {
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1001; /* Siempre por encima del menú */
+}
+
+.hamburger, .hamburger::before, .hamburger::after {
+    content: '';
+    display: block;
+    background-color: var(--color-texto);
+    height: 3px;
+    width: 30px;
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+}
+
+.hamburger::before {
+    transform: translateY(-10px);
+}
+
+.hamburger::after {
+    transform: translateY(7px);
+}
+
+/* Animación del botón a 'X' cuando está activo */
+.menu-toggle.is-active .hamburger {
+    background-color: transparent; /* La barra del medio desaparece */
+}
+
+.menu-toggle.is-active .hamburger::before {
+    transform: translateY(0) rotate(45deg);
+}
+
+.menu-toggle.is-active .hamburger::after {
+    transform: translateY(-3px) rotate(-45deg);
+}
+
+
+/* --- ESTILOS PARA TABLET Y ESCRITORIO (A partir de 768px) --- */
+@media (min-width: 768px) {
+    .menu-toggle {
+        display: none; /* Ocultamos el botón hamburguesa */
+    }
+
+    .main-nav {
+        position: static;
+        width: auto;
+        height: auto;
+        background-color: transparent;
+        box-shadow: none;
+        padding-top: 0;
+        transition: none;
+    }
+
+    .nav-list {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem; /* Espacio entre elementos del menú */
+    }
+
+    .nav-list a {
+        padding: 0;
+        font-size: 1rem;
+        position: relative;
+    }
+
+    .nav-list a:hover {
+        background-color: transparent;
+        color: var(--color-primario);
+    }
+    
+    /* Efecto de subrayado al pasar el ratón */
+    .nav-list a:not(.btn-contact)::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 50%;
+        background-color: var(--color-primario);
+        transition: all 0.3s ease-out;
+    }
+
+    .nav-list a:not(.btn-contact):hover::after {
+        width: 100%;
+        left: 0;
+    }
+
+    .btn-contact {
+        margin: 0;
+        padding: 0.6rem 1.8rem !important;
+        /* Aseguramos que la transición se aplique correctamente en desktop */
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    /* REGLA CORREGIDA Y EXPLÍCITA PARA EL HOVER DEL BOTÓN */
+    .btn-contact:hover {
+        background-color: #5849be; /* Un poco más oscuro que el color primario */
+        transform: translateY(-2px); /* El efecto de elevación que te gustó */
+        /* Nos aseguramos de que el color del texto no cambie y se mantenga visible */
+        color: var(--color-texto-claro) !important;
+    }
+}
+
+/* --- SECCIÓN HERO --- */
+.hero {
+    background-color: var(--color-secundario); /* Un fondo sutil para contraste */
+    padding: 80px 0; /* Espacio vertical generoso */
+    position: relative; /* Para el posicionamiento absoluto de la imagen de fondo */
+    overflow: hidden; /* Para que la imagen de fondo no se desborde */
+}
+
+.hero .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px; /* Espacio entre el texto y la imagen (en pantallas más grandes) */
+}
+
+.hero-content {
+    width: 100%;
+}
+
+.hero-text {
+    flex: 1; /* El texto ocupa el espacio disponible */
+}
+
+.hero-title {
+    color: var(--color-primario);
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.hero-description {
+    color: var(--color-texto);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+/* Botón primario para la llamada a la acción */
+.btn-primary {
+    display: inline-block;
+    background-color: var(--color-primario);
+    color: var(--color-texto-claro);
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #5849be;
+    transform: translateY(-3px);
+}
+
+.hero-image {
+    flex: 1; /* La imagen ocupa el espacio disponible */
+    min-height: 300px; /* Altura mínima para la imagen */
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsJa5teIeKwt09pbTrM9UskNE4eCayhgF4gg&s'); /* Reemplaza con tu URL */
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px; /* Opcional: bordes redondeados */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Opcional: sombra suave */
+}
+
+/* --- ADAPTABILIDAD (RESPONSIVE) --- */
+@media (max-width: 768px) {
+    .hero {
+        padding: 60px 0;
+    }
+
+    .hero .container {
+        flex-direction: column; /* Apilar elementos en pantallas pequeñas */
+        text-align: center;
+    }
+
+    .hero-image {
+        width: 80%; /* Ajustar el ancho de la imagen en móviles */
+        max-width: 400px;
+        margin: 20px auto 0;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-description {
+        font-size: 1rem;
+    }
+}
+
+/* --- SECCIÓN DE SERVICIOS --- */
+.services-section {
+    padding: 80px 0;
+    background-color: var(--color-fondo);
+    text-align: center; /* Centrar el texto por defecto */
+}
+
+.services-section .section-title {
+    color: var(--color-primario);
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.services-section .section-description {
+    color: var(--color-texto);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 800px; /* Limitar el ancho de la descripción */
+    margin: 0 auto 3rem auto; /* Centrar y añadir margen inferior */
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Una columna por defecto */
+    gap: 30px; /* Espacio entre los elementos de la cuadrícula */
+    margin-bottom: 3rem;
+}
+
+.service-item {
+    background-color: var(--color-secundario);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.service-icon {
+    color: var(--color-primario);
+    font-size: 3rem; /* Para íconos de fuentes */
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.service-icon svg {
+    width: 60px; /* Tamaño para los SVG */
+    height: 60px;
+    stroke-width: 1.5; /* Grosor de la línea del SVG */
+}
+
+.service-title {
+    color: var(--color-primario);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.service-description {
+    color: var(--color-texto);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.services-section .btn-primary {
+    margin-top: 2rem; /* Espacio para el botón debajo de la cuadrícula */
+}
+
+/* Adaptabilidad para la sección de servicios */
+@media (min-width: 768px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr); /* Dos columnas en tabletas */
+    }
+}
+
+@media (min-width: 1024px) {
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr); /* Tres columnas en escritorio */
+    }
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* --- SECCIÓN QUIÉN SOY (ABOUT) --- */
+.about-section {
+    padding: 80px 0;
+    background-color: var(--color-secundario); /* Un fondo sutil para esta sección */
+}
+
+.about-section .container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.about-content {
+    display: flex;
+    flex-direction: column; /* Apilar en móviles primero */
+    align-items: center;
+    gap: 40px; /* Espacio entre texto e imagen */
+    /*text-align: center;  Centrar el texto por defecto */
+}
+
+.about-text {
+    flex: 1; /* Permite que el texto ocupe su espacio */
+    max-width: 700px; /* Limita el ancho del texto para una mejor lectura */
+    text-align: justify; /* ¡Nuevo! Justifica el texto */
+    padding-right: 50px;
+}
+
+.about-section .section-title {
+    color: var(--color-primario);
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: start;
+}
+
+.about-section .section-description {
+    color: var(--color-texto);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem; /* Espacio entre párrafos */
+}
+
+.about-image {
+    flex: 1; /* Permite que la imagen ocupe su espacio */
+    min-height: 350px; /* Altura mínima de la imagen */
+    width: 100%; /* Ocupa todo el ancho disponible en móviles */
+    max-width: 500px; /* Ancho máximo para la imagen */
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRvCL-8CxGAbsbt-L5lQFJPqi54HpnawNwHg&s'); /* Reemplaza con una imagen adecuada */
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Adaptabilidad para la sección "Quién Soy" */
+@media (min-width: 768px) {
+    .about-content {
+        flex-direction: row; /* Diseño en fila en tabletas y escritorio */
+        text-align: left; /* Alinear el texto a la izquierda en escritorio */
+    }
+
+    .about-image {
+        order: 1; /* Pone la imagen a la derecha por defecto */
+    }
+
+    /* Puedes cambiar el orden si quieres que la imagen esté a la izquierda */
+    /* .about-text { order: 2; } */
+    /* .about-image { order: 1; } */
+}
+
+@media (min-width: 1024px) {
+    .about-section .section-title {
+        font-size: 2.5rem;
+    }
+}
+
+/* --- SECCIÓN DE BLOG --- */
+.blog-section {
+    padding: 80px 0;
+    background-color: var(--color-fondo);
+    text-align: center;
+}
+
+.blog-section .section-title {
+    color: var(--color-primario);
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.blog-section .section-description {
+    color: var(--color-texto);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto 3rem auto;
+}
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Una columna por defecto */
+    gap: 30px; /* Espacio entre los artículos del blog */
+    margin-bottom: 3rem;
+}
+
+.blog-post {
+    background-color: var(--color-secundario);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden; /* Asegura que la imagen no se desborde */
+    text-align: left; /* Alinea el texto dentro de cada post a la izquierda */
+    display: flex;
+    flex-direction: column; /* Apilar imagen y contenido */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blog-post:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.post-image {
+    width: 100%;
+    height: 200px; /* Altura fija para las imágenes */
+    object-fit: cover; /* Recorta la imagen para que cubra el espacio */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.post-content {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Permite que el contenido se expanda y empuje el "Leer más" hacia abajo */
+}
+
+.post-title {
+    color: var(--color-primario);
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+}
+
+.post-excerpt {
+    color: var(--color-texto);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    flex-grow: 1; /* Permite que el extracto ocupe el espacio disponible */
+}
+
+.read-more {
+    display: inline-block;
+    color: var(--color-primario);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.read-more:hover {
+    color: #443c7c; /* Un tono más oscuro del primario */
+    text-decoration: underline;
+}
+
+/* Adaptabilidad para la sección de blog */
+@media (min-width: 768px) {
+    .blog-grid {
+        grid-template-columns: repeat(2, 1fr); /* Dos columnas en tabletas */
+    }
+}
+
+@media (min-width: 1024px) {
+    .blog-grid {
+        grid-template-columns: repeat(3, 1fr); /* Tres columnas en escritorio */
+    }
+}
+
+/* --- SECCIÓN DE CONTACTO --- */
+.contact-section {
+    padding: 80px 0;
+    background-color: var(--color-secundario); /* Un fondo sutil */
+}
+
+.contact-section .container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contact-content {
+    display: flex;
+    flex-direction: column; /* Apilar en móviles */
+    gap: 50px;
+    align-items: center;
+    text-align: center; /* Centrar el texto en móviles */
+}
+
+
+.contact-info {
+    flex: 1;
+    max-width: 500px;
+}
+
+.contact-info .section-title {
+    color: var(--color-primario);
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.contact-info .section-description {
+    color: var(--color-texto);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    text-align: justify; /* Justificar la descripción en esta sección también */
+}
+
+.contact-details p {
+    font-size: 1.05rem;
+    margin-bottom: 0.8rem;
+    color: var(--color-texto);
+}
+
+.contact-details .detail-label {
+    color: var(--color-primario);
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.contact-details a {
+    color: var(--color-primario);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.contact-details a:hover {
+    color: #443c7c;
+    text-decoration: underline;
+}
+
+/* Estilos para los íconos de redes sociales */
+.social-icons {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center; /* Centrar iconos en móvil */
+    gap: 20px;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: var(--color-primario);
+    color: var(--color-texto-claro);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.social-icon:hover {
+    background-color: #443c7c;
+    transform: translateY(-3px);
+}
+
+.contact-form-wrapper {
+    flex: 1;
+    max-width: 600px; /* Limita el ancho del formulario */
+    width: 100%;
+    background-color: var(--color-fondo);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.contact-form .form-group {
+    margin-bottom: 1.5rem;
+    text-align: left; /* Alinea etiquetas a la izquierda */
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--color-texto);
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: var(--font-principal);
+    font-size: 1rem;
+    color: var(--color-texto);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-form input[type="text"]:focus,
+.contact-form input[type="email"]:focus,
+.contact-form textarea:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.2);
+    outline: none;
+}
+
+.contact-form textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+    min-height: 120px;
+}
+
+.contact-form .btn-primary {
+    width: auto; /* Para que el botón no ocupe todo el ancho */
+    margin-top: 1rem;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    border: none; /* Asegura que no tenga bordes indeseados */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Puedes añadir una sombra si quieres que se vea como otros botones */    
+}
+
+/* También puedes añadir una sombra al pasar el ratón para consistencia, si te gusta */
+.contact-form .btn-primary:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Una sombra un poco más pronunciada al hover */
+}
+
+/* Adaptabilidad para la sección de Contacto */
+@media (min-width: 768px) {
+    .contact-content {
+        flex-direction: row; /* Diseño en fila en tabletas y escritorio */
+        text-align: left; /* Alinea el texto a la izquierda */
+    }
+
+    .social-icons {
+        justify-content: flex-start; /* Alinea iconos a la izquierda en desktop */
+    }
+
+    .contact-info .section-title,
+    .contact-info .section-description {
+        text-align: left; /* Asegura que el título y descripción se alineen a la izquierda */
+    }
+}
+
+@media (min-width: 1024px) {
+    .contact-content {
+        justify-content: space-between; /* Espacio entre info y formulario */
+        align-items: flex-start; /* Alinea al inicio verticalmente */
+    }
+}
+
+/* --- FOOTER (PIE DE PÁGINA) --- */
+.site-footer {
+    background-color: var(--color-primario); /* Fondo oscuro e impactante */
+    color: var(--color-texto-claro); /* Texto claro sobre el fondo oscuro */
+    padding: 60px 0 20px 0; /* Espaciado superior e inferior */
+    font-size: 0.95rem;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column; /* Apilar en móviles */
+    align-items: center; /* Centrar elementos en móviles */
+    gap: 40px; /* Espacio entre secciones del footer */
+    padding-bottom: 40px; /* Espacio antes del bottom bar */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Línea divisoria sutil */
+    text-align: center; /* Centrar contenido en móvil */
+}
+
+.footer-section {
+    flex: 1;
+}
+
+.footer-logo {
+    color: var(--color-texto-claro); /* Asegura que el logo sea blanco */
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    display: inline-block; /* Para aplicar margin-bottom */
+}
+
+.footer-logo strong {
+    color: var(--color-secundario); /* El "fuerte" en un color secundario */
+}
+
+.brand-description {
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto 1.5rem auto; /* Centrar y añadir margen */
+}
+
+.footer-social {
+    justify-content: center; /* Centrar iconos sociales en móvil */
+    margin-top: 1.5rem; /* Ajuste de margen para los iconos en el footer */
+}
+
+.footer-social .social-icon {
+    background-color: rgba(255, 255, 255, 0.15); /* Fondo más claro para los iconos */
+    color: var(--color-texto-claro);
+}
+
+.footer-social .social-icon:hover {
+    background-color: var(--color-secundario); /* Color primario al pasar el ratón */
+    transform: translateY(-3px);
+}
+
+
+.footer-heading {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--color-texto-claro);
+    position: relative; /* Para el posible subrayado animado */
+    padding-bottom: 5px; /* Espacio para el subrayado */
+}
+
+/* Opcional: Pequeña animación de subrayado para los títulos del footer */
+.footer-heading::after {
+    content: '';
+    position: absolute;
+    left: 50%; /* Centrar el subrayado */
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 50px; /* Ancho inicial */
+    height: 3px;
+    background-color: var(--color-secundario);
+    border-radius: 2px;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+    color: var(--color-texto-claro);
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: inline-block; /* Permite transform */
+}
+
+.footer-links a:hover {
+    color: var(--color-secundario); /* Cambia al color secundario al pasar el ratón */
+    transform: translateX(5px); /* Pequeño desplazamiento */
+}
+
+.footer-newsletter p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre input y botón */
+    max-width: 350px;
+    margin: 0 auto; /* Centrar el formulario */
+}
+
+.newsletter-form input[type="email"] {
+    padding: 12px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
+    color: var(--color-texto-claro);
+    font-family: var(--font-principal);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.newsletter-form input[type="email"]::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.newsletter-form input[type="email"]:focus {
+    border-color: var(--color-secundario);
+    background-color: rgba(255, 255, 255, 0.2);
+    outline: none;
+}
+
+.newsletter-form .btn-primary {
+    width: 100%; /* El botón ocupa todo el ancho del formulario */
+    background-color: var(--color-secundario); /* Botón en color secundario para contraste */
+    color: var(--color-primario); /* Texto del botón en color primario */
+    border: none;
+    box-shadow: none; /* Quitamos la sombra del botón para que no choque con el fondo del footer */
+}
+
+.newsletter-form .btn-primary:hover {
+    background-color: #e0e0e0; /* Un tono más claro del secundario al pasar el ratón */
+    transform: translateY(-2px);
+    color: var(--color-primario); /* Asegura el color del texto */
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.footer-bottom-content {
+    display: flex;
+    flex-direction: column; /* Apilar en móviles */
+    gap: 10px;
+    align-items: center;
+}
+
+.copyright,
+.powered-by {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.powered-by a {
+    color: var(--color-secundario); /* Color destacado para el enlace "Powered by" */
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.powered-by a:hover {
+    color: var(--color-texto-claro); /* Blanco puro al pasar el ratón */
+    text-decoration: underline;
+}
+
+/* Adaptabilidad para el Footer */
+@media (min-width: 768px) {
+    .footer-content {
+        flex-direction: row; /* Columnas en tabletas y escritorio */
+        justify-content: space-between; /* Espacio entre columnas */
+        text-align: left; /* Alinear texto a la izquierda */
+        align-items: flex-start; /* Alinea verticalmente arriba todas las columnas */
+    }
+
+    .footer-brand,
+    .footer-links,
+    .footer-newsletter {
+        text-align: left;
+        max-width: none;
+        margin: 0;
+    }
+
+    .footer-logo {
+        margin-left: 0; /* Alinea el logo a la izquierda */
+    }
+    
+    .footer-heading::after {
+        left: 0; /* Subrayado a la izquierda */
+        transform: translateX(0);
+    }
+
+    .footer-social {
+        justify-content: flex-start; /* Alinea iconos a la izquierda en desktop */
+    }
+
+    .footer-newsletter p {
+        margin-left: 0; /* Alinea el párrafo del newsletter a la izquierda */
+        margin-right: 0;
+    }
+
+    .newsletter-form {
+        margin: 0; /* Alinea el formulario a la izquierda */
+    }
+
+    .footer-bottom-content {
+        flex-direction: row; /* Elementos en fila en desktop */
+        justify-content: space-between;
+    }
+}
+
+@media (min-width: 1024px) {
+    /* Ajustes específicos para escritorio si fueran necesarios */
+}
+
+/* --- BOTÓN VOLVER ARRIBA --- */
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #6a5acd; /* Color de tu marca */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-to-top-btn.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-to-top-btn svg {
+    width: 28px; /* Tamaño de la flecha SVG */
+    height: 28px;
+}
+
+.scroll-to-top-btn:hover {
+    background-color: #5849be; /* Color más oscuro al pasar el ratón */
+    transform: translateY(-3px); /* Pequeño efecto de elevación */
+}
+
+.scroll-to-top-btn.show {
+    opacity: 1; /* Mostrar cuando se le añade la clase 'show' */
+}
+
+/* --- ESTILOS PARA EL ÍCONO DEL CARRITO EN EL HEADER --- */
+.cart-icon-link {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espacio entre el ícono y el número */
+    text-decoration: none;
+    color: var(--color-texto); /* Color del ícono por defecto */
+    font-size: 1.2rem; /* Tamaño del texto del contador */
+    font-weight: 500;
+    transition: color 0.3s ease;
+    padding: 0.5rem 1rem; /* Padding para que sea clicable y tenga espacio */
+    border-radius: 5px; /* Bordes ligeramente redondeados */
+}
+
+.cart-icon-link:hover {
+    color: var(--color-primario); /* Color al pasar el ratón */
+    background-color: var(--color-secundario); /* Un fondo sutil al pasar el ratón */
+}
+
+.cart-icon-link svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor; /* Asegura que el SVG herede el color del texto */
+}
+
+.cart-count {
+    background-color: var(--color-primario); /* Fondo del contador */
+    color: var(--color-texto-claro); /* Color del número */
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 50%;
+    padding: 3px 7px; /* Ajusta el padding para el círculo */
+    line-height: 1; /* Asegura que el número esté centrado */
+    min-width: 20px; /* Asegura un ancho mínimo para números de 1 dígito */
+    text-align: center;
+    transform: translateY(-5px); /* Levanta el contador un poco */
+}
+
+/* Ajustes para el menú de navegación en escritorio (media query) */
+@media (min-width: 768px) {
+    .nav-list {
+        /* Asegura que haya suficiente espacio para el nuevo ícono */
+        gap: 1.5rem; /* Puedes ajustar este valor si necesitas más espacio */
+    }
+
+    .cart-icon-link {
+        /* Ajustes específicos para escritorio si son necesarios */
+        padding: 0; /* Quita el padding extra para que se alinee con otros enlaces */
+        background-color: transparent; /* Fondo transparente por defecto */
+    }
+
+    .cart-icon-link:hover {
+        background-color: transparent; /* No fondo al pasar el ratón en desktop */
+        color: var(--color-primario); /* Solo cambia el color del ícono y texto */
+    }
+
+    /* Opcional: Efecto de subrayado para el carrito también si lo deseas */
+    /*
+    .cart-icon-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 50%;
+        background-color: var(--color-primario);
+        transition: all 0.3s ease-out;
+    }
+
+    .cart-icon-link:hover::after {
+        width: 100%;
+        left: 0;
+    }
+    */
+}
+
+/* --- ESTILOS PARA EL BOTÓN DE INICIO DE SESIÓN EN EL HEADER --- */
+.login-btn {
+    text-decoration: none;
+    color: var(--color-texto);
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem; /* Padding para que sea clicable y tenga espacio */
+    border-radius: 5px; /* Bordes ligeramente redondeados */
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.login-btn:hover {
+    color: var(--color-primario);
+    background-color: var(--color-secundario); /* Un fondo sutil al pasar el ratón */
+}
+
+/* Ajustes para el menú de navegación en escritorio (media query) */
+@media (min-width: 768px) {
+    .nav-list {
+        /* Asegura que haya suficiente espacio para el nuevo botón */
+        gap: 1.5rem; /* Puedes ajustar este valor si necesitas más espacio */
+    }
+
+    .login-btn {
+        padding: 0; /* Quita el padding extra para que se alinee con otros enlaces */
+        background-color: transparent; /* Fondo transparente por defecto */
+    }
+
+    .login-btn:hover {
+        background-color: transparent; /* No fondo al pasar el ratón en desktop */
+        color: var(--color-primario); /* Solo cambia el color del texto */
+    }
+
+    /* Opcional: Si quieres que tenga el efecto de subrayado como los otros enlaces */
+    /*
+    .login-btn::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 50%;
+        background-color: var(--color-primario);
+        transition: all 0.3s ease-out;
+    }
+
+    .login-btn:hover::after {
+        width: 100%;
+        left: 0;
+    }
+    */
+}
+
+/* --- ESTILOS PARA EL ÍCONO DE INICIO DE SESIÓN EN EL HEADER --- */
+.login-icon-link {
+    display: flex; /* Usamos flex para centrar el SVG */
+    align-items: center;
+    justify-content: center; /* Centra el ícono */
+    text-decoration: none;
+    color: var(--color-texto); /* Color del ícono por defecto */
+    font-size: 1rem;
+    font-weight: 500;
+    width: 40px; /* Tamaño fijo para el área clicable del ícono */
+    height: 40px; /* Tamaño fijo para el área clicable del ícono */
+    border-radius: 50%; /* Opcional: para un fondo circular al hover */
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.login-icon-link svg {
+    width: 24px; /* Tamaño del ícono SVG */
+    height: 24px;
+    stroke: currentColor; /* Asegura que el SVG herede el color */
+}
+
+.login-icon-link:hover {
+    color: var(--color-primario); /* Color del ícono al pasar el ratón */
+    background-color: var(--color-secundario); /* Fondo sutil al pasar el ratón */
+}
+
+/* Ajustes para el menú de navegación en escritorio (media query) */
+@media (min-width: 768px) {
+    .nav-list {
+        gap: 1.5rem; /* Ajusta el espacio si es necesario */
+    }
+
+    .login-icon-link {
+        /* En desktop, mantenemos el tamaño fijo para un área clicable consistente */
+        width: 40px;
+        height: 40px;
+        background-color: transparent; /* Fondo transparente por defecto */
+    }
+
+    .login-icon-link:hover {
+        background-color: transparent; /* No fondo al pasar el ratón en desktop */
+        color: var(--color-primario); /* Solo cambia el color del ícono */
+    }
+
+    /* Puedes añadir el efecto de subrayado si lo deseas, como en el carrito */
+    /*
+    .login-icon-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 50%;
+        background-color: var(--color-primario);
+        transition: all 0.3s ease-out;
+    }
+
+    .login-icon-link:hover::after {
+        width: 100%;
+        left: 0;
+    }
+    */
+}
+
+/* Estilos para el botón de "Subir al inicio" */
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #6a5acd; /* Color de tu marca */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-to-top-btn.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-to-top-btn:hover {
+  background-color: #5849a3; /* Un tono más oscuro para el hover */
+}

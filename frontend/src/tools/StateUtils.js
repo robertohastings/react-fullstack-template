@@ -28,3 +28,14 @@ export const useEmpresaID = () => {
 
     return appState.idEmpresa
 }
+
+export const useHostname = () => {
+    const appState = useContext(StateContext)
+
+    return appState.hostname
+}
+export const useLandingPageID = () => {
+    const appState = useContext(StateContext)
+
+    return appState.landingPage.idLandingPage
+}

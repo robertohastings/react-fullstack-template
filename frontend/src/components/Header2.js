@@ -105,8 +105,8 @@ function Header2(props) {
     }
 
     const handled_LoggedOut = () => {
-        appDispatch({ type: "logout", value: true })
-        appDispatch({ type: "showLoggedIn", value: true })
+        //appDispatch({ type: "crmLogout", value: true })
+        //appDispatch({ type: "showLoggedIn", value: true })
         navigate("/")
     }
 

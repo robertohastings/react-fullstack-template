@@ -249,3 +249,19 @@ ALTER TABLE `crm`.`kardex`
 ADD COLUMN `id_proveedor` INT NULL AFTER `id_usuario`;
 
 UPDATE `crm`.`procmenu` SET `linkTo` = 'Inventario/Kardex/Kardex' WHERE (`id_empresa` = '1') and (`id_procMenu` = '29');
+
+-- NUEVO SP: postAjusteInventario
+
+ALTER TABLE `crm`.`kardex` 
+CHANGE COLUMN `referencia_documento` `referencia_documento` VARCHAR(100) NULL DEFAULT NULL ;
+
+
+-- NEW TABLE ordencompra_estado, ordencompra, ordencompra_detalle
+-- NEW Sp: getProveedoresFiltro, getProductosByProveedor
+
+-- NEW paquete: npm install @google/generative-ai
+
+-- getColoniasDeliveryListing
+-- postColoniaDelivery	
+-- getCajeroListing
+-- postCajero

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"
-import Axios from "axios"
 import { Table, Button, Pagination, Spinner, Modal, Form, FloatingLabel, Row, Col } from "react-bootstrap"
 import { CiEdit } from "react-icons/ci"
 import { IoIosAddCircle } from "react-icons/io"
@@ -8,6 +7,8 @@ import * as Yup from "yup"
 import { Formik, useFormik } from "formik"
 import Page from "../Page"
 import SpinnerButton from "../Spinner/SpinnerButton"
+import { useEmpresaID } from "../../tools/StateUtils"
+import { gettingPuntosDeEntrega, updatingPuntosDeEntrega } from "../services/Landing.service"
 
 const validationSchema = Yup.object({
     nombre: Yup.string().required("El nombre debe ser capturado"),
@@ -15,6 +16,7 @@ const validationSchema = Yup.object({
 })
 
 function PuntosDeEntrega() {
+    const id_empresa = useEmpresaID()
     const [data, setData] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     const [totalRecords, setTotalRecords] = useState(0)
@@ -29,16 +31,20 @@ function PuntosDeEntrega() {
     const fetchData = async () => {
         setIsLoaging(true)
 
+        const params= {
+            limite: rowsPerPage,
+            pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5
+        }
+
         try {
-            const response = await Axios.get("/api/getPuntosDeEntrega", {
-                params: {
-                    limite: rowsPerPage,
-                    pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5
-                }
-            })
-            console.log("response:", response.data.puntosDeEntrega)
-            setData(response.data.puntosDeEntrega)
-            setTotalRecords(response.data.totalRegistros)
+            const response = await gettingPuntosDeEntrega(params)
+            if (!response.success) {
+                console.error("Error fetching puntos de entrega:", response.error)
+                return
+            }
+            //console.log("response:", response.puntosDeEntrega)
+            setData(response.puntosDeEntrega)
+            setTotalRecords(response.totalRegistros)
         } catch (error) {
             console.error("There was an error fetching the products!", error.message)
         } finally {
@@ -69,7 +75,7 @@ function PuntosDeEntrega() {
             //console.log("values:", values)
 
             const puntoDeEntrega = {
-                id_empresa: 1,
+                id_empresa,
                 id_puntoDeEntrega: values.id_puntoDeEntrega,
                 nombre: values.nombre,
                 horario: values.horario,
@@ -82,13 +88,13 @@ function PuntosDeEntrega() {
     const postData = async puntoDeEntrega => {
         console.log("punto de entrega:", puntoDeEntrega)
         try {
-            await Axios.post("/api/postPuntosDeEntrega", puntoDeEntrega)
-                .then(response => {
-                    console.log(response)
-                })
-                .catch(error => {
-                    console.log("There was an error updating punto de entrega: ", error.message)
-                })
+            const response = await updatingPuntosDeEntrega(puntoDeEntrega)
+            if (response.success) {
+                console.log('Punto de entrega actualizado correctamente')
+            } else {
+                console.error('No se pudo actualizar el punto de entrega:', response.error)
+            }
+
         } catch (error) {
             console.log("error:", error)
         } finally {
@@ -108,7 +114,7 @@ function PuntosDeEntrega() {
     }
 
     const Agregar_handled = () => {
-        formik.values.id_empresa = 1
+        formik.values.id_empresa = id_empresa
         formik.values.id_puntoDeEntrega = 0
         formik.values.nombre = ""
         formik.values.horario = ""

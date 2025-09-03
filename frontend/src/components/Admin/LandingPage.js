@@ -1,67 +1,98 @@
-import React, { useState, useRef, useContext } from "react"
+import React, { useState, useRef, useContext, useEffect } from "react"
 import { Tab, Tabs, Form, Button, Spinner } from "react-bootstrap"
 import JoditEditor from "jodit-react"
 import { IoSaveOutline } from "react-icons/io5"
 import Page from "../Page"
 import PuntosDeEntrega from "./PuntosDeEntrega"
+import FormasDePago from "./FormasDePago"
+import ColoniasDelivery from "./ColoniasDelivery"
+import Cajeros from "./Cajeros"
+import Usuarios from './Usuarios'
+import Galeria from "./Galeria"
 import StateContext from "../../StateContext"
 import DispatchContext from "../../DispatchContext"
-import Axios from "axios"
-import FormasDePago from "./FormasDePago"
-import Galeria from "./Galeria"
+import { useEmpresaID, useHostname, useLandingPageID } from "../../tools/StateUtils"
+import { gettingLandingPageAdmin, updateLanding, updateLandingPage_QuienesSomos, updateLandingPage_Products,
+    updateLandingPage_Servicios
+ } from "../services/Landing.service"
 
 function LandingPage() {
+    const id_empresa = useEmpresaID()
+    const hostname = useHostname()
+    const id_landingPage = useLandingPageID()
     const appState = useContext(StateContext)
     const appDispatch = useContext(DispatchContext)
 
     const editorAboutUs = useRef(null)
     const editorProducts = useRef(null)
     const editorServices = useRef(null)
+    const editorInicio = useRef(null)
+    const editorDescripcion = useRef(null)
 
-    const [aboutUs, setAboutUs] = useState(appState.landingPage.quienesSomos)
+    const [aboutUs, setAboutUs] = useState()
     const [products, setProducts] = useState(appState.landingPage.productos)
     const [services, setServices] = useState(appState.landingPage.servicios)
-    // const [settings, setSettings] = useState({
-    //     mostrar_quienes_somos: false,
-    //     mostrar_contactanos: false,
-    //     mostrar_productos: false,
-    //     mostrar_servicios: false
-    // })
-    const [quienesSomosChecked, setQuienesSomosChecked] = useState(appState.landingPage.settings.mostrar_quienes_somos === 1 ? true : false)
-    const [contactanosChecked, setContactanosChecked] = useState(appState.landingPage.settings.mostrar_contactanos === 1 ? true : false)
-    const [productosChecked, setproductosChecked] = useState(appState.landingPage.settings.mostrar_productos === 1 ? true : false)
-    const [productosVerMasChecked, setproductosVerMasChecked] = useState(appState.landingPage.settings.mostrar_productos_verMas === 1 ? true : false)
-    const [serviciosChecked, setServiciosChecked] = useState(appState.landingPage.settings.mostrar_servicios === 1 ? true : false)
-    const [sitioEnMttoChecked, setSitioEnMttoChecked] = useState(appState.landingPage.settings.mostrar_sitioEnMantenimiento === 1 ? true : false)
-    //const [ settingsChecked, setSettingsChecked ] = useState(false)
-
+    const [inicioTitulo, setInicioTitulo] = useState(appState.landingPage.inicioTitulo)
+    const [inicioDescripcion, setInicioDescripcion] = useState(appState.landingPage.inicioDescripcion)
+    const [quienesSomosChecked, setQuienesSomosChecked] = useState(false)
+    const [contactanosChecked, setContactanosChecked] = useState(false)
+    const [productosChecked, setproductosChecked] = useState(false)
+    const [productosVerMasChecked, setproductosVerMasChecked] = useState(false)
+    const [serviciosChecked, setServiciosChecked] = useState(false)
+    const [sitioEnMttoChecked, setSitioEnMttoChecked] = useState(false)
+    const [carritoDeComprasChecked, setCarritoDeComprasChecked] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
+    console.log("hostname:", hostname)
+    console.log("id_LandingPage:", id_landingPage)
 
-    //console.log("aboutus:", appState.landingPage.quienesSomos)
-
-    // useEffect(() => {
-    //   setAboutUs(appState.landinPage.products.contenido)
-    // }, [])
-
+    useEffect(() => {
+        fetchData();
+    }, [])
+    
+    const fetchData = async () => {
+        const response = await gettingLandingPageAdmin(hostname);
+        if (response.success) {
+            console.log("Landing page data:", response);
+            console.log("quienes somos:", response.landingPage.settings.mostrar_quienes_somos);
+            //appDispatch({ type: "landingPage", data: response.landingPage });
+            setAboutUs(response.landingPage.quienesSomos);
+            setProducts(response.landingPage.productos);
+            setServices(response.landingPage.servicios);
+            setInicioTitulo(response.landingPage.inicio_titulo);
+            setInicioDescripcion(response.landingPage.inicio_descripcion);
+            setQuienesSomosChecked(response.landingPage.settings.mostrar_quienes_somos === 1 ? true : false);
+            setContactanosChecked(response.landingPage.settings.mostrar_contactanos === 1 ? true : false);
+            setproductosChecked(response.landingPage.settings.mostrar_productos === 1 ? true : false);
+            setproductosVerMasChecked(response.landingPage.settings.mostrar_productos_verMas === 1 ? true : false);
+            setServiciosChecked(response.landingPage.settings.mostrar_servicios === 1 ? true : false);
+            setSitioEnMttoChecked(response.landingPage.settings.mostrar_sitioEnMantenimiento === 1 ? true : false);
+            setCarritoDeComprasChecked(response.landingPage.settings.mostrar_carritoDeCompras === 1 ? true : false);
+        }
+    };
+    
+    
     const handledSubmit_AboutUs = async e => {
         e.preventDefault()
 
         setIsSaving(true)
 
         const landingPage = {
-            id_empresa: 1,
-            id_landingPage: 1,
-            quienes_somos: aboutUs
+            id_empresa,
+            id_landingPage,
+            quienes_somos: aboutUs,
+            inicio_titulo: inicioTitulo,
+            inicio_descripcion: inicioDescripcion
         }
 
         try {
-            await Axios.put("/api/putLandingPage_QuienesSomos", landingPage)
-                .then(response => {
-                    console.log(response)
-                })
-                .catch(error => {
-                    console.log("There was an error updating about us: ", error)
-                })
+            const response = await updateLandingPage_QuienesSomos(landingPage)
+            if (response.success) {
+                console.log('Se actualizó correctamente')
+            } else {
+                console.log('No se puedo actualizar la información correctamente')
+            }
+            //console.log('response quienes somos', response)
+            
         } catch (error) {
             console.log("error:", error)
         } finally {
@@ -74,19 +105,20 @@ function LandingPage() {
         setIsSaving(true)
 
         const landingPage = {
-            id_empresa: 1,
-            id_landingPage: 1,
+            id_empresa,
+            id_landingPage,
             productos: products
         }
 
         try {
-            await Axios.put("/api/putLandingPage_Productos", landingPage)
-                .then(response => {
-                    console.log(response)
-                })
-                .catch(error => {
-                    console.log("There was an error updating about us: ", error)
-                })
+            const response = await updateLandingPage_Products(landingPage)
+            if (response.success) {
+                console.log('Se actualizó correctamente')
+            } else {
+                console.log('No se puedo actualizar la información correctamente')
+            }
+            console.log('response productos', response)
+
         } catch (error) {
             console.log("error:", error)
         } finally {
@@ -99,19 +131,18 @@ function LandingPage() {
         setIsSaving(true)
 
         const landingPage = {
-            id_empresa: 1,
-            id_landingPage: 1,
+            id_empresa,
+            id_landingPage,
             servicios: services
         }
 
         try {
-            await Axios.put("/api/putLandingPage_Servicios", landingPage)
-                .then(response => {
-                    console.log(response)
-                })
-                .catch(error => {
-                    console.log("There was an error updating about us: ", error)
-                })
+            const response = await updateLandingPage_Servicios(landingPage)
+            if (response.success) {
+                console.log('Se actualizó correctamente')
+            } else {
+                console.log('No se puedo actualizar la información correctamente')
+            }
         } catch (error) {
             console.log("error:", error)
         } finally {
@@ -131,7 +162,8 @@ function LandingPage() {
             mostrar_productos_verMas: productosVerMasChecked === true ? 1 : 0,
             mostrar_servicios: serviciosChecked === true ? 1 : 0,
             mostrar_contactanos: contactanosChecked === true ? 1 : 0,
-            mostrar_sitioEnMantenimiento: sitioEnMttoChecked === true ? 1 : 0
+            mostrar_sitioEnMantenimiento: sitioEnMttoChecked === true ? 1 : 0,
+            mostrar_carritoDeCompras: carritoDeComprasChecked === true ? 1 : 0
         }
 
         appDispatch({
@@ -142,18 +174,21 @@ function LandingPage() {
                 mostrar_productos_verMas: productosVerMasChecked === true ? 1 : 0,
                 mostrar_servicios: serviciosChecked === true ? 1 : 0,
                 mostrar_contactanos: contactanosChecked === true ? 1 : 0,
-                mostrar_sitioEnMantenimiento: sitioEnMttoChecked === true ? 1 : 0
+                mostrar_sitioEnMantenimiento: sitioEnMttoChecked === true ? 1 : 0,
+                mostrar_carritoDeCompras: carritoDeComprasChecked === true ? 1 : 0
             }
         })
 
         try {
-            await Axios.put("/api/putLandingPage_Settings", landingPage)
-                .then(response => {
-                    console.log(response)
-                })
-                .catch(error => {
-                    console.log("There was an error updating about us: ", error)
-                })
+            await updateLanding(landingPage)
+
+            // await Axios.put("/api/putLandingPage_Settings", landingPage)
+            //     .then(response => {
+            //         console.log(response)
+            //     })
+            //     .catch(error => {
+            //         console.log("There was an error updating about us: ", error)
+            //     })
         } catch (error) {
             console.log("error:", error)
         } finally {
@@ -165,7 +200,7 @@ function LandingPage() {
 
     return (
         <Page title="Landig Page">
-            <Tabs defaultActiveKey="settings" id="justify-tab-example" className="mb-3" justify>
+            <Tabs defaultActiveKey="settings" id="justify-tab-example" className="mb-3" justify variant="tabs">
                 <Tab eventKey="settings" title="Landing Page">
                     <h4 className="pt-4">Activar / Desactivar páginas</h4>
                     <hr />
@@ -174,50 +209,65 @@ function LandingPage() {
                             <Form.Check // prettier-ignore
                                 type="switch"
                                 label="¿Quienes somos?"
-                                defaultChecked={quienesSomosChecked}
+                                //defaultChecked={quienesSomosChecked}
                                 id="aboutUs"
                                 className="pt-2"
+                                //value={quienesSomosChecked}
+                                checked={quienesSomosChecked}
                                 onChange={e => setQuienesSomosChecked(e.target.checked)}
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
                                 label="Contáctanos"
-                                defaultChecked={contactanosChecked}
+                                //defaultChecked={contactanosChecked}
                                 id="contactUs"
                                 className="pt-2"
+                                checked={contactanosChecked}
                                 onChange={e => setContactanosChecked(e.target.checked)}
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
                                 label="Productos"
-                                defaultChecked={productosChecked}
+                                //defaultChecked={productosChecked}
                                 id="products"
                                 className="pt-2"
+                                checked={productosChecked}
                                 onChange={e => setproductosChecked(e.target.checked)}
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
                                 label="Productos ver más"
-                                defaultChecked={productosVerMasChecked}
+                                //defaultChecked={productosVerMasChecked}
                                 id="products_vermas"
                                 className="pt-2"
+                                checked={productosVerMasChecked}
                                 onChange={e => setproductosVerMasChecked(e.target.checked)}
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
                                 label="Servicios"
-                                defaultChecked={serviciosChecked}
+                                //defaultChecked={serviciosChecked}
                                 id="services"
                                 className="pt-2"
+                                checked={serviciosChecked}
                                 onChange={e => setServiciosChecked(e.target.checked)}
                             />
                             <Form.Check // prettier-ignore
                                 type="switch"
                                 label="Mostrar Sitio en Mantenimiento"
-                                defaultChecked={sitioEnMttoChecked}
+                                //defaultChecked={sitioEnMttoChecked}
                                 id="mtto"
-                                className="pt-2 pb-3"
+                                className="pt-2"
+                                checked={sitioEnMttoChecked}
                                 onChange={e => setSitioEnMttoChecked(e.target.checked)}
+                            />
+                            <Form.Check // prettier-ignore
+                                type="switch"
+                                label="Mostrar Carrito de compras"
+                                id="carrito"
+                                className="pt-2 pb-3"
+                                checked={carritoDeComprasChecked}
+                                onChange={e => setCarritoDeComprasChecked(e.target.checked)}
                             />
                             <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
                                 <IoSaveOutline />
@@ -229,10 +279,16 @@ function LandingPage() {
                 </Tab>
                 {/* Quienes somos */}
                 <Tab eventKey="profile" title="¿Quienes somos?">
-                    <h4 className="pt-2 pb-3">¿Quienes somos?</h4>
 
                     <Form onSubmit={handledSubmit_AboutUs}>
+                        <h4 className="pt-2 pb-3">¿Quienes somos?</h4>
                         <JoditEditor tabIndex={1} ref={editorAboutUs} value={aboutUs} onChange={newContent => setAboutUs(newContent)} />
+                        <hr />
+                        <h4 className="pt-4 pb-3">Inicio - Título</h4>
+                        <JoditEditor tabIndex={2} ref={editorInicio} value={inicioTitulo} onChange={newContent => setInicioTitulo(newContent)} />
+                        <hr />
+                        <h4 className="pt-4 pb-3">Inicio - Descripción</h4>
+                        <JoditEditor tabIndex={3} ref={editorDescripcion} value={inicioDescripcion} onChange={newContent => setInicioDescripcion(newContent)} />    
 
                         <Button type="submit" className="mt-3 d-flex align-items-center gap-1">
                             <IoSaveOutline />
@@ -242,7 +298,7 @@ function LandingPage() {
                     </Form>
 
                     <h4 className="pt-5">Carrousel</h4>
-                    <Galeria fuente={"quienes_somos"} />
+                    {/*<Galeria fuente={"quienes_somos"} />*/}
                 </Tab>
 
                 <Tab eventKey="products" title="Productos">
@@ -276,6 +332,15 @@ function LandingPage() {
                 </Tab>
                 <Tab eventKey="formasDePago" title="Formas de Pago">
                     <FormasDePago />
+                </Tab>
+                <Tab eventKey="coloniasDelivery" title="Colonias Delivery">
+                    <ColoniasDelivery />
+                </Tab>
+                <Tab eventKey="cajeros" title="Cajeros">
+                    <Cajeros />
+                </Tab>
+                <Tab eventKey="usuarios" title="Usuarios">
+                    <Usuarios />
                 </Tab>
             </Tabs>
         </Page>

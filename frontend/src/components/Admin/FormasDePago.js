@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react"
-import Axios from "axios"
 import { Button, Col, Form, Row, Spinner } from "react-bootstrap"
 import Page from "../Page"
 
 import { TbRefresh } from "react-icons/tb"
 import SpinnerButton from "../Spinner/SpinnerButton"
+import { gettingFormasDePago, updatingFormasDePago } from "../services/Landing.service"
+import { useEmpresaID } from "../../tools/StateUtils"
 
 function FormasDePago() {
+    const id_empresa = useEmpresaID()
     const [data, setData] = useState([])
     const [isLoading, setIsLoaging] = useState(false)
     const [sending, setSending] = useState(false)
@@ -19,13 +21,15 @@ function FormasDePago() {
         setIsLoaging(true)
 
         try {
-            const response = await Axios.get("/api/getFormasDePago", {
-                params: {
-                    id_empresa: 1
-                }
-            })
-            console.log("response formas de pago:", response.data.formasDePago)
-            setData(response.data.formasDePago)
+            const params = {
+                id_empresa
+            }
+
+            const response = await gettingFormasDePago(params)
+            if (response.success){
+                console.log("response formas de pago:", response.formasDePago)
+                setData(response.formasDePago)
+            }
         } catch (error) {
             console.error("There was an error fetching the products!", error.message)
         } finally {
@@ -37,9 +41,9 @@ function FormasDePago() {
 
     const submit_handled = e => {
         e.preventDefault()
-        console.log("form data:", e)
+        //console.log("form data:", e)
         const dataUpdated = {
-            id_empresa: 1,
+            id_empresa,
             formasDePago: [
                 {
                     id_forma_de_pago: 1,
@@ -70,31 +74,44 @@ function FormasDePago() {
                     id_forma_de_pago: 6,
                     activo: e.target[10].checked === true ? 1 : 0,
                     informacion_adicional: e.target[11].value
+                },
+                {
+                    id_forma_de_pago: 7,
+                    activo: e.target[12].checked === true ? 1 : 0,
+                    informacion_adicional: e.target[13].value
+                },
+                {
+                    id_forma_de_pago: 8,
+                    activo: e.target[14].checked === true ? 1 : 0,
+                    informacion_adicional: e.target[15].value
+                },
+                {
+                    id_forma_de_pago: 9,
+                    activo: e.target[16].checked === true ? 1 : 0,
+                    informacion_adicional: e.target[17].value
                 }
             ]
         }
 
-        console.log(dataUpdated)
+        //console.log(dataUpdated)
         putFormasDePago(dataUpdated)
     }
 
     const putFormasDePago = async dataUpdated => {
         setSending(true)
         try {
-            await Axios.put("/api/putFormasDePago", dataUpdated)
-                .then(response => {
-                    console.log(response)
-                    setSending(false)
-                })
-                .catch(error => {
-                    console.log("There was an error updating formas de pago: ", error)
-                    setSending(false)
-                })
+            const response = await updatingFormasDePago(dataUpdated)
+            if (response.success){
+                console.log(response.message)
+            }
+            fetchData()
+            //console.log(response)
+            //setSending(false)
+
         } catch (error) {
             console.log("error:", error)
         } finally {
             setSending(false)
-            //setShow(false)
             fetchData()
         }
     }

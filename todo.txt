@@ -187,9 +187,9 @@ ok- Crear putCaja: Valida que no se pueda crear una caja nueva si hay una caja p
                 referencia_documento, saldo_anterior, saldo_actual, observaciones, id_usuario
         - Crear postKardex (Pendiente)
         - Crear ruta y controlador (Pendiente)
-    - Crear la consulta de kardex
-        - Crear getKardex
-        - Crear ruta y controlador
+    OK- Crear la consulta de kardex
+        OK- Crear getKardex
+        OK- Crear ruta y controlador
 
 - Nueva pantallas de Combos
     OK- Crear tabla combos con los campos:
@@ -201,33 +201,39 @@ ok- Crear putCaja: Valida que no se pueda crear una caja nueva si hay una caja p
 - Nueva pantalla de Proveedores
 
 - Nueva pantalla de Ordenes de compra
-    - Crear tabla ordencompra_estado
-        - Campos: id_empresa, id_estado_ordencompra, descripción
-        - Crear registros: Pendiente, Recibida, Cancelada, Cuando el estatus sea recibida se afecta el inventario.
-        - crear getOrdeDeCompra
-        - Crear ruta y controladores
+        ok- Crear tabla ordencompra_estado
+        ok- Campos: id_empresa, id_estado_ordencompra, descripción
+        ok- Crear registros: Pendiente, Recibida, Cancelada, Cuando el estatus sea recibida se afecta el inventario.
+        ok- Agregar los regisros en postHost
+        ok- crear getOrdeDeCompra
+        ok- Crear ruta y controladores
 
-    - Crear nueva tabla ordencompra
-        - Campos: id_empresa, id_ordencompra, fecha, id_proveedor, total_orden, id_estado_ordencompra
 
-    - Crear nueva tabla detalle_ordencompra
-        - Campos: id_empresa, id_ordencompra, partida, id_producto, cantidad, costo_unitario, subtotal
+    OK- Crear nueva tabla ordencompra
+        OK- Campos: id_empresa, id_ordencompra, fecha, id_proveedor, total_orden, id_estado_ordencompra
 
-    - Crear getOrdenDeCompra, postOrdenDeCompra, putOrdenDeCompra
+    OK- Crear nueva tabla detalle_ordencompra
+        OK- Campos: id_empresa, id_ordencompra, partida, id_producto, cantidad, costo_unitario, subtotal
 
-    - crear controladores y rutas
-        - Al crear la orden se debe de incrementar la existencia de cada uno de los productos.
-        - También se debe crear un registro en el kardex, la referencia_documento = orden de compra y el id_tipo_movimiento
+    ok- Crear 
+        ok- getOrdenDeCompra, 
+        ok- postOrdenDeCompra
+        ok- putOrdenDeCompra
+        ok- deleteOrdenDeCompra
+
+    ok- crear controladores y rutas
+        ok- Al crear la orden se debe de incrementar la existencia de cada uno de los productos.
+        ok- También se debe crear un registro en el kardex, la referencia_documento = orden de compra y el id_tipo_movimiento
     - crear pantalla  
 
-- Nueva pantalla de ajustes de Inventario
-    - Crear tabla ajustes_inventario
+- Nueva pantalla de ajustes de Inventario. (no fue necesario quedo dentro de la consulta de kardex) 
+    ok - Crear tabla ajustes_inventario
         Campos: id_empresa, id_ajuste, fecha, id_producto, cantidad_ajustada, id_tipo_movimiento, id_usuario, razon_ajuste
-    - Crear pantalla de ajustes
-    - Crear postAjusteInventario
-        - Se debe de incrementar o decrementar la existencia dependiendo si es entrada o salida sgún el id_tipo_movimiento.
-        - Se debe de generar un movimiento de kardex con razon_ajuste = "Auditoria de Inventario"
-    - Crear ruta y controlador    
+    ok- Crear pantalla de ajustes
+    ok- Crear postAjusteInventario
+        ok- Se debe de incrementar o decrementar la existencia dependiendo si es entrada o salida sgún el id_tipo_movimiento.
+        ok- Se debe de generar un movimiento de kardex con razon_ajuste = "Auditoria de Inventario"
+    ok- Crear ruta y controlador    
 
 
 - Si se registró una nueva colonia, volver a cargar el getColoniasDelivery
@@ -237,3 +243,8 @@ ok- Crear putCaja: Valida que no se pueda crear una caja nueva si hay una caja p
 - Validar que la forma de pago acepte cantidades mayores o no
 - Ver la parte del cargo por cobro con tarjeta
 - Validar que en la alta de productos que el SKU no se repita que sea único, y también en la pantalla.
+
+Conf Menu
+
+- ABC Menu
+- ABC Roles

@@ -2,6 +2,49 @@ import { pool } from "../db.js"
 import axios from "axios"
 import requestIp from 'request-ip'
 
+export const getLandingPageAdmin = async (req, res) => {
+    try {
+        const { hostname } = req.query
+        console.log("getLandingPage -> hostname", hostname)
+        //const rows = await pool.query(`CALL getLandingPage( ?, ?, ?);`, [id_empresa, id_landingPage, hostname])
+        const rows = await pool.query(`CALL getLandingPage( ? );`, [hostname])
+        console.log(rows[0][0][0]);
+        const data = {
+            success: true,
+            landingPage: {
+                idEmpresa: rows[0][0][0].id_empresa,
+                idLandingPage: rows[0][0][0].id_landingPage,
+                inicioTitulo: rows[0][0][0].inicio_titulo,
+                inicioDescripcion: rows[0][0][0].inicio_descripcion,
+                descripcion: rows[0][0][0].descripcion,
+                quienesSomos: rows[0][0][0].quienes_somos,
+                servicios: rows[0][0][0].servicios,
+                productos: rows[0][0][0].productos,
+                categorias: rows[0][1],
+                menuLanding: rows[0][2],
+                tipoPedido: rows[0][3],
+                formasDePago: rows[0][4],
+                settings: {
+                    mostrar_quienes_somos: rows[0][0][0].mostrar_quienes_somos,
+                    mostrar_productos: rows[0][0][0].mostrar_productos,
+                    mostrar_productos_verMas: rows[0][0][0].mostrar_productos_verMas,
+                    mostrar_servicios: rows[0][0][0].mostrar_servicios,
+                    mostrar_contactanos: rows[0][0][0].mostrar_contactanos,
+                    mostrar_sitioEnMantenimiento: rows[0][0][0].mostrar_sitioEnMantenimiento,
+                    mostrar_landingPage: rows[0][0][0].mostrar_landingPage,
+                    mostrar_carritoDeCompras: rows[0][0][0].mostrar_carritoDeCompras                    
+                }
+            }
+        }
+        console.log("getLandingPage -> data", data.landingPage)
+        res.json(data)
+    } catch (error) {
+        console.log("Error fectching the data ", error)
+        res.status(500).json({
+            error: error
+        })
+    }
+}
 
 export const putLandingPage = async (req, res) => {
     const { id_empresa, id_landingPage } = req.params
@@ -28,17 +71,19 @@ export const putLandingPage = async (req, res) => {
 }
 
 export const putLandingPage_QuienesSomos = async (req, res) => {
-    const { id_empresa, id_landingPage, quienes_somos } = req.body
+    const { id_empresa, id_landingPage, quienes_somos, inicio_titulo, inicio_descripcion } = req.body
 
     try {
-        const [result] = await pool.query("CALL putLandingPage_QuienesSomos(?, ?, ?)", [id_empresa, id_landingPage, quienes_somos])
+        const [result] = await pool.query("CALL putLandingPage_QuienesSomos(?, ?, ?, ?, ?)", [id_empresa, id_landingPage, quienes_somos, inicio_titulo, inicio_descripcion])
 
         if (result.affectedRows == 0) {
             res.status(404).json({
+                success: false,
                 message: "No se realizó actualización"
             })
         } else {
             return res.status(200).json({
+                success: true,
                 message: "Landing paga actualizada"
             })
         }
@@ -58,10 +103,12 @@ export const putLandingPage_Productos = async (req, res) => {
 
         if (result.affectedRows == 0) {
             res.status(404).json({
+                success: false,
                 message: "Landing Productos No se actualizó"
             })
         } else {
             return res.status(200).json({
+                success: true,
                 message: "Landing Productos actualizada"
             })
         }
@@ -81,10 +128,12 @@ export const putLandingPage_Servicios = async (req, res) => {
 
         if (result.affectedRows == 0) {
             res.status(404).json({
+                success: false,
                 message: "Landing Servicios No se actualizó"
             })
         } else {
             return res.status(200).json({
+                success: true,
                 message: "Landing Servicios actualizada"
             })
         }
@@ -97,11 +146,15 @@ export const putLandingPage_Servicios = async (req, res) => {
 }
 
 export const putLandingPage_Settings = async (req, res) => {
-    const { id_empresa, id_landingPage, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos, mostrar_sitioEnMantenimiento } = req.body
+    console.log("putLandingPage_Settings body:", req.body)
+    const { id_empresa, id_landingPage, mostrar_quienes_somos, mostrar_productos, mostrar_productos_verMas, mostrar_servicios, mostrar_contactanos, 
+        mostrar_sitioEnMantenimiento, mostrar_carritoDeCompras } = req.body
 
     try {
-        const [result] = await pool.query("CALL putLandingPage_Settings(?, ?, ?, ?, ?, ?, ?)", [id_empresa, id_landingPage, mostrar_quienes_somos, mostrar_productos, mostrar_servicios, mostrar_contactanos, mostrar_sitioEnMantenimiento])
-
+    const { id_empresa, id_landingPage, mostrar_quienes_somos, mostrar_productos, mostrar_productos_verMas, mostrar_servicios, mostrar_contactanos, mostrar_sitioEnMantenimiento, mostrar_carritoDeCompras } = req.body
+        const [result] = await pool.query("CALL putLandingPage_Settings(?, ?, ?, ?, ?, ?, ?, ?, ?)", [id_empresa, id_landingPage, mostrar_quienes_somos, mostrar_productos, mostrar_productos_verMas, mostrar_servicios, 
+            mostrar_contactanos, mostrar_sitioEnMantenimiento, mostrar_carritoDeCompras])
+        console.log('result:', result)
         if (result.affectedRows == 0) {
             res.status(404).json({
                 message: "Landing Settings No se actualizó"
@@ -128,10 +181,12 @@ export const postPuntosDeEntrega = async (req, res) => {
         const [result] = await pool.query("CALL postPuntoDeEntrega(?, ?, ?, ?, ?)", [id_empresa, id_puntoDeEntrega, nombre, horario, activo])
         if (result.affectedRows == 0) {
             res.status(404).json({
+                success: false,
                 message: `Puntos de acceso No se actualizó`
             })
         } else {
             return res.status(200).json({
+                success: true,
                 message: "Puntos de accesos actualizados"
             })
         }
@@ -144,12 +199,14 @@ export const postPuntosDeEntrega = async (req, res) => {
 }
 
 export const putUsuario = async (req, res) => {
+    console.log('here')
     //console.log("postPuntosDeEntrega")
-    console.log("body:", req.body)
-    const { id_empresa, id_usuario, nombre, apellidos, celular, fecha_nacimiento } = req.body
+    console.log("putUsuario body:", req.body)
+    const { id_empresa, id_usuario, nombre, apellidos, celular, fecha_nacimiento } = req.body.params
 
     try {
         const [result] = await pool.query("CALL putUsuario(?, ?, ?, ?, ?, ?)", [id_empresa, id_usuario, nombre, apellidos, celular, fecha_nacimiento])
+        console.log('result:', result)
         if (result.affectedRows == 0) {
             res.status(404).json({
                 message: `Usuario No se actualizó`
@@ -206,7 +263,7 @@ export const postDireccion = async (req, res) => {
     }
 }
 export const getDirecciones = async (req, res) => {
-    //console.log("here")
+    //console.log("getDirecciones:", req.query)
     try {
         const { limite, pagina, id_empresa, tipo_identidad, identidad } = req.query
         //console.log(limite, pagina)
@@ -228,9 +285,9 @@ export const getPuntosDeEntregaCarrito = async (req, res) => {
     console.log("getPuntosDeEntregaCarrito:", req.query)
     try {
         const { id_empresa, id_direccion_tipo_identidad, identidad } = req.query
-        //console.log(limite, pagina)
 
         const rows = await pool.query(`CALL getPuntosDeEntregaCarrito(?, ?, ?);`, [id_empresa, id_direccion_tipo_identidad, identidad])
+        
 
         res.status(200).json({
             success: true,
@@ -246,7 +303,6 @@ export const getFormasDePago = async (req, res) => {
     console.log("getFormasDePago:", req.query)
     try {
         const { id_empresa } = req.query
-        //console.log(limite, pagina)
 
         const rows = await pool.query(`CALL getFormasDePago(?);`, [id_empresa])
 
@@ -256,6 +312,7 @@ export const getFormasDePago = async (req, res) => {
         })
     } catch (error) {
         res.status(500).json({
+            success: false,
             error: "An error ocurred"
         })
     }
@@ -263,18 +320,20 @@ export const getFormasDePago = async (req, res) => {
 export const putFormasDePago = async (req, res) => {
     //console.log("body putFormasDePago:", req.body)
     const { id_empresa, formasDePago } = req.body
-    //console.log("id_empresa", id_empresa)
-    //console.log("formasDePago", formasDePago)
+    console.log("id_empresa", id_empresa)
+    console.log("formasDePago", formasDePago)
 
     try {
         const [result] = await pool.query("CALL putFormasDePago(?, ?)", [id_empresa, JSON.stringify(formasDePago)])
 
         if (result.affectedRows == 0) {
             res.status(404).json({
+                success: false,
                 message: "No se realizó actualización"
             })
         } else {
             return res.status(200).json({
+                success: true,
                 message: "Formas de pago actualizadas exitosamente"
             })
         }
@@ -319,7 +378,7 @@ export const postPedido = async (req, res) => {
     }
 }
 export const getPedidoDetalle = async (req, res) => {
-    console.log("getPedidoDetalle:", req.query)
+    //console.log("getPedidoDetalle:", req.query.params)
     try {
         const { id_empresa, id_usuario } = req.query
         //console.log(limite, pagina)
@@ -637,6 +696,189 @@ export const getPedidosPorIdCaja = async (req, res) => {
         })
     } catch (error) {
         res.status(500).json({
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const getMenu = async (req, res) => {
+
+    try {
+        console.log(req.query)
+        const { id_empresa, id_padre, limite, pagina } = req.query
+        console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getMenu(?, ?, ?, ?);`, [id_empresa, id_padre, limite, pagina])
+        console.log(rows[0][1])
+        res.json({
+            success: true,
+            menu: rows[0][1],
+            totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const postMenu = async (req, res) => {
+    try {
+        const { id_empresa, id_procMenu, nombre, orden, activo, linkTo, icono, soloLanding, id_padre} = req.body
+        const result = await pool.query("CALL postMenu(?, ?, ?, ?, ?, ?, ?, ?, ?)", [id_empresa, id_procMenu, nombre, orden, activo, linkTo, icono, soloLanding, id_padre])
+        res.json({
+            success: true,
+            message: "Menu creado correctamente",
+            data: result[0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const getRolListing = async (req, res) => {
+    //console.log("Fetching role listing", req.query)
+    try {
+        const { id_empresa, limite, pagina } = req.query
+        const rows = await pool.query(`CALL getRolListing(?, ?, ?);`, [id_empresa, limite, pagina])
+        res.json({
+            success: true,
+            roles: rows[0][1],
+            totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const postRol = async (req, res) => {
+    try {
+        const { id_empresa, id_rol, nombre, activo } = req.body
+        const result = await pool.query("CALL postRol(?, ?, ?, ?)", [id_empresa, id_rol, nombre, activo])
+        res.json({
+            success: true,
+            message: "Rol creado correctamente",
+            data: result[0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const getModuloListing = async (req, res) => {
+    try {
+        const { id_empresa, limite, pagina } = req.query
+        const rows = await pool.query(`CALL getModuloListing(?, ?, ?);`, [id_empresa, limite, pagina])
+        res.json({
+            success: true,
+            modulos: rows[0][1],
+            totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const postModulo = async (req, res) => {
+    try {
+        const { id_empresa, id_modulo, nombre, activo } = req.body
+        const result = await pool.query("CALL postModulo(?, ?, ?, ?)", [id_empresa, id_modulo, nombre, activo])
+        res.json({
+            success: true,
+            message: "Modulo creado correctamente",
+            data: result[0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const getRolMenuListing = async (req, res) => {
+    try {
+        const { id_empresa, id_rol, limite, pagina } = req.query
+        const rows = await pool.query(`CALL getRolMenuListing(?, ?, ?, ?);`, [id_empresa, id_rol, limite, pagina])
+        res.json({
+            success: true,
+            menu: rows[0][1],
+            totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const postRolMenu = async (req, res) => {  
+    console.log('Request body postRolMenu:', req.body)  
+    try {
+        const { id_empresa, id_procMenu, id_rol, activo } = req.body
+        const result = await pool.query("CALL postRolMenu(?, ?, ?, ?)", [id_empresa, id_procMenu, id_rol, activo])
+        res.json({
+            success: true,
+            message: "RolMenu creado correctamente",
+            data: result[0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const getRoles = async (req, res) => {
+    try {
+        const { id_empresa } = req.query
+        const rows = await pool.query(`CALL getRoles(?);`, [id_empresa])
+        res.json({
+            success: true,
+            roles: rows[0][0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const getEmpresasListing = async (req, res) => {
+    try {
+        const { limite, pagina } = req.query
+        const rows = await pool.query(`CALL getEmpresasListing(?, ?);`, [limite, pagina])
+        console.log("Response data from getEmpresasListing:", rows[0][1]);
+        res.json({
+            success: true,
+            empresas: rows[0][1],
+            totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const postEmpresa = async (req, res) => {
+    try {
+        const { id_empresa, nombre, logo, host, activo } = req.body
+        const result = await pool.query("CALL postEmpresa(?, ?, ?, ?, ?)", [id_empresa, nombre, logo, host, activo])
+        res.json({
+            success: true,
+            message: "Empresa creada correctamente",
+            data: result[0]
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
             error: `An error ocurred: ${error.message}`
         })
     }

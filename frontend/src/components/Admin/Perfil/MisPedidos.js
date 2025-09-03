@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from "react"
-import Axios from "axios"
+import { getPedidoDetalle } from "../../../models/Usuario/Usuario.model"
+import { useEmpresaID, useUsuarioID } from "../../../tools/StateUtils";
+
 //import SpinnerButton from "../../Spinner/SpinnerButton"
 import { Accordion, Button, Spinner, Table, Image } from "react-bootstrap"
 
 function MisPedidos() {
+    const id_empresa = useEmpresaID();
+    const id_usuario = useUsuarioID();
     const [data, setData] = useState([])
     const [isLoading, setIsLoaging] = useState(false)
 
-    const fetchMisPedidos = async () => {
-        setIsLoaging(true)
-
-        try {
-            const response = await Axios.get("/api/getPedidoDetalle", {
-                params: {
-                    id_empresa: 1,
-                    id_usuario: 1
-                }
-            })
-            console.log("response:", response.data.direcciones)
-            setData(response.data.pedidos)
-        } catch (error) {
-            console.error("There was an error fetching the pedidos!", error)
-        } finally {
-            setIsLoaging(false)
-        }
-    }
-
+    
     useEffect(() => {
+        
+        const fetchMisPedidos = async () => {
+            setIsLoaging(true)
+    
+            try {
+                const response = await getPedidoDetalle(id_empresa, id_usuario)
+
+                setData(response.pedidos)
+            } catch (error) {
+                console.error("There was an error fetching the pedidos!", error)
+            } finally {
+                setIsLoaging(false)
+            }
+        }
         fetchMisPedidos()
-    }, [])
+    }, [id_empresa, id_usuario])
 
     // Create our number formatter.
     const formatter = new Intl.NumberFormat("en-MX", {

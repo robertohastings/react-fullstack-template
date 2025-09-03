@@ -13,6 +13,8 @@ import comprasRoutes from "./routes/compras.routes.js"
 import catalogosRoutes from "./routes/catalogos.routes.js"
 import whatsappRoutes from "./routes/whatsapp.routes.js"
 import agendaRoutes from "./routes/agenda.routes.js"
+import aiRoutes from "./routes/ai.routes.js"
+import carteraRoutes from "./routes/cartera.route.js"
 
 const app = express()
 //const PORT = process.env.PORT || 8080
@@ -67,6 +69,9 @@ app.use("/api/", uploadRoutes)
 app.use("/api/", comprasRoutes)
 app.use("/api/", catalogosRoutes)
 app.use("/whatsapp", whatsappRoutes)
+app.use("/api/ai", aiRoutes)
+app.use("/api/", carteraRoutes)
+
 
 app.get("/api", (req, res) => {
     res.send("Hola mundo from backend! 5")

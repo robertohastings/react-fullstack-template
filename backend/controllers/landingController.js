@@ -30,6 +30,8 @@ export const getLandingPage = async (req, res) => {
             landingPage: {
                 idEmpresa: rows[0][0][0].id_empresa,
                 idLandingPage: rows[0][0][0].id_landingPage,
+                inicioTitulo: rows[0][0][0].inicio_titulo,
+                inicioDescripcion: rows[0][0][0].inicio_descripcion,
                 quienesSomos: rows[0][0][0].quienes_somos,
                 servicios: rows[0][0][0].servicios,
                 productos: rows[0][0][0].productos,
@@ -83,18 +85,14 @@ export const getCategorias = async (req, res) => {
 }
 
 export const getPuntosDeEntrega = async (req, res) => {
-    //console.log("here 2")
+
     try {
+        console.log(req.query)
         const { limite, pagina } = req.query
         console.log(limite, pagina)
 
         const rows = await pool.query(`CALL getPuntosDeEntrega(?, ?);`, [limite, pagina])
-
-        //console.log(rows)
-
-        //console.log("rows:", rows[0][0][0])
-
-        //console.log("rows:", rows[0][1])
+        console.log(rows[0][1])
         res.json({
             success: true,
             puntosDeEntrega: rows[0][1],
@@ -102,7 +100,99 @@ export const getPuntosDeEntrega = async (req, res) => {
         })
     } catch (error) {
         res.status(500).json({
+            success: false,
             error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const getColoniasDeliveryListing = async (req, res) => {
+
+    try {
+        console.log(req.query)
+        const { id_empresa, limite, pagina } = req.query
+        console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getColoniasDeliveryListing(?, ?, ?);`, [id_empresa, limite, pagina])
+        console.log(rows[0][1])
+        res.json({
+            success: true,
+            coloniasDelivery: rows[0][1],
+            totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+export const postColoniaDelivery = async (req, res) => {
+    //console.log("postPuntosDeEntrega")
+    //console.log("body:", req.body)
+    const { id_empresa, id_colonia, nombre, cargo, activo } = req.body
+
+    try {
+        const [result] = await pool.query("CALL postColoniaDelivery(?, ?, ?, ?, ?)", [id_empresa, id_colonia, nombre, cargo, activo])
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                success: false,
+                message: `Colonia de entrega No se actualizó`
+            })
+        } else {
+            return res.status(200).json({
+                success: true,
+                message: "Colonia de entrega actualizada"
+            })
+        }
+    } catch (error) {
+        //console.log("Ocurrió un error")
+        res.status(500).json({
+            message: `Error: ${error.message}`
+        })
+    }
+}
+export const getCajeroListing = async (req, res) => {
+
+    try {
+        console.log(req.query)
+        const { id_empresa, limite, pagina } = req.query
+        console.log(limite, pagina)
+
+        const rows = await pool.query(`CALL getCajeroListing(?, ?, ?);`, [id_empresa, limite, pagina])
+        console.log(rows[0][1])
+        res.json({
+            success: true,
+            cajeros: rows[0][1],
+            totalRegistros: rows[0][0][0].totalRegistros
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: `An error ocurred: ${error.message}`
+        })
+    }
+}
+
+export const postCajero = async (req, res) => {
+    const { id_empresa, id_cajero, nombre, password, activo } = req.body
+
+    try {
+        const [result] = await pool.query("CALL postCajero(?, ?, ?, ?, ?)", [id_empresa, id_cajero, nombre, password, activo])
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                success: false,
+                message: `Cajero No se actualizó`
+            })
+        } else {
+            return res.status(200).json({
+                success: true,
+                message: "Cajero actualizado"
+            })
+        }
+    } catch (error) {
+        //console.log("Ocurrió un error")
+        res.status(500).json({
+            message: `Error: ${error.message}`
         })
     }
 }
@@ -149,3 +239,25 @@ export async function apiLanding(req, res) {
     }
     await res.send(data)
 }
+//Colonias Delivery
+// export const getColoniasDelivery = async (req, res) => {    
+//     try {
+//         const { id_empresa, limite, pagina } = req.query
+//         console.log("getColoniasDelivery -> id_empresa:", id_empresa, "limite:", limite, "pagina:", pagina)
+
+//         const rows = await pool.query(`CALL getColoniasDelivery(?, ?, ?);`, [id_empresa, limite, pagina])
+//         console.log("getColoniasDelivery -> rows:", rows[0][1])
+
+//         res.json({
+//             success: true,
+//             coloniasDelivery: rows[0][1],
+//             totalRegistros: rows[0][0][0].totalRegistros
+//         })
+//     } catch (error) {
+//         console.error("Error fetching colonias delivery:", error)
+//         res.status(500).json({
+//             success: false,
+//             error: `An error ocurred: ${error.message}`
+//         })
+//     }
+// }

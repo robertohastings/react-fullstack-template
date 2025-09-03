@@ -8,8 +8,9 @@ function Page(props) {
         window.scrollTo(0, 0)
     }, [props.title])
 
-    const containerClass = props.fluid ? "container-fluid mt-5" : "container mt-5 pt-2"
-
+    //const containerClass = props.fluid ? "container-fluid mt-5" : "container mt-5 pt-2"
+    const marginTop = props.mt || 5; // Use the provided mt prop or default to 5
+    const containerClass = props.fluid ? `container-fluid mt-${marginTop}` : `container mt-${marginTop} pt-2`;
     return (
         <>
             <div className={containerClass}>{props.children}</div>

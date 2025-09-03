@@ -1,0 +1,64 @@
+.navbar {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.brand {
+    font-weight: 600;
+    color: #6a5acd; /* --color-primario from old file */
+}
+
+.navbar :global(.nav-link) {
+    position: relative; /* Necesario para posicionar el subrayado */
+    transition: color 0.2s ease-in-out;
+  padding-bottom: 5px; /* Espacio para que el subrayado no pegue con el texto */
+}
+
+.navbar :global(.nav-link):hover {
+    color: #6a5acd !important;
+}
+
+/* Muestra el subrayado al pasar el mouse */
+.navbar :global(.nav-link):hover::after {
+  width: 100%;
+}
+
+/* Pseudo-elemento para el subrayado (inicialmente invisible) */
+.navbar :global(.nav-link)::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #6a5acd;
+  transition: width 0.3s ease-out; /* Animación para el ancho */
+}
+
+.navbar :global(.nav-link):hover::after {
+  width: 100%;
+}
+
+.userName {
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+
+.icon {
+    color: #333333; /* --color-texto from old file */
+}
+
+.cartLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cartCount {
+    background-color: #6a5acd;
+    color: white;
+    border-radius: 50%;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+}

@@ -1,0 +1,111 @@
+.loginPage {
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    background-color: #f8f9fa;
+}
+
+.carouselContainer {
+    height: 100vh;
+    padding: 0;
+}
+
+.carouselContainer :global(.carousel),
+.carouselContainer :global(.carousel-inner),
+.carouselContainer :global(.carousel-item) {
+    height: 100%;
+}
+
+.carouselContainer :global(.carousel-item img) {
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.formContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.loginFormWrapper {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.inputGroup {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.inputIcon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+}
+
+.formInput {
+    padding-left: 45px !important;
+    height: 50px;
+    border-radius: 8px;
+}
+
+.submitButton {
+    width: 100%;
+    height: 50px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #6c757d;
+    margin: 2rem 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.divider:not(:empty)::before {
+    margin-right: .5em;
+}
+
+.divider:not(:empty)::after {
+    margin-left: .5em;
+}
+
+.googleButton {
+    width: 100%;
+    height: 50px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.googleButton svg {
+    width: 20px;
+    height: 20px;
+}
+
+.forgotPasswordLink {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.forgotPasswordLink:hover {
+    text-decoration: underline;
+}

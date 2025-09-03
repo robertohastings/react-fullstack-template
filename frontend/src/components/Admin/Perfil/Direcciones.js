@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react"
-import Axios from "axios"
 import { Table, Button, Pagination, Spinner, Modal, Form, FloatingLabel, Row, Col } from "react-bootstrap"
 import { CiEdit } from "react-icons/ci"
 import { IoIosAddCircle } from "react-icons/io"
 import { TbRefresh } from "react-icons/tb"
 import * as Yup from "yup"
 import { Formik, useFormik } from "formik"
+import { postDireccion } from "../../../models/Usuario/Usuario.model"
+import { getDirecciones } from "../../../models/Usuario/Usuario.model"
+import { useEmpresaID, useUsuarioID } from "../../../tools/StateUtils"
 //import Page from "../../Page"
 import SpinnerButton from "../../Spinner/SpinnerButton"
 
@@ -20,6 +22,8 @@ const validationSchema = Yup.object({
 })
 
 function Direcciones() {
+    const id_empresa = useEmpresaID();
+    const id_usuario = useUsuarioID();
     const [data, setData] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     const [totalRecords, setTotalRecords] = useState(0)
@@ -35,18 +39,18 @@ function Direcciones() {
         setIsLoaging(true)
 
         try {
-            const response = await Axios.get("/api/getDirecciones", {
-                params: {
-                    limite: rowsPerPage,
-                    pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5,
-                    id_empresa: 1,
-                    tipo_identidad: 1,
-                    identidad: 1
-                }
-            })
-            console.log("response:", response.data.direcciones)
-            setData(response.data.direcciones)
-            setTotalRecords(response.data.totalRegistros)
+
+            const params = {
+                limite: rowsPerPage,
+                pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5,
+                id_empresa,
+                tipo_identidad: 1,
+                identidad: 1
+            }
+            const response = await getDirecciones(params)
+
+            setData(response.direcciones)
+            setTotalRecords(response.totalRegistros)
         } catch (error) {
             console.error("There was an error fetching the products!", error)
         } finally {
@@ -93,19 +97,14 @@ function Direcciones() {
                 pais: values.pais,
                 codigo_postal: values.codigo_postal
             }
-            postDireccion(direccion)
+            handled_postDireccion(direccion)
         }
     })
 
-    const postDireccion = async direccion => {
+    const handled_postDireccion = async direccion => {
         try {
-            await Axios.post("/api/postDireccion", direccion)
-                .then(response => {
-                    console.log(response)
-                })
-                .catch(error => {
-                    console.log("There was an error updating about us: ", error)
-                })
+            await postDireccion(direccion)
+
         } catch (error) {
             console.log("error:", error)
         } finally {

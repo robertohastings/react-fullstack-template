@@ -1,6 +1,6 @@
 // frontend/src/App.js
 import React, { useEffect, useState } from "react"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import axios from "axios"
 import AxiosConfig from "./tools/AxiosConfig"
 import { useImmerReducer } from "use-immer"
@@ -37,8 +37,20 @@ import PedidoCanvas from "./components/Inventario/Canvas/PedidoCanvas"
 import Cotizar from "./components/Ventas/Cotizar/Cotizar"
 import LandingPagePreview from "./components/LandingPagePreview"
 import Agenda from "./components/Cartera/Agenda/Agenda"
+import Clientes from "./components/Cartera/Clientes"
 import MovimientosCaja from "./components/Ventas/Cotizar/MovimientosCaja"
 import Kardex from "./components/Inventario/Kardex/Kardex"
+import OrdenCompra from "./components/Compras/Proveedores/OrdenCompra"
+//import Menu from "./components/Admin/Settings/Menu"
+import Settings from "./components/Admin/Settings/Settings"
+
+//LandingPages
+import LandingPageOne from "./LandingPages/LandingPageOne/LandingPageOne"
+import LandingPageTwo from "./LandingPages/LandingPageTwo/LandingPageTwo"
+
+//CRM Components
+import { CRMProvider, useCRMState } from "./CrmContext"
+import CRMLogin from "./components/CRMLogin"
 
 function App() {
     const api_url = process.env.REACT_APP_API_URL
@@ -121,6 +133,7 @@ function App() {
     }
 
     const [state, dispatch] = useImmerReducer(ourReducer, initialState)
+    const [landingPageComponent, setLandingPageComponent] = useState(null)
 
 
     useEffect(() => {
@@ -147,6 +160,20 @@ function App() {
                     idEmpresa: storedData.idEmpresa,
                 },
             });
+            console.log('Stored data found in localStorage:', storedData.landingPage);
+            // Determine the landing page component based on id_landingPage
+            switch (storedData.landingPage.id_landingPage) {
+                case 1:
+                    setLandingPageComponent(<LandingPageOne content={storedData.landingPage} />);
+                    break;
+                case 2:
+                    setLandingPageComponent(<LandingPageTwo content={storedData.landingPage.content} />);
+                    break;
+                // Add more cases for other landing pages
+                default:
+                    setLandingPageComponent(<LandingPageOne content={storedData.landingPage.content} />); // Default landing page
+                    break;
+            }            
         } else {
             // Si no hay datos o el token no es válido, realiza la llamada a la API
             axios
@@ -165,6 +192,7 @@ function App() {
                         landingPage: response.data.landingPage,
                         idEmpresa: response.data.landingPage.idEmpresa,
                     };
+                    console.log('Landing page response data:', response.data.landingPage);
 
                     // Guarda los datos en localStorage
                     setEncryptedItem("hostregioLandingPage", landingPageData);
@@ -174,10 +202,24 @@ function App() {
                         type: "initialize",
                         data: landingPageData,
                     });
+                    // Determine the landing page component based on id_landingPage
+                    switch (response.data.landingPage.id_landingPage) {
+                        case 1:
+                            setLandingPageComponent(<LandingPageOne content={response.data.landingPage} />);
+                            break;
+                        case 2:
+                            setLandingPageComponent(<LandingPageTwo content={response.data.landingPage.content} />);
+                            break;
+                        // Add more cases for other landing pages
+                        default:
+                            setLandingPageComponent(<LandingPageOne content={response.data.landingPage.content} />); // Default landing page
+                            break;
+                    }                    
                 })
                 .catch((error) => {
                     console.error("Error al obtener los datos del landing page:", error);
                 });
+                
         }
     }, [dispatch]);
 
@@ -202,49 +244,83 @@ function App() {
         <>
             <StateContext.Provider value={state}>
                 <DispatchContext.Provider value={dispatch}>
-                    <BrowserRouter>
-                        <AxiosConfig />
-                        <ShoppingCartProvider>
-                            {/* <FlashMessage messages={state.flashMessages} /> */}
-                            <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
-                            <Notifications show={state.notifications} />
-                            <LoggedIn show={!state.loggedIn} />
-                            {/* <LoggedIn show={!isLoggedIn} /> */}
-                            {/* <Header shoppingCart={state.carrito} /> */}
-                            <Header2 shoppingCart={state.carrito} />
+                    <CRMProvider>   
+                        <BrowserRouter>
+                            <AxiosConfig />
+                            <ShoppingCartProvider>
+                                {/* <FlashMessage messages={state.flashMessages} /> */}
+                                <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
+                                <Notifications show={state.notifications} />
+                                {/* <LoggedIn show={!state.loggedIn} /> Este lo comenté */}
 
-                            <main>
-                                <Routes>
-                                    <Route path="/" element={<Home />} />
-                                    {/* <Route path="/Header2" element={<Header2/>} /> */}
-                                    <Route path="/AboutUs" element={<AboutUs />} />
-                                    <Route path="/ContactUs" element={<ContactUs />} />
-                                    <Route path="/Products" element={<Products />} />
-                                    <Route path="/Services" element={<Services />} />
-                                    <Route path="/Admin" element={<Admin />} />
-                                    <Route path="/Usuarios" element={<Testing title="Usuarios" />} />
-                                    <Route path="/Admin/LandingPage" element={<LandingPage />} />
-                                    <Route path="/Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
-                                    <Route path="/Inventario/Productos/ListProductos" element={<ListProductos />} />
-                                    <Route path="/Inventario/Canvas/PedidoCanvas" element={<PedidoCanvas />} />
-                                    <Route path="/Inventario/Kardex/Kardex" element={<Kardex />} />
-                                    <Route path="/Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
-                                    <Route path="/Carrito" element={<Carrito />} />
-                                    <Route path="/Admin/Perfil" element={<Perfil />} />
-                                    <Route path="/Ventas/Cotizar" element={<Cotizar />} />
-                                    <Route path="/Ventas/MovimientosCaja" element={<MovimientosCaja />} />
-                                    <Route path="/LandingPagePreview" element={<LandingPagePreview />} />
-                                    <Route path="/Cartera/Agenda" element={<Agenda />} />
-                                </Routes>
-                            </main>
+                                {/* <LoggedIn show={!isLoggedIn} /> */}
+                                {/* <Header shoppingCart={state.carrito} /> */}
 
-                            <Footer />
-                        </ShoppingCartProvider>
-                    </BrowserRouter>
+                                {/* <Header2 shoppingCart={state.carrito} /> También lo comenté */}
+                                    <Routes>
+                                        <Route path="/" element={landingPageComponent} />{" "}
+                                        {/* Dynamic Landing Page */}
+                                        <Route path="/crm/login" element={<CRMLogin />} />{" "}
+                                        <Route path="/crm/perfil" element={<Perfil />} />{" "}
+                                        {/* CRM Login Route */}
+                                        <Route
+                                            path="/erp/*"
+                                            element={
+                                                state.loggedIn ? (
+                                                    <>
+                                                        <Header2 shoppingCart={state.carrito} />
+                                                        <main>
+                                                            <Routes>
+                                                                <Route path="/" element={<Home />} />
+                                                                <Route path="AboutUs" element={<AboutUs />} />
+                                                                <Route path="ContactUs" element={<ContactUs />} />
+                                                                <Route path="Products" element={<Products />} />
+                                                                <Route path="Services" element={<Services />} />
+                                                                <Route path="Usuarios" element={<Testing title="Usuarios" />} />
+                                                                <Route path="Inventario/Categorias/ListCategorias" element={<ListCategorias />} />
+                                                                <Route path="Inventario/Productos/ListProductos" element={<ListProductos />} />
+                                                                <Route path="Inventario/Canvas/PedidoCanvas" element={<PedidoCanvas />} />
+                                                                <Route path="Inventario/Kardex/Kardex" element={<Kardex />} />
+                                                                <Route path="Compras/Proveedores/ListProveedores" element={<ListProveedores />} />
+                                                                <Route path="Compras/Proveedores/OrdenCompra" element={<OrdenCompra />} />
+                                                                <Route path="Carrito" element={<Carrito />} />
+                                                                <Route path="Ventas/Cotizar" element={<Cotizar />} />
+                                                                <Route path="Ventas/MovimientosCaja" element={<MovimientosCaja />} />
+                                                                <Route path="Cartera/Agenda" element={<Agenda />} />
+                                                                <Route path="Cartera/Clientes" element={<Clientes />} />
+                                                                <Route path="Admin/LandingPage" element={<LandingPage />} />
+                                                                <Route path="Admin/Settings/Settings" element={<Settings />} />
+                                                            </Routes>
+                                                        </main>
+                                                        <Footer />
+                                                    </>
+                                                ) : (
+                                                    <Navigate to="/" />
+                                                )
+                                            }
+                                        />
+                                        <Route path="/Admin/*" element={state.loggedIn ? <AdminRoutes /> : <Navigate to="/" />} />{" "}
+                                        {/* Admin Route */}
+                                        <Route path="/LandingPagePreview" element={<LandingPagePreview />} />
+                                    </Routes>
+                            </ShoppingCartProvider>
+                        </BrowserRouter>
+                    </CRMProvider>
                 </DispatchContext.Provider>
             </StateContext.Provider>
         </>
     )
+}
+
+function AdminRoutes() {
+    return (
+        <Routes>
+            <Route path="/" element={<Admin />} />
+            <Route path="LandingPage" element={<LandingPage />} />
+            <Route path="Settings/Settings" element={<Settings />} />
+            {/* Add other admin routes here */}
+        </Routes>
+    );
 }
 
 export default App
