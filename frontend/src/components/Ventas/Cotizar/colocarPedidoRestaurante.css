@@ -4,3 +4,99 @@
     overflow: hidden; /* Oculta el texto que se desborde */
     text-overflow: ellipsis; /* Agrega puntos suspensivos si el texto es demasiado largo */
 }
+
+/* --- Estilos para el Selector de Cajeros con Avatares --- */
+
+/* Contenedor principal que permite scroll horizontal si hay muchos cajeros */
+.cajero-selector-container {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    overflow-x: auto;
+    justify-content: center; /* Centra los avatares si caben en la pantalla */
+}
+
+/* Estilo para cada item de cajero (avatar + nombre) */
+.cajero-avatar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    min-width: 80px; /* Ancho mínimo para cada avatar */
+}
+
+/* El círculo del avatar */
+.cajero-initials {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #6c757d; /* Color de fondo por defecto */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    border: 3px solid transparent; /* Borde transparente para el estado activo */
+    transition: border-color 0.2s ease;
+}
+
+/* Nombre del cajero debajo del avatar */
+.cajero-name {
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+/* --- Estilo para el cajero SELECCIONADO --- */
+.cajero-avatar-item.active .cajero-initials {
+    border-color: #0d6efd; /* Color del borde cuando está activo */
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
+}
+
+.cajero-avatar-item.active .cajero-name {
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+/* Efecto hover para dar feedback al usuario */
+.cajero-avatar-item:not(.active):hover {
+    background-color: #f8f9fa;
+}
+
+/* Estilos para las columnas  */
+/* Estilo para el marco con título (fieldset) */
+.fieldset-container {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 1.5rem 1rem 1rem 1rem; /* Espacio interior */
+    position: relative;
+    height: 100%; /* Ocupa toda la altura de la columna */
+}
+
+/* Estilo para el título del marco (legend) */
+.fieldset-container legend {
+    position: absolute;
+    top: -0.75rem; /* Lo posiciona sobre el borde superior */
+    left: 0.75rem;
+    background-color: #fff; /* Fondo blanco para "cortar" el borde */
+    padding: 0 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #495057;
+    width: auto; /* Ancho automático basado en el contenido */
+}
+
+/* Contenedor vertical y con scroll para los avatares de cajero */
+.cajero-vertical-selector {
+    display: flex;
+    flex-direction: column; /* Flujo vertical */
+    align-items: center;   /* Centra los avatares horizontalmente */
+    gap: 1rem;
+    max-height: 300px; /* Altura máxima antes de que aparezca el scroll */
+    overflow-y: auto;  /* Scroll vertical si hay muchos cajeros */
+    padding: 0.5rem;
+}

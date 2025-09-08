@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from "react"
-import { Card, Col, Container, Row, Button, Table, Image, ButtonGroup, Badge, ButtonToolbar, Modal } from "react-bootstrap"
+import { Card, Col, Container, Row, Button, Table, Image, ButtonGroup, Badge, ButtonToolbar, Modal, InputGroup, Form } from "react-bootstrap"
+import { useNavigate } from "react-router-dom"
 import axiosInstance from "../../../tools/AxiosInstance"
 import "./cotizar.css"
 import { FaPlus, FaMinus, FaRegTrashAlt, FaShoppingCart, FaMotorcycle, FaSearch, FaCashRegister  } from "react-icons/fa"
-import { IoFastFoodOutline } from "react-icons/io5"
+import { IoFastFoodOutline, IoExitOutline } from "react-icons/io5"
 import CustomModal from "../../../tools/CustomModal"
 import StateContext from "../../../StateContext"
 import DispatchContext from "../../../DispatchContext"
@@ -15,6 +16,7 @@ import { getTipoPedido, getColoniasDelivery, getCajeros, getCaja } from "../../.
 import { useTipoPedido } from "../../../tools/StateUtils"
 
 function Cotizar() {
+    const navigate = useNavigate();
     const [showColocarPedido, setShowColocarPedido] = useState(false);
     const [resetPagos, setResetPagos] = useState(() => () => {});
     const [detalleDelPago, setDetalleDelPago] = useState(null); // 
@@ -411,10 +413,14 @@ function Cotizar() {
 
             <Row>
                 {/* Columna de categorías fija a la izquierda */}
-                <Col xs={1} className="categories-column">
+                <Col xs={12} md={3} lg={2} className="categories-column">
                     <div className="categories-scroll">
                         {dataCategories.map(category => (
-                            <div key={category.id_categoria} className="category-item" onClick={() => fetchCProductosByCategoria(category.id_categoria)}>
+                            <div 
+                                key={category.id_categoria} 
+                                className={`category-item ${selectedCategory === category.id_categoria ? 'active animate-pop' : ''}`}  
+                                onClick={() => fetchCProductosByCategoria(category.id_categoria)}
+                            >
                                 <Image src={category.imagen} className="category-image" />
                                 <div className="category-name-overlay">{category.nombre}</div>
                             </div>
@@ -423,74 +429,77 @@ function Cotizar() {
                 </Col>
 
                 {/* Columna de productos */}
-                <Col xs={7} className="mt-5">
-                    {selectedCategory ? (
-                        <Row>
-                            {dataProducts.map(product => (
-                                <Col key={product.id_producto} xs={12} md={6} lg={3} className="mb-4">
-                                    <Card className="product-card mt-1">
-                                        <div className="d-flex justify-content-center pt-3">
-                                            <Card.Img variant="top" src={product.image1} className="product-image" />
-                                        </div>
-                                        <Card.Body>
-                                            <Card.Title className="text-center">{product.nombre}</Card.Title>
-                                            {/* <Card.Text className="product-description">{product.descripcion}</Card.Text> */}
-                                            <Card.Text className="text-muted text-center">{`Precio: $${product.precio}`} </Card.Text>
-                                        </Card.Body>
-                                        <Card.Footer>
-                                            <div className="d-flex justify-content-around align-items-center border rounded p-1">
-                                                {/* Grupo de botones para aumentar/disminuir cantidad */}
-                                                <ButtonGroup>
-                                                    <Button size="sm" variant="outline-secondary" onClick={() => decreaseQuantity(product.id_producto)}>
-                                                        <FaMinus size={10} />
-                                                    </Button>
-                                                    <input type="text" className="text-center" value={quantities[product.id_producto] || 1} onChange={e => {}} style={{ width: "40px", border: "none" }} />
-                                                    <Button size="sm" variant="outline-secondary" onClick={() => increaseQuantity(product.id_producto)}>
-                                                        <FaPlus size={10} />
-                                                    </Button>
-                                                </ButtonGroup>
-                                                {/* Botón de agregar al carrito */}
+                <Col xs={12} md={5} lg={6} className="products-column">
+                    <div className="products-scroll mt-2">
+                        {selectedCategory ? (
+                            <Row className={dataProducts.length < 4 ? "justify-content-center" : ""}>
+                                {dataProducts.map(product => (
+                                    <Col key={product.id_producto} xs={12} md={6} lg={3} xl={3} className="mb-1 d-flex">
+                                        <Card className="product-card mt-0">
+                                            <div className="d-flex justify-content-center pt-0">
+                                                <Card.Img variant="top" src={product.image1} className="product-image" />
                                             </div>
-                                            <div className="d-grid">
-                                                <Button className="mt-2" variant="outline-primary" size="sm" onClick={() => Agregar_handled(product)}>
-                                                    <FaShoppingCart size={12} />
-                                                </Button>
-                                            </div>
-                                        </Card.Footer>
-                                    </Card>
-                                </Col>
-                            ))}
-                        </Row>
-                    ) : (
-                        <p>Selecciona una categoría para ver los productos.</p>
-                    )}
+                                            <Card.Body>
+                                                <Card.Title className="text-center">{product.nombre}</Card.Title>
+                                                {/* <Card.Text className="product-description">{product.descripcion}</Card.Text> */}
+                                                <Card.Text className="text-muted text-center">{`Precio: $${product.precio}`} </Card.Text>
+                                            </Card.Body>
+                                            <Card.Footer>
+                                                
+                                                    {/* Grupo de botones para aumentar/disminuir cantidad */}
+                                                    <InputGroup size="sm">
+                                                        <Button size="sm" variant="outline-secondary" onClick={() => decreaseQuantity(product.id_producto)}>
+                                                            <FaMinus size={10} />
+                                                        </Button>
+                                                        <Form.Control
+                                                            className="text-center"
+                                                            value={quantities[product.id_producto] || 1}
+                                                            readOnly // Es buena práctica hacerlo de solo lectura si se controla con botones
+                                                            
+                                                        />
+                                                        <Button size="sm" variant="outline-secondary" onClick={() => increaseQuantity(product.id_producto)}>
+                                                            <FaPlus size={10} />
+                                                        </Button>
+                                                    </InputGroup>
+                                                    {/* Botón de agregar al carrito */}
+                                                
+                                                <div className="d-grid">
+                                                    <Button className="mt-2" variant="outline-primary" size="sm" onClick={() => Agregar_handled(product)}>
+                                                        <FaShoppingCart size={12} />
+                                                    </Button>
+                                                </div>
+                                            </Card.Footer>
+                                        </Card>
+                                    </Col>
+                                ))}
+                            </Row>
+                        ) : (
+                            <p>Selecciona una categoría para ver los productos.</p>
+                        )}
+                    </div>
                 </Col>
 
                 {/* Columna del resumen a la derecha  */}
-                <Col xs={4} className="resumen-column">
+                <Col xs={12} md={4} lg={4} className="resumen-column">
                     <div className="resumen-scroll mt-2">
-                        <Row>
-                            <Col xs={3}>
-                                <p>
-                                    # Prod: <Badge>{totalItems}</Badge>
-                                </p>
+                        <Row className="d-flex justify-content-between align-items-center mb-2">
+                            <Col xs="auto">
+                                <span className="fw-bold">
+                                    # Prod: <Badge key={totalItems} bg="secondary" className="animate-pop">{totalItems}</Badge>
+                                </span>
                             </Col>
-                            <Col xs={5}>
-                                <p className="text-end">Total a pagar: </p>
-                            </Col>
-                            <Col xs={4}>
-                                <p className="text-end">
-                                    <h4>
-                                        <Badge>{currencyFormat(totalPrice)}</Badge>{" "}
-                                    </h4>
-                                </p>
+                            <Col xs="auto" className="text-end">
+                                <span className="fw-bold">Total a pagar: </span>
+                                <Badge key={totalPrice} bg="success" as="h4" className="mb-0 ms-1 animate-pop">
+                                    {currencyFormat(totalPrice)}
+                                </Badge>{" "}
                             </Col>
                         </Row>
                         <hr className="mt-0 mb-2" />
                         <Row>
                             <Col>
-                                <ButtonToolbar className="justify-content-around">
-                                    <ButtonGroup size="">
+                                <ButtonToolbar className="justify-content-center">
+                                    <ButtonGroup size="" className="w-100">
 
                                         {/* Boton Domicilio */}
                                         {/* <Button size="sm" variant="warning" style={{ width: "100px" }} title="Definir tipo de entrega: Domiclio ó Recoge" disabled={detallePedido.length === 0}>
@@ -500,16 +509,17 @@ function Cotizar() {
                                         <Button 
                                             size="sm" 
                                             variant="success" 
-                                            style={{ width: "100px" }} 
+                                            // style={{ width: "100px" }} 
                                             disabled={detallePedido.length === 0 || caja.cajaAbierta === 0} 
+                                            title="Colocar Pedido"
                                             onClick={ColocarPedido_handled}>
                                             <IoFastFoodOutline size={30} />
                                         </Button>
-                                        <Button size="sm" variant="info" style={{ width: "100px" }}>
+                                        {/* <Button size="sm" variant="info" style={{ width: "100px" }}>
                                             <FaSearch size={30} /> Pedido
-                                        </Button>
+                                        </Button> */}
                                         {/* Boton Limpiar */}
-                                        <Button 
+                                        {/* <Button 
                                             size="sm" 
                                             variant="danger" 
                                             style={{ width: "100px" }} 
@@ -517,16 +527,26 @@ function Cotizar() {
                                             onClick={LimpiarCaptura_handleOpenModal} 
                                             disabled={detallePedido.length === 0}>
                                             <FaRegTrashAlt size={30} />
-                                        </Button>                                        
+                                        </Button>                                         */}
                                         {/* Boton Caja */}
-                                        <Button 
+                                        <Button
+                                            className="pt-3" 
                                             size="sm" 
                                             variant="warning" 
-                                            style={{ width: "100px" }} 
+                                            // style={{ width: "100px" }} 
                                             title="Movimientos de caja" onClick={()=>{setShowCaja(true)}}                                            
                                         >                                            
                                             <FaCashRegister size={30} />
-                                        </Button>                                        
+                                            <span className="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">{caja.cajaAbierta ? "Abierta" : "Cerrada"}</span>
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            variant="secondary"
+                                            title="Regresar al menú principal"
+                                            onClick={() => navigate('/erp')}
+                                        >
+                                            <IoExitOutline size={30} />
+                                        </Button>                                                                                
                                     </ButtonGroup>
                                 </ButtonToolbar>
                             </Col>

@@ -1,4 +1,4 @@
-.App {
+/* .App {
     text-align: center;
 }
 
@@ -15,16 +15,20 @@
 
 .App-link {
     color: #61dafb;
-}
-
-/* .img-container {
-  width: 100%;
-  height: 200px; /* Ajusta la altura según tus necesidades 
-  overflow: hidden;
-}
-
-.custom-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 } */
+
+/* 
+  Esta clase se añadirá al body en la página de Cotizar.
+  Anula cualquier padding o margin superior que esté empujando el contenido hacia abajo.
+  El !important asegura que este estilo tenga prioridad.
+*/
+body.full-screen-mode main {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    height: 100vh; /* Opcional: hace que el main ocupe toda la altura de la pantalla */
+}
+
+/* Si el espacio lo añade directamente el body, usa esto: */
+body.full-screen-mode {
+    padding-top: 0 !important;
+}

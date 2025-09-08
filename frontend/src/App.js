@@ -1,19 +1,21 @@
 // frontend/src/App.js
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
+import './App.css'
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import axios from "axios"
 import AxiosConfig from "./tools/AxiosConfig"
 import { useImmerReducer } from "use-immer"
 import StateContext from "./StateContext"
 import DispatchContext from "./DispatchContext"
-import ShoppingCartProvider from "./context/ShoppingCartContext"
+import { CartContext } from "./context/ShoppingCartContext"
 import { setEncryptedItem, getDecryptedItem } from "./tools/Utils"
 import { isTokenValid } from "./tools/Utils"
 import { setTokenGetter} from "./tools/AxiosInstance"
 
 //My Components
 //import Header from "./components/Header"
-import Header2 from "./components/Header2"
+import HeaderERP from "./components/Header2"
+import HeaderCRM from "./LandingPages/Header2"
 import Footer from "./components/Footer"
 import Home from "./components/Home"
 import AboutUs from "./components/AboutUs"
@@ -51,6 +53,26 @@ import LandingPageTwo from "./LandingPages/LandingPageTwo/LandingPageTwo"
 //CRM Components
 import { CRMProvider, useCRMState } from "./CrmContext"
 import CRMLogin from "./components/CRMLogin"
+
+import ShoppingCartProvider from "./context/ShoppingCartContext"
+import "./animations.css"
+
+import AppLayout from "./components/AppLayout"
+
+// const AppHeader = () => {
+//   // 1. Accede al contexto aquí, donde sabemos que funciona
+//   const { cart = [] } = useContext(CartContext) || {};
+
+//   console.log('Contenido del carrito en AppHeader:', cart);
+
+//   // 2. Calcula la cantidad
+//   const quantity = cart.reduce((acc, curr) => {
+//     return acc + parseInt(curr.cantidad || 0);
+//   }, 0);
+
+//   // 3. Pasa la cantidad como una prop al Header2
+//   return <HeaderCRM cartQuantity={quantity} />;
+// }
 
 function App() {
     const api_url = process.env.REACT_APP_API_URL
@@ -248,6 +270,8 @@ function App() {
                         <BrowserRouter>
                             <AxiosConfig />
                             <ShoppingCartProvider>
+                                {/* <HeaderCRM /> */}
+                                <AppLayout />
                                 {/* <FlashMessage messages={state.flashMessages} /> */}
                                 <FlashMessage messages={state.alert.message} typeAlert={state.alert.typeAlert} />
                                 <Notifications show={state.notifications} />
@@ -262,13 +286,15 @@ function App() {
                                         {/* Dynamic Landing Page */}
                                         <Route path="/crm/login" element={<CRMLogin />} />{" "}
                                         <Route path="/crm/perfil" element={<Perfil />} />{" "}
+                                        <Route path="/crm/products" element={<Products />} />{" "}
+                                        <Route path="/crm/carrito" element={<Carrito />} />{" "}
                                         {/* CRM Login Route */}
                                         <Route
                                             path="/erp/*"
                                             element={
                                                 state.loggedIn ? (
                                                     <>
-                                                        <Header2 shoppingCart={state.carrito} />
+                                                        {/* <HeaderERP shoppingCart={state.carrito} /> */}
                                                         <main>
                                                             <Routes>
                                                                 <Route path="/" element={<Home />} />
@@ -292,7 +318,7 @@ function App() {
                                                                 <Route path="Admin/Settings/Settings" element={<Settings />} />
                                                             </Routes>
                                                         </main>
-                                                        <Footer />
+                                                        {/* <Footer /> */}
                                                     </>
                                                 ) : (
                                                     <Navigate to="/" />

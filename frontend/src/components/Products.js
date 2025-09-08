@@ -9,6 +9,8 @@ import Axios from "axios"
 
 import SpinnerDot from "./Spinner/SpinnerDot"
 import { CartContext } from "../context/ShoppingCartContext"
+import styles from "./Products.module.css"
+import Header2 from "../LandingPages/Header2"
 
 function Products() {
     const [cart, setCart] = useContext(CartContext)
@@ -19,7 +21,7 @@ function Products() {
     //const { productos } = appState.landinPage.productos
     const dataCategories = appState.landingPage.categorias
 
-    const [categoria, setCategoria] = useState(null)
+    const [categoria, setCategoria] = useState(1)
     const [productos, setProductos] = useState({})
     const [isLoading, setIsLoading] = useState(false)
 
@@ -84,7 +86,7 @@ function Products() {
             if (isItemFound) {
                 return currItems.map(item => {
                     if (item.id_producto === producto.id_producto) {
-                        return { ...item, cantidad: item.cantidad + 1 }
+                        return { ...item, cantidad: parseInt(item.cantidad) + 1 }
                     } else {
                         return item
                     }
@@ -105,103 +107,54 @@ function Products() {
 
     return (
         <Page title="Productos">
-            <h2 className="mt-0 mb-0">Productos</h2>
-
-            {/* <div style={{backgroundColor: "lightgrey"}} className="mb-5 p-3" dangerouslySetInnerHTML={{ __html: contenido }}></div> */}
-
-            <div>
-                {rows.map((row, rowIndex) => (
-                    <Row key={rowIndex} className="mb-4">
-                        {row.map(category => (
-                            <Col key={category.id_categoria} xs={12} md={3}>
-                                <Image src={category.imagen} thumbnail fluid />
-                            </Col>
-                        ))}
-                    </Row>
-                ))}
-            </div>
-
-            <div className="mt-1 d-flex justify-content-center">
-                <Form>
-                    <Form.Group as={Col} controlId="selectorCategoria">
-                        <Form.Label column>Seleccione una Categoria</Form.Label>
-                        <Col className="d-flex align-items-center">
-                            <Form.Select onChange={e => setCategoria(e.target.value)}>
-                                <option value={0}>Seleccione</option>
-                                {dataCategories.map(categoria => {
-                                    return <option value={categoria.id_categoria}>{categoria.nombre}</option>
-                                })}
+            <div className={styles.productsPage}>
+                <Container>
+                    <h2 className={styles.title}>Nuestros Productos</h2>
+                    <div className={styles.categorySelector}>
+                        <Form.Group controlId="selectorCategoria">
+                            <Form.Label>Filtrar por Categoría</Form.Label>
+                            <Form.Select value={categoria} onChange={e => setCategoria(e.target.value)}>
+                                {dataCategories.map(cat => (
+                                    <option key={cat.id_categoria} value={cat.id_categoria}>
+                                        {cat.nombre}
+                                    </option>
+                                ))}
                             </Form.Select>
-                        </Col>
-                    </Form.Group>
-                </Form>
-            </div>
+                        </Form.Group>
+                    </div>
 
-            {isLoading && <SpinnerDot />}
+                    {isLoading && <SpinnerDot />}
 
-            {!isLoading && (
-                <>
-                    {/* Cards de productos */}
-
-                    {productos.length > 0 && (
-                        <div className="mt-4 mb-4">
-                            <Container className="d-flex justify-content-center">
-                                <Row xs={1} sm={1} md={productos.length === 1 ? 8 : 4} lg={4} className="g-4 d-flex justify-content-center w-100">
-                                    {productos.map(producto => {
-                                        return (
-                                            <Col key={producto.id} className="d-flex">
-                                                <Card className="h-100">
-                                                    <div className="d-flex justify-content-center">
-                                                        <Card.Img variant="top" src={producto.image1 !== null || producto.image1 !== "" ? producto.image1 : "https://fiestatijuana.mx/image-not-available.png"} style={{ width: "100%", height: "150px" }} />
-                                                    </div>
-                                                    <Card.Body>
-                                                        <Card.Title>{producto.nombre}</Card.Title>
-                                                        <Card.Text>{producto.descripcion}</Card.Text>
-                                                    </Card.Body>
-                                                    <ListGroup className="list-group-flush">
-                                                        <ListGroup.Item>
-                                                            <Row>
-                                                                <Col>Precio:</Col>
-                                                                <Col>${producto.precio}</Col>
-                                                            </Row>
-                                                        </ListGroup.Item>
-                                                        <ListGroup.Item>
-                                                            <Row>
-                                                                <Col>Existencia:</Col>
-                                                                <Col>{producto.existencia}</Col>
-                                                            </Row>
-                                                        </ListGroup.Item>
-                                                    </ListGroup>
-                                                    <Card.Footer>
-                                                        <Row>
-                                                            <Col className="mb-1">
-                                                                <Button variant="outline-success" size="sm">
-                                                                    Ver Producto
-                                                                </Button>
-                                                            </Col>
-                                                            <Col>
-                                                                <Button variant="outline-warning" size="sm" onClick={() => agregarCarrito_handled(producto)}>
-                                                                    Agregar al Carrito
-                                                                </Button>
-                                                            </Col>
-                                                        </Row>
-                                                    </Card.Footer>
-                                                </Card>
-                                            </Col>
-                                        )
-                                    })}
-                                </Row>
-                            </Container>
-                        </div>
+                    {!isLoading && productos.length > 0 && (
+                        <Row xs={1} sm={2} md={3} lg={4} className="g-4 justify-content-center">
+                            {productos.map(producto => (
+                                <Col key={producto.id_producto} className="d-flex">
+                                    {/* 2. Aplicar los nuevos estilos a la tarjeta */}
+                                    <div className={styles.productCard}>
+                                        <div className={styles.cardImageContainer}>
+                                            <img src={producto.image1 || "https://fiestatijuana.mx/image-not-available.png"} alt={producto.nombre} className={styles.cardImage} />
+                                        </div>
+                                        <div className={styles.cardBody}>
+                                            <h3 className={styles.cardTitle}>{producto.nombre}</h3>
+                                            <p className={styles.cardText}>{producto.descripcion}</p>
+                                        </div>
+                                        <div className={styles.priceInfo}>
+                                            <span className={styles.price}>${producto.precio}</span>
+                                            <span className={styles.stock}>Stock: {producto.existencia}</span>
+                                        </div>
+                                        <div className={styles.cardFooter}>
+                                            <button className={`btn btn-outline-secondary ${styles.actionButton}`}>Ver</button>
+                                            <button className={`btn btn-primary ${styles.actionButton}`} onClick={() => agregarCarrito_handled(producto)}>
+                                                Agregar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </Col>
+                            ))}
+                        </Row>
                     )}
-                </>
-            )}
-
-            <Container>
-                <div style={{ backgroundColor: "lightgrey" }} className="mb-5 p-3">
-                    {HtmlReactParser(appState.landingPage.productos)}
-                </div>
-            </Container>
+                </Container>
+            </div>
         </Page>
     )
 }

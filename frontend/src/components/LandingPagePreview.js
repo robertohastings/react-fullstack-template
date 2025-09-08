@@ -159,7 +159,7 @@ function LandingPagePreview() {
             </section>
 
             {/* Footer */}
-            <footer className="footer">
+            {/* <footer className="footer">
                 <Row>
                     <Col md={6}>
                         <p>&nbsp;</p>
@@ -180,7 +180,7 @@ function LandingPagePreview() {
                         </Link>
                     </Col>
                 </Row>
-            </footer>
+            </footer> */}
         </Container>
     )
 }

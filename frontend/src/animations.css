@@ -1,0 +1,24 @@
+/* 
+  Definimos la animación 'pop' en el ámbito global.
+  Cualquier clase puede usarla por su nombre.
+*/
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3); /* Un poco más grande para que se note */
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 
+  Creamos una clase de utilidad global que aplica esta animación.
+  Podemos añadir esta clase a cualquier elemento.
+*/
+.animate-pop {
+  display: inline-block; /* Necesario para que transform funcione */
+  animation: pop 0.4s ease-out;
+}

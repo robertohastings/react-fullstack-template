@@ -52,7 +52,7 @@ export const getUsuarioLogin = async (req, res) => {
                     username: data.email
                 }
 
-                jwt.sign({ user }, JWT_SECRET, { expiresIn: "1h" }, (err, token) => {
+                jwt.sign({ user }, JWT_SECRET, { expiresIn: "24h" }, (err, token) => {
 
                     console.log("token:", token)
                     data.token = token

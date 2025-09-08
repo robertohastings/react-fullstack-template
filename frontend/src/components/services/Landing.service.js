@@ -59,7 +59,7 @@ export const gettingPuntosDeEntrega = async (params) => {
 export const updatingPuntosDeEntrega = async (data) => {
     console.log("updatingPuntosDeEntrega data:", data);
     try {
-        const response = await axiosInstance.put("/postPuntosDeEntrega", data);
+        const response = await axiosInstance.post("/postPuntoDeEntrega", data);
         return response.data;
     } catch (error) {
         console.error("Error actualizando puntos de entrega:", error);

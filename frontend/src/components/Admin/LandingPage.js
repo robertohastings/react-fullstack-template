@@ -1,5 +1,5 @@
 import React, { useState, useRef, useContext, useEffect } from "react"
-import { Tab, Tabs, Form, Button, Spinner } from "react-bootstrap"
+import { Tab, Tabs, Form, Button, Spinner, Container, FormControl } from "react-bootstrap"
 import JoditEditor from "jodit-react"
 import { IoSaveOutline } from "react-icons/io5"
 import Page from "../Page"
@@ -15,6 +15,7 @@ import { useEmpresaID, useHostname, useLandingPageID } from "../../tools/StateUt
 import { gettingLandingPageAdmin, updateLanding, updateLandingPage_QuienesSomos, updateLandingPage_Products,
     updateLandingPage_Servicios
  } from "../services/Landing.service"
+ import ImageConvertToSVG from "../../tools/ImageConvertToSVG"
 
 function LandingPage() {
     const id_empresa = useEmpresaID()
@@ -42,6 +43,10 @@ function LandingPage() {
     const [sitioEnMttoChecked, setSitioEnMttoChecked] = useState(false)
     const [carritoDeComprasChecked, setCarritoDeComprasChecked] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
+
+    const [showOffcanvas, setShowOffcanvas] = useState(false);
+    const [svgCode, setSvgCode] = useState('');
+
     console.log("hostname:", hostname)
     console.log("id_LandingPage:", id_landingPage)
 
@@ -198,6 +203,22 @@ function LandingPage() {
         setIsSaving(false)
     }
 
+    const handleShowOffcanvas = () => setShowOffcanvas(true);
+    const handleCloseOffcanvas = () => setShowOffcanvas(false);
+
+    const handleConversion = (code) => {
+        setSvgCode(code);
+        handleCloseOffcanvas();
+    };
+
+    const handleCopyToClipboard = () => {
+        if (navigator.clipboard) {
+        navigator.clipboard.writeText(svgCode)
+            .then(() => alert('Código SVG copiado al portapapeles!'))
+            .catch(() => alert('No se pudo copiar el código.'));
+        }
+    };    
+
     return (
         <Page title="Landig Page">
             <Tabs defaultActiveKey="settings" id="justify-tab-example" className="mb-3" justify variant="tabs">
@@ -341,6 +362,48 @@ function LandingPage() {
                 </Tab>
                 <Tab eventKey="usuarios" title="Usuarios">
                     <Usuarios />
+                </Tab>
+                <Tab eventKey="logo" title="Logo">
+                    <h1 className="text-center mb-4">Aplicación de Conversión</h1>
+                        <div className="text-center">
+                            <Button variant="primary" onClick={handleShowOffcanvas}>
+                            Convertir Imagen a SVG
+                            </Button>
+                        </div>
+
+                        <ImageConvertToSVG 
+                            show={showOffcanvas} 
+                            handleClose={handleCloseOffcanvas} 
+                            onConversionComplete={handleConversion} 
+                        />
+
+                        {svgCode && (
+                            <div className="mt-5">
+                            <h2 className="text-center mb-3">Resultado de la Conversión</h2>
+                            <Form.Group controlId="svgCodeArea">
+                                <Form.Label>Código SVG Generado:</Form.Label>
+                                <FormControl
+                                as="textarea"
+                                rows={10}
+                                value={svgCode}
+                                readOnly
+                                style={{ fontFamily: 'monospace' }}
+                                />
+                            </Form.Group>
+                            <div className="d-flex justify-content-center mt-3">
+                                <Button variant="outline-primary" onClick={handleCopyToClipboard}>
+                                Copiar Código
+                                </Button>
+                            </div>
+
+                            <h3 className="text-center my-4">Vista Previa</h3>
+                            <div
+                                className="border rounded-3 p-3 text-center"
+                                style={{ backgroundColor: '#f8f9fa' }}
+                                dangerouslySetInnerHTML={{ __html: svgCode }}
+                            />
+                            </div>
+                        )}                    
                 </Tab>
             </Tabs>
         </Page>

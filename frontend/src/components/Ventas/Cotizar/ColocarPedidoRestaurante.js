@@ -402,6 +402,16 @@ const handledBuscarCliente = async celular => {
         setMotivoCancelacion('');
         setShowCancelarPedido(false);
     };
+
+    // Función para obtener las iniciales del nombre del cajero
+    const getInitials = (name) => {
+        if (!name) return '?';
+        const names = name.split(' ');
+        if (names.length > 1) {
+            return `${names[0][0]}${names[1][0]}`.toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
+    };    
   
     return (
       <Modal
@@ -411,6 +421,7 @@ const handledBuscarCliente = async celular => {
         aria-labelledby="contained-modal-title-vcenter"
         centered
         backdrop="static"
+        fullscreen="xl-down"
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
@@ -472,108 +483,127 @@ const handledBuscarCliente = async celular => {
 
                     {/* Datos del Cliente */}
                     <Tab eventKey="cliente" title="Cliente" className="p-3">
-                        {/* <h6>Datos del Cliente</h6> */}
-                        {/* Selector de Cajero */}
-                        <Form.Group className='my-3'>
-                            <Row>
-                                <Col>
-                                    {/* <Form.Label>Cajero</Form.Label> */}
-                                    <Form.Select
-                                        value={cajeroSeleccionado}
-                                        onChange={(e) => setCajeroSeleccionado(Number(e.target.value))}
-                                    >
-                                        <option value="">Seleccione un cajero</option>
-                                        {cajeros.map((cajero) => (
-                                            <option key={cajero.id_cajero} value={cajero.id_cajero}>
-                                                {cajero.nombre}
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Col>
-                            </Row>
-                        </Form.Group>
-                        {/* Selector de Tipo de Cliente */}                        
-                        <Form.Group>
-                            <Row>
-                                <Col>
-                                    <ButtonGroup className="w-100 gap-2 mt-3 mb-5">
-                                        {tipoCliente.map((tipo, index) => (
-                                            <Button
-                                                key={index}
-                                                variant={tipoClienteSeleccionado === tipo.idTipoCliente ? "primary" : "outline-primary"}
-                                                size="sm"
-                                                className="w-100"
-                                                onClick={() => {
-                                                    //console.log('Tipo Cliente presionado =>', tipo.idTipoCliente)
-                                                    //console.log('Tipo Cliente seleccionado =>', tipoClienteSeleccionado)
-                                                    setTipoClienteSeleccionado(tipo.idTipoCliente)
-                                                    if (tipo.idTipoCliente === 0){
-                                                        setCelular(0)
-                                                        setNombreCliente('Cliente Mostrador')
-                                                    } else {
-                                                        setCelular('')
-                                                        setNombreCliente('')
-                                                        setTimeout(() => {
-                                                            if (celularRef.current){
-                                                                celularRef.current.focus()
+                        <Row>
+                                {/* Columna Izquierda: Selección de Cajero */}
+                                <Col md={5}>
+                                    <fieldset className="fieldset-container">
+                                        <legend>Seleccione un cajero</legend>
+                                        <div className="cajero-vertical-selector">
+                                            {cajeros.map((cajero) => (
+                                                <div
+                                                    key={cajero.id_cajero}
+                                                    className={`cajero-avatar-item ${cajeroSeleccionado === cajero.id_cajero ? 'active' : ''}`}
+                                                    onClick={() => setCajeroSeleccionado(cajero.id_cajero)}
+                                                >
+                                                    <div className="cajero-initials">
+                                                        {getInitials(cajero.nombre)}
+                                                    </div>
+                                                    <div className="cajero-name">{cajero.nombre.split(' ')[0]}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </fieldset>
+                                    {/* <Form.Group className='my-3' hidden={true}>
+                                        <Row>
+                                            <Col>
+                                                <Form.Select
+                                                    value={cajeroSeleccionado}
+                                                    onChange={(e) => setCajeroSeleccionado(Number(e.target.value))}
+                                                >
+                                                    <option value="">Seleccione un cajero</option>
+                                                    {cajeros.map((cajero) => (
+                                                        <option key={cajero.id_cajero} value={cajero.id_cajero}>
+                                                            {cajero.nombre}
+                                                        </option>
+                                                    ))}
+                                                </Form.Select>
+                                            </Col>
+                                        </Row>
+                                    </Form.Group>                                        */}
+                                </Col> 
+                                <Col md={7}>
+                                    {/* Selector de Tipo de Cliente */}  
+                                    <fieldset className="fieldset-container">
+                                        <legend>Seleccione el cliente</legend>
+                                            <ButtonGroup className="w-100 gap-2 mt-3 mb-5">
+                                                {tipoCliente.map((tipo, index) => (
+                                                    <Button
+                                                        key={index}
+                                                        variant={tipoClienteSeleccionado === tipo.idTipoCliente ? "primary" : "outline-primary"}
+                                                        size="sm"
+                                                        className="w-100"
+                                                        onClick={() => {
+                                                            setTipoClienteSeleccionado(tipo.idTipoCliente)
+                                                            if (tipo.idTipoCliente === 0){
+                                                                setCelular(0)
+                                                                setNombreCliente('Cliente Mostrador')
+                                                            } else {
+                                                                setCelular('')
+                                                                setNombreCliente('')
+                                                                setTimeout(() => {
+                                                                    if (celularRef.current){
+                                                                        celularRef.current.focus()
+                                                                    }
+                                                                }, 100)
                                                             }
-                                                        }, 100)
-                                                    }
-                                                }}  
-                                            >
-                                                {tipo.tipoCliente}
-                                            </Button>
-                                        ))}
-                                    </ButtonGroup>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <Row>
-                                        <Col xs={9}>
-                                            {/* <Form.Label>Celular:</Form.Label> */}
-                                            <Form.Control 
-                                                type="number" 
-                                                id="celular" 
-                                                name="celular" 
-                                                placeholder="Registar celular" 
-                                                autoComplete="off"
-                                                value={celular}
-                                                ref={celularRef}
-                                                onChange={e => {
-                                                    if (e.target.value === '0') {setNombreCliente('Cliente Mostrador')}
-                                                    setCelular(e.target.value)
-                                                }}
-                                                disabled={tipoClienteSeleccionado === 0}
-                                            />                                
-                                        </Col>
-                                        <Col xs={3}>
-                                            <Button variant="primary" 
-                                                size="sm" className="w-100"
-                                                onClick={() => handledBuscarCliente(celular)} 
-                                                title="Presione aquí para buscar el cliente por número de teléfono" 
-                                                disabled={isFetching || tipoClienteSeleccionado === 0}
-                                            >
-                                                <BsSearch />
-                                            </Button>                                                            
-                                        </Col>
-                                    </Row>
-                                </Col>
-                                <Col>
-                                    <Form.Control 
-                                        ref={nombreRef}
-                                        type="text" 
-                                        id="nombre" 
-                                        name="nombreCliente" 
-                                        placeholder= {ayudaNombre === '' ? "Nombre del cliente" : ayudaNombre}
-                                        autoComplete="off" 
-                                        value={nombreCliente}
-                                        onChange={e => setNombreCliente(e.target.value.toUpperCase())}
-                                        disabled={tipoClienteSeleccionado === 0}
-                                    />
-                                </Col>
-                            </Row>
-                        </Form.Group>                            
+                                                        }}  
+                                                    >
+                                                        {tipo.tipoCliente}
+                                                    </Button>
+                                                ))}
+                                            </ButtonGroup>
+                                            {tipoClienteSeleccionado === 1 && ( 
+                                                <>
+                                                    <Row>
+                                                        <Col xs={9}>
+                                                            {/* <Form.Label>Celular:</Form.Label> */}
+                                                            <Form.Control 
+                                                                type="number" 
+                                                                id="celular" 
+                                                                name="celular" 
+                                                                placeholder="Registar celular" 
+                                                                autoComplete="off"
+                                                                value={celular}
+                                                                ref={celularRef}
+                                                                onChange={e => {
+                                                                    if (e.target.value === '0') {setNombreCliente('Cliente Mostrador')}
+                                                                    setCelular(e.target.value)
+                                                                }}
+                                                                disabled={tipoClienteSeleccionado === 0}
+                                                            />                                
+                                                        </Col>
+                                                        <Col xs={3}>
+                                                            <Button variant="primary" 
+                                                                size="sm" className="w-100"
+                                                                onClick={() => handledBuscarCliente(celular)} 
+                                                                title="Presione aquí para buscar el cliente por número de teléfono" 
+                                                                disabled={isFetching || tipoClienteSeleccionado === 0}
+                                                            >
+                                                                <BsSearch />
+                                                            </Button>                                                            
+                                                        </Col>
+                                                    </Row>
+                                                    <Row className='mt-2'>
+                                                        <Col>
+                                                            <Form.Control 
+                                                                ref={nombreRef}
+                                                                type="text" 
+                                                                id="nombre" 
+                                                                name="nombreCliente" 
+                                                                placeholder= {ayudaNombre === '' ? "Nombre del cliente" : ayudaNombre}
+                                                                autoComplete="off" 
+                                                                value={nombreCliente}
+                                                                onChange={e => setNombreCliente(e.target.value.toUpperCase())}
+                                                                disabled={tipoClienteSeleccionado === 0}
+                                                            />
+                                                        </Col>
+                                                    </Row>                                                                                                   
+                                                </>
+                                            )}
+                                         
+                                    </fieldset>
+                                </Col>                           
+                        </Row>                                                                                                              
                     </Tab>
                 
                     {/* Tipo de Pedido */}

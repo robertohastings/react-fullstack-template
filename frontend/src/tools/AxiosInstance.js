@@ -46,6 +46,7 @@ axiosInstance.interceptors.response.use(
     },
     (error) => {
         if (error.response) {
+            console.log('error response:', error.response)
             if (error.response.status === 401) {
                 console.error("Token inválido o expirado. Redirigiendo al inicio de sesión...");
                 if (appDispatch) {

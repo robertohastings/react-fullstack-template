@@ -1,0 +1,163 @@
+.productsPage {
+    padding: 60px 0;
+    background-color: #f8f9fa; /* Fondo suave y limpio */
+    min-height: 100vh;
+}
+
+.title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #6a5acd;
+    margin-bottom: 20px;
+}
+
+.categorySelector {
+    max-width: 500px;
+    margin: 0 auto 50px auto;
+    text-align: center;
+}
+
+.categorySelector label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Estilos para la tarjeta de producto */
+.productCard {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+}
+
+.productCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.cardImageContainer {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.cardImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.productCard:hover .cardImage {
+    transform: scale(1.05);
+}
+
+.cardBody {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.cardTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.cardText {
+    font-size: 0.9rem;
+    color: #666;
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+
+.priceInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #6a5acd; /* Color primario */
+}
+
+.stock {
+    font-size: 0.9rem;
+    color: #5cb85c;
+    font-weight: 500;
+}
+
+.cardFooter {
+    padding: 15px 20px;
+    background-color: transparent;
+    border-top: none;
+    display: flex;
+    gap: 10px;
+}
+
+.actionButton {
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+    transform: translateY(-2px);
+}
+
+/* --- ESTILOS RESPONSIVE PARA MÓVILES --- */
+@media (max-width: 767px) {
+    .productsPage {
+        padding: 40px 0;
+    }
+
+    .title {
+        font-size: 2rem; /* Reducir tamaño del título principal */
+    }
+
+    .categorySelector {
+        width: 90%; /* Asegurar que el selector no toque los bordes */
+        margin-bottom: 40px;
+    }
+
+    .cardImageContainer {
+        height: 180px; /* Reducir altura de la imagen en móviles */
+    }
+
+    .cardTitle {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        /* --- AÑADE ESTA LÍNEA --- */
+        /* Permite que las palabras largas se corten para evitar el desbordamiento */
+        overflow-wrap: break-word;
+    }
+
+    .cardBody, .priceInfo, .cardFooter {
+        padding: 15px; /* Reducir un poco el padding interno de la tarjeta */
+    }
+
+    .price {
+        font-size: 1.1rem;
+    }
+
+    .actionButton {
+        font-size: 0.9rem; /* Ajustar tamaño de fuente del botón */
+        padding: 0.5rem 0.75rem;
+    }
+}

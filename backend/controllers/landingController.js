@@ -88,10 +88,10 @@ export const getPuntosDeEntrega = async (req, res) => {
 
     try {
         console.log(req.query)
-        const { limite, pagina } = req.query
+        const { id_empresa, limite, pagina } = req.query
         console.log(limite, pagina)
 
-        const rows = await pool.query(`CALL getPuntosDeEntrega(?, ?);`, [limite, pagina])
+        const rows = await pool.query(`CALL getPuntosDeEntrega(?, ?, ?);`, [id_empresa, limite, pagina])
         console.log(rows[0][1])
         res.json({
             success: true,
@@ -105,6 +105,31 @@ export const getPuntosDeEntrega = async (req, res) => {
         })
     }
 }
+
+export const postPuntoDeEntrega = async (req, res) => {
+    console.log("postPuntosDeEntrega",req.body)
+    const { id_empresa, id_puntoDeEntrega, nombre, horario, activo } = req.body
+
+    try {
+        const [result] = await pool.query("CALL postPuntoDeEntrega(?, ?, ?, ?, ?)", [id_empresa, id_puntoDeEntrega, nombre, horario, activo])
+        if (result.affectedRows == 0) {
+            res.status(404).json({
+                success: false,
+                message: `Punto de entrega No se actualizó`
+            })
+        } else {
+            return res.status(200).json({
+                success: true,
+                message: "Punto de entrega actualizado"
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: `Error: ${error.message}`
+        })
+    }
+}
+
 export const getColoniasDeliveryListing = async (req, res) => {
 
     try {

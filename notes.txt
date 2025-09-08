@@ -393,4 +393,11 @@ END
 
 agregar subdirectorio: landingPage en backend dentro del directorio imagenes
 
+Abre una terminal (como Git Bash, PowerShell o el Símbolo del sistema) y ejecuta los siguientes dos comandos:
+git config --global --unset http.proxy
+git config --global --unset https.proxy
 
+Recuerda que cuando regreses a la oficina, probablemente necesitarás volver a activar el proxy. Para ello, ejecuta:
+
+git config --global http.proxy http://10.100.0.100:8080
+git config --global https.proxy http://10.100.0.100:8080

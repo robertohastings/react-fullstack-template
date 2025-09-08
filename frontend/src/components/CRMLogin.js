@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCRMDispatch } from '../CrmContext';
 import DispatchContext from '../DispatchContext';
 import StateContext from '../StateContext';
-import { Container, Row, Col, Form, Button, Carousel, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Carousel, Spinner, Image } from 'react-bootstrap';
 import styles from './CRMLogin.module.css';
 import axios from 'axios';
 import { encryptData } from '../tools/Utils';
@@ -177,6 +177,9 @@ function CRMLogin() {
                 {/* Columna Derecha - Formulario */}
                 <Col md={8} className={styles.formContainer}>
                     <div className={styles.loginFormWrapper}>
+                        <div className="text-center mb-4">
+                            <Image src="/img/hostregioapp_logo.png" alt="HostRegio App Logo" style={{ width: '150px', height: 'auto' }} />
+                        </div>
                         <h2 className="mb-4">Bienvenido de Nuevo</h2>
                         <p className="mb-4 text-muted">Ingresa tus credenciales para acceder a tu cuenta.</p>
                         <Form onSubmit={handleSubmit}>

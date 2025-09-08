@@ -668,6 +668,7 @@ export const postCajaCerrar = async (req, res) => {
 }
 export const getMovimientosDeCaja = async (req, res) => {
     try {
+        console.log("getMovimientosDeCaja:", req.query)
         const { id_empresa, fecha_inicial, fecha_final } = req.query
 
         const rows = await pool.query(`CALL getMovimientosDeCaja(?, ?, ?);`, [id_empresa, fecha_inicial, fecha_final])

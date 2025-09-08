@@ -32,6 +32,7 @@ function PuntosDeEntrega() {
         setIsLoaging(true)
 
         const params= {
+            id_empresa,
             limite: rowsPerPage,
             pagina: currentPage * rowsPerPage - 5 < 0 ? 0 : currentPage * rowsPerPage - 5
         }
@@ -155,8 +156,9 @@ function PuntosDeEntrega() {
                         <th>#Id</th>
                         <th>Nombre</th>
                         <th>Horario</th>
-                        <th>F. Actualización</th>
+                        {/* <th>F. Actualización</th> */}
                         <th>Activo</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 {isLoading && (

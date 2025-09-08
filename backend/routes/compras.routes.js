@@ -5,7 +5,7 @@ import { getProveedoresListado, postProveedor } from "../controllers/comprasCont
 const router = Router()
 
 //Proveedores
-router.get("/compras/getProveedoresListado", authenticateToken, getProveedoresListado)
-router.post("/compras/postProveedor", authenticateToken, postProveedor)
+router.get("/compras/getProveedoresListado", getProveedoresListado)
+router.post("/compras/postProveedor", postProveedor)
 
 export default router

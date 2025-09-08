@@ -164,7 +164,7 @@ function Header2(props) {
                                                         <NavDropdown.Item 
                                                             key={hijoIndex} 
                                                             as={hijo.linkTo ? Link : "button"} 
-                                                            to={hijo.linkTo || undefined}
+                                                            to={`/erp/${hijo.linkTo}` || undefined}
                                                             onClick={() => {
                                                                 actions[hijo.nombre]?.();
                                                                 setExpanded(false); // Cierra el menú al seleccionar una opción

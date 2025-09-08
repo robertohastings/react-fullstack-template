@@ -1,6 +1,6 @@
 
 import React, {useContext, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import styles from './LandingPageOne.module.css';
 import { useScrollToTopBtn } from './hooks';
 import Header2 from '../Header2';
@@ -25,7 +25,7 @@ function LandingPageOne({content}) {
 
     return (
         <>
-        <Header2 />
+        {/* <Header2 /> */}
         <section id="inicio" className={styles["hero"]}>
             <div className={styles["container"]}>
                 <div className={styles["hero-text"]}>
@@ -39,6 +39,32 @@ function LandingPageOne({content}) {
                 </div>
             </div>
         </section>
+
+        {/* --- NUEVA SECCIÓN DE CATEGORÍAS --- */}
+        {appState.landingPage.categorias && appState.landingPage.categorias.length > 0 && (
+            <section id="categorias" className={styles["categories-section"]}>
+                <div className={styles["container"]}>
+                    <h2 className={styles["section-title"]}>Explora Nuestras Categorías de Productos</h2>
+                    <p className={styles["section-description"]}>Encuentra los productos que necesitas, organizados para tu comodidad.</p>
+                    <div className={styles["categories-grid"]}>
+                        {appState.landingPage.categorias.map((categoria) => (
+                            <a href="#" key={categoria.id_categoria} className={styles["category-item"]}>
+                                <img src={categoria.imagen} alt={categoria.nombre} className={styles["category-image"]} />
+                                <div className={styles["category-overlay"]}>
+                                    <h3 className={styles["category-title"]}>{categoria.nombre}</h3>
+                                </div>
+                            </a>
+                        ))}
+                    </div>
+                    <div className={styles["text-center"]} style={{ marginTop: '50px' }}>
+                        <Link to="/crm/products" className={styles["btn-primary"]}>
+                            Comprar
+                        </Link>
+                    </div>                    
+                </div>
+            </section>
+        )}
+
         <section id="servicios" className={styles["services-section"]}>
             <div className={styles["container"]}>
                 <h2 className={styles["section-title"]}>Nuestros Servicios Destacados</h2>

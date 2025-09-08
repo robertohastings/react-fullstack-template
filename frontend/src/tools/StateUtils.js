@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import StateContext from "../StateContext";
+import { useCRMState } from "../CrmContext";
 
 export const useTipoPedido = () => {
     const appState = useContext(StateContext)
@@ -38,4 +39,10 @@ export const useLandingPageID = () => {
     const appState = useContext(StateContext)
 
     return appState.landingPage.idLandingPage
+}
+
+export const useUsuarioData = () => {
+    const stateCRM = useCRMState()
+
+    return stateCRM.crmUser
 }
